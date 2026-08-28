@@ -1,0 +1,196 @@
+import type { TileData } from "@/lib/types";
+
+export const tiles: TileData[] = [
+  {
+    id: "intro",
+    categories: ["about"],
+    size: "2x1",
+    variant: "intro",
+    props: {
+      name: "Oscar Rode",
+      bio: "I am a UI/UX designer who translate from design theory to the interface that actually goes into production.",
+      paragraphs: [
+        "Based in Copenhagen, I focus on Human-AI interaction: the messy middle where intent, trust, and usability decide whether an AI feature feels helpful or hollow.",
+        "As co-founder and UX designer of CheapVoyage, I shaped an AI-driven travel planner that surfaces affordable flights and trains across Europe through a conversational chat interface.",
+        "I studied Digital Design & Interactive Technologies at the IT University of Copenhagen — BSc from 2021 to 2024, and MSc from 2024 to 2026.",
+        "My master's work explores GenAI for mixed-initiative co-creative level design — prototyping how designers and models can create together.",
+        "I also teach and mentor: as a teaching assistant I've guided 50+ students from concept to working prototypes, and I help fellow founders through the Startup Hub with design thinking and critique.",
+        "Outside the screen I'm a builder at heart — music production, hackathons, and the occasional Himalayan trek keep me curious about craft, collaboration, and place.",
+      ],
+      imageSrc: "/oscar-rode-profile-picture.png",
+    },
+  },
+  {
+    id: "contact-email",
+    categories: ["about"],
+    size: "1x1",
+    variant: "social",
+    props: {
+      label: "Email",
+      copyValue: "oscarrode99@gmail.com",
+      icon: "/gmail-icon.png",
+    },
+  },
+  {
+    id: "contact-linkedin",
+    categories: ["about", "work"],
+    size: "1x1",
+    variant: "social",
+    props: {
+      label: "LinkedIn",
+      href: "https://www.linkedin.com/in/oscarrode/",
+      icon: "/linkedin-icon.png",
+    },
+  },
+  {
+    id: "case-study-1",
+    categories: ["work"],
+    size: "2x2",
+    variant: "case-study",
+    props: {
+      title: "CheapVoyage",
+      subtitle: "Co-Founder & UX Designer",
+      slug: "cheap-voyage",
+      accent: "teal",
+      coverSrc: "/case-studies/cheapvoyage-picture-1.png",
+    },
+  },
+  {
+    id: "case-study-2",
+    categories: ["work"],
+    size: "1x2",
+    variant: "case-study",
+    props: {
+      title: "AI Sources for Spotify Podcasts",
+      subtitle: "Product design",
+      slug: "spotify-podcasts",
+      accent: "violet",
+      coverSrc: "/spotify-logo-stylized.jpg",
+      comingSoon: true,
+    },
+  },
+  {
+    id: "masters-thesis-co-creative-level-design",
+    categories: ["work"],
+    size: "2x2",
+    variant: "case-study",
+    props: {
+      title: "Master's Thesis on Co-Creative Level Design",
+      subtitle: "Research",
+      slug: "co-creative-level-design",
+      accent: "indigo",
+      comingSoon: true,
+    },
+  },
+  {
+    id: "music-production",
+    categories: ["music", "work"],
+    size: "2x1",
+    variant: "case-study",
+    props: {
+      title: "Co-Creative AI in Music Production",
+      subtitle: "Bachelor's Project",
+      slug: "co-creative-music-production",
+      accent: "teal",
+      comingSoon: true,
+    },
+  },
+  {
+    id: "botanica",
+    categories: ["music"],
+    size: "2x1",
+    variant: "music",
+    props: {
+      title: "Botanica",
+      subtitle: "Music & Visuals",
+      description: "Produce, mix, and craft audiovisual experiences.",
+      coverSrc: "/feel-alive-background.png",
+      youtubeId: "SLBmsHOsuLU",
+      startSeconds: 669,
+      videoTitle: "Feel Alive",
+      videoArtist: "Oscar Rode",
+    },
+  },
+  {
+    id: "quote",
+    categories: ["about", "work"],
+    size: "2x1",
+    variant: "quote",
+    props: {
+      text: "Great products result from treating design and engineering as a single field.",
+      subtitle: "My Design Principle",
+      showQuoteIcon: true,
+      cursorLabel: "My design process philosophy",
+    },
+  },
+  {
+    id: "quote-ux-principle",
+    categories: ["about", "work"],
+    size: "2x1",
+    variant: "quote",
+    props: {
+      text: "Great UX should make users feel in control.",
+      subtitle: "My UX Principle",
+      showQuoteIcon: true,
+      cursorLabel: "My UX philosophy",
+    },
+  },
+  {
+    id: "himalaya",
+    categories: ["side-quests"],
+    size: "1x2",
+    variant: "photo-stack",
+    props: {
+      title: "Himalayan Trekking",
+      listingUrl: "/api/himalaya-photos.json",
+      // Collapsed stack only. Expanded gallery streams Manaslu, then Annapurna.
+      images: [
+        "/himalayan-trekking/manaslu-august-2024/PXL_20240804_092734561.jpg",
+        "/himalayan-trekking/manaslu-august-2024/PXL_20240804_095527543.jpg",
+        "/himalayan-trekking/manaslu-august-2024/PXL_20240804_095543347.jpg",
+      ],
+    },
+  },
+  {
+    id: "duolingo",
+    categories: ["side-quests", "about"],
+    size: "1x1",
+    variant: "duolingo",
+    props: {
+      username: "OscarRode",
+      userId: 1000201223,
+    },
+  },
+  {
+    id: "startup-hub",
+    categories: ["side-quests", "work"],
+    size: "2x1",
+    variant: "logo",
+    props: {
+      imageSrc: "/itu-nextgen-logo.png",
+      alt: "ITU NextGen Innovation & startup hub",
+      label: "Check out ITU NextGen where I got support to run CheapVoyage 🚀",
+      href: "https://www.itunextgen.dk/",
+      openInNewTab: true,
+    },
+  },
+  {
+    id: "oscar-rode-cv",
+    categories: ["work", "about"],
+    size: "1x1",
+    variant: "cv",
+    props: {
+      logoSrc: "/cv-logo.svg",
+      fileSrc: "/Oscar-Rode-CV.pdf",
+      downloadFileName: "Oscar Rode - CV.pdf",
+    },
+  },
+];
+
+export const filters = [
+  { id: "all" as const, label: "All" },
+  { id: "work" as const, label: "Work" },
+  { id: "music" as const, label: "Music" },
+  { id: "about" as const, label: "About" },
+  { id: "side-quests" as const, label: "Side Quests" },
+];

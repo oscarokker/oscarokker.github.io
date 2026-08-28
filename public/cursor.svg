@@ -1,0 +1,10 @@
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Classic NW pointer: tip ~ (0.63, 0.63), black fill, white stroke -->
+  <path
+    d="M14.458 5.24121C15.1874 5.48433 15.1874 6.51567 14.458 6.75879L9.44238 8.43066C8.96483 8.58994 8.58994 8.96483 8.43066 9.44238L6.75879 14.458C6.51567 15.1874 5.48433 15.1874 5.24121 14.458L0.631836 0.631836L14.458 5.24121Z"
+    fill="#000000"
+    stroke="#FFFFFF"
+    stroke-width="0.8"
+    stroke-linejoin="round"
+  />
+</svg>
