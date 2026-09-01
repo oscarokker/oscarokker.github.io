@@ -5,6 +5,8 @@ import { Header } from "@/components/Header";
 import { StarfieldBackground } from "@/components/StarfieldBackground";
 import { CaseStudyMorphOverlay } from "@/components/case-studies/CaseStudiesMorphOverlay";
 import { CaseStudyTransitionProvider } from "@/components/case-studies/CaseStudiesTransition";
+import { MusicPlayerProvider } from "@/contexts/MusicPlayerContext";
+import { MusicPlayer } from "@/components/MusicPlayer";
 import {
   HeaderVisibilityProvider,
   useHeaderVisibility,
@@ -19,6 +21,7 @@ function ShellChrome({ children }: { children: React.ReactNode }) {
       <Header visible={headerVisible} />
       {children}
       <CaseStudyMorphOverlay />
+      <MusicPlayer />
     </>
   );
 }
@@ -26,11 +29,13 @@ function ShellChrome({ children }: { children: React.ReactNode }) {
 export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <CustomCursor>
-      <CaseStudyTransitionProvider>
-        <HeaderVisibilityProvider>
-          <ShellChrome>{children}</ShellChrome>
-        </HeaderVisibilityProvider>
-      </CaseStudyTransitionProvider>
+      <MusicPlayerProvider>
+        <CaseStudyTransitionProvider>
+          <HeaderVisibilityProvider>
+            <ShellChrome>{children}</ShellChrome>
+          </HeaderVisibilityProvider>
+        </CaseStudyTransitionProvider>
+      </MusicPlayerProvider>
     </CustomCursor>
   );
 }

@@ -9,12 +9,12 @@ import {
 } from "react";
 import { IntroTileExpanded } from "@/components/tiles/IntroTileExpanded";
 import { PhotoStackPreview } from "@/components/tiles/PhotoMedia";
-import { MusicTileExpanded } from "@/components/tiles/MusicTileExpanded";
 import { PhotoStackTileExpanded } from "@/components/tiles/PhotoStackTileExpanded";
 import { useCursorLabelOptional } from "@/hooks/useCursorLabel";
 import { useTileExpand } from "@/hooks/useTileExpand";
 import { accentClass } from "@/lib/accent";
 import { withBasePath } from "@/lib/base-path";
+import { useMusicPlayer } from "@/contexts/MusicPlayerContext";
 import {
   CopyIcon,
   DownloadIcon,
@@ -368,20 +368,59 @@ export function MusicTile({
   videoArtist,
 }: MusicTileProps) {
   const expandable = Boolean(youtubeId);
-  const {
-    tileRef,
-    mounted,
-    visible,
-    sourceRect,
-    measureSourceRect,
-    open,
-    close,
-    handleMorphReady,
-    handleExitComplete,
-    handleKeyDown,
-  } = useTileExpand({ enabled: expandable });
+  const tileRef = useRef<HTMLDivElement>(null);
+  const { playTrack } = useMusicPlayer();
   const playLabel = videoTitle ?? title;
   const coverClass = coverSrc ? "music-tile--cover" : "";
+
+  const handleClick = useCallback(() => {
+    if (!expandable || !youtubeId) return;
+
+    const rect = tileRef.current?.getBoundingClientRect();
+    if (!rect) return;
+
+    playTrack(
+      {
+        youtubeId,
+        startSeconds,
+        title,
+        subtitle,
+        description,
+        videoTitle,
+        videoArtist,
+        accent,
+        coverSrc,
+      },
+      {
+        top: rect.top,
+        left: rect.left,
+        width: rect.width,
+        height: rect.height,
+      },
+    );
+  }, [
+    expandable,
+    youtubeId,
+    startSeconds,
+    title,
+    subtitle,
+    description,
+    videoTitle,
+    videoArtist,
+    accent,
+    coverSrc,
+    playTrack,
+  ]);
+
+  const handleKeyDown = useCallback(
+    (event: React.KeyboardEvent) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        handleClick();
+      }
+    },
+    [handleClick],
+  );
 
   if (!expandable) {
     return (
@@ -399,49 +438,26 @@ export function MusicTile({
   }
 
   return (
-    <>
-      <div
-        ref={tileRef}
-        className={`tile-card-inner music-tile music-tile--expandable ${coverClass} ${accentClass(accent)} h-full`}
-        role="button"
-        tabIndex={mounted ? -1 : 0}
-        aria-expanded={mounted}
-        aria-haspopup="dialog"
-        aria-label={`${title}. Activate to play ${playLabel}.`}
-        onClick={mounted ? undefined : open}
-        onKeyDown={mounted ? undefined : handleKeyDown}
-      >
-        <TileChromeHint>
-          <ExpandIcon />
-        </TileChromeHint>
-        <MusicTileFace
-          title={title}
-          subtitle={subtitle}
-          description={description}
-          coverSrc={coverSrc}
-        />
-      </div>
-
-      {mounted && sourceRect && youtubeId && (
-        <MusicTileExpanded
-          title={title}
-          subtitle={subtitle}
-          description={description}
-          coverSrc={coverSrc}
-          youtubeId={youtubeId}
-          startSeconds={startSeconds}
-          videoTitle={videoTitle}
-          videoArtist={videoArtist}
-          accent={accent}
-          visible={visible}
-          sourceRect={sourceRect}
-          getSourceRect={measureSourceRect}
-          onClose={close}
-          onExitComplete={handleExitComplete}
-          onMorphReady={handleMorphReady}
-        />
-      )}
-    </>
+    <div
+      ref={tileRef}
+      className={`tile-card-inner music-tile music-tile--expandable ${coverClass} ${accentClass(accent)} h-full`}
+      role="button"
+      tabIndex={0}
+      aria-haspopup="dialog"
+      aria-label={`${title}. Activate to play ${playLabel}.`}
+      onClick={handleClick}
+      onKeyDown={handleKeyDown}
+    >
+      <TileChromeHint>
+        <ExpandIcon />
+      </TileChromeHint>
+      <MusicTileFace
+        title={title}
+        subtitle={subtitle}
+        description={description}
+        coverSrc={coverSrc}
+      />
+    </div>
   );
 }
 
