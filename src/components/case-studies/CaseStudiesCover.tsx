@@ -30,7 +30,7 @@ export function CaseStudyCover({ id, label }: CaseStudyCoverProps) {
         {photo ? (
           <Image
             src={withBasePath(photo.src)}
-            alt=""
+            alt={label}
             width={photo.width}
             height={photo.height}
             sizes="(max-width: 680px) 100vw, 680px"
