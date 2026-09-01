@@ -147,17 +147,17 @@ export function MusicPlayer() {
     : heading;
 
   const embedSrc = useMemo(() => {
-    if (!track) return "";
+    if (!track?.youtubeId) return "";
     // Only include startSeconds on first load
     const useStartSeconds = !hasStartedRef.current;
-    if (track.youtubeId && !hasStartedRef.current) {
+    if (!hasStartedRef.current) {
       hasStartedRef.current = true;
     }
     return youtubeEmbedSrc(
       track.youtubeId,
       useStartSeconds ? track.startSeconds : undefined,
     );
-  }, [track]);
+  }, [track?.youtubeId, track?.startSeconds]);
 
   const applyRect = useCallback((rect: MorphRect, expanded: boolean) => {
     const card = dialogRef.current;
