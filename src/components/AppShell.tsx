@@ -4,13 +4,30 @@ import { CustomCursor } from "@/components/CustomCursor";
 import { Header } from "@/components/Header";
 import { StarfieldBackground } from "@/components/StarfieldBackground";
 import { CaseStudyMorphOverlay } from "@/components/case-studies/CaseStudiesMorphOverlay";
-import { CaseStudyTransitionProvider } from "@/components/case-studies/CaseStudiesTransition";
+import { CaseStudyTransitionProvider, useCaseStudyTransition } from "@/components/case-studies/CaseStudiesTransition";
+import { CaseStudyArticle } from "@/components/case-studies/CaseStudiesArticle";
+import { getCaseStudy } from "@/data/case-studies";
 import { MusicPlayerProvider } from "@/contexts/MusicPlayerContext";
 import { MusicPlayer } from "@/components/MusicPlayer";
 import {
   HeaderVisibilityProvider,
   useHeaderVisibility,
 } from "@/hooks/useHeaderVisibility";
+
+function InDocumentCaseStudyLayer() {
+  const { inDocumentSlug } = useCaseStudyTransition();
+  
+  if (!inDocumentSlug) return null;
+  
+  const study = getCaseStudy(inDocumentSlug);
+  if (!study) return null;
+  
+  return (
+    <div className="case-study-in-document-layer">
+      <CaseStudyArticle study={study} />
+    </div>
+  );
+}
 
 function ShellChrome({ children }: { children: React.ReactNode }) {
   const headerVisible = useHeaderVisibility();
@@ -20,6 +37,7 @@ function ShellChrome({ children }: { children: React.ReactNode }) {
       <StarfieldBackground />
       <Header visible={headerVisible} />
       {children}
+      <InDocumentCaseStudyLayer />
       <CaseStudyMorphOverlay />
       <MusicPlayer />
     </>
