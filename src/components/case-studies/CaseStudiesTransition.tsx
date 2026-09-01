@@ -59,6 +59,7 @@ export type CaseStudyPhase =
 interface CaseStudyTransitionValue {
   phase: CaseStudyPhase;
   snapshot: CaseStudySnapshot | null;
+  inDocumentSlug: string | null;
   openFromTile: (snapshot: CaseStudySnapshot) => void;
   notifyPageReady: (slug: string) => void;
   completeExpand: () => void;
@@ -244,6 +245,7 @@ export function CaseStudyTransitionProvider({
   // boot (cover overlay, pending collapse) is applied in useLayoutEffect.
   const [phase, setPhase] = useState<CaseStudyPhase>("idle");
   const [snapshot, setSnapshot] = useState<CaseStudySnapshot | null>(null);
+  const [inDocumentSlug, setInDocumentSlug] = useState<string | null>(null);
   const tilesRef = useRef(new Map<string, HTMLElement>());
   const lastSnapshotRef = useRef<CaseStudySnapshot | null>(null);
   const pendingCollapseRef = useRef(false);
@@ -256,6 +258,8 @@ export function CaseStudyTransitionProvider({
   const homeNavFallbackRef = useRef(0);
   const phaseRef = useRef(phase);
   phaseRef.current = phase;
+  const inDocumentSlugRef = useRef<string | null>(null);
+  inDocumentSlugRef.current = inDocumentSlug;
   const setLabelSuppressed = cursor?.setLabelSuppressed;
   const clearCursorLabel = cursor?.clearCursorLabel;
 
@@ -324,13 +328,25 @@ export function CaseStudyTransitionProvider({
       clearCursorLabel?.();
 
       const href = withBasePath(caseStudyHref(next.slug));
-      // Static export (`serve out` / GitHub Pages): App Router client
-      // navigations abort (HEAD + segment .txt). Don't start router.push —
-      // it cancels the document load. Morph, then assign the HTML page.
+      
       if (prefersReducedMotion()) {
         flushSync(() => setPhase("covering"));
         window.scrollTo({ top: 0, behavior: "instant" });
-        window.location.assign(href);
+        
+        // Use in-document approach even for reduced motion
+        window.history.pushState(
+          { caseStudySlug: next.slug, fromGrid: true },
+          "",
+          href
+        );
+        setInDocumentSlug(next.slug);
+        
+        // Immediately reveal since there's no animation
+        clearPendingOpen();
+        setPhase("idle");
+        setSnapshot(null);
+        setLabelSuppressed?.(false);
+        clearBootCover();
         return;
       }
 
@@ -352,15 +368,39 @@ export function CaseStudyTransitionProvider({
     const href = withBasePath(caseStudyHref(current.slug));
     markPendingOpen(current.slug);
     didAssignOpenRef.current = true;
+    
+    // Show case study in-document instead of loading new page
     window.requestAnimationFrame(() => {
       window.requestAnimationFrame(() => {
         if (pendingCollapseRef.current) return;
         if (phaseRef.current !== "covering") return;
         if (isCaseStudyPath(locationPath())) return;
-        window.location.assign(href);
+        
+        // Update URL without reload
+        window.history.pushState(
+          { caseStudySlug: current.slug, fromGrid: true },
+          "",
+          href
+        );
+        setInDocumentSlug(current.slug);
+        
+        // Manually trigger the ready → revealing → idle sequence
+        // since usePathname() doesn't change on pushState
+        clearPendingOpen();
+        setPhase("revealing");
+        window.clearTimeout(revealTimeoutRef.current);
+        revealTimeoutRef.current = window.setTimeout(
+          () => {
+            setPhase("idle");
+            setSnapshot(null);
+            setLabelSuppressed?.(false);
+            clearBootCover();
+          },
+          prefersReducedMotion() ? 0 : 280,
+        );
       });
     });
-  }, []);
+  }, [setLabelSuppressed]);
 
   const notifyPageReady = useCallback(
     (slug: string) => {
@@ -410,6 +450,14 @@ export function CaseStudyTransitionProvider({
     const goHome = () => {
       markPendingCollapse();
       clearPendingOpen();
+      
+      // If opened in-document, use history.back() first
+      if (inDocumentSlugRef.current && window.history.length > 1) {
+        setInDocumentSlug(null);
+        window.history.back();
+        return;
+      }
+      
       if (openedFromGrid(slug) && window.history.length > 1) {
         const cancelFallback = () => {
           window.clearTimeout(homeNavFallbackRef.current);
@@ -462,6 +510,22 @@ export function CaseStudyTransitionProvider({
       });
     });
   }, [clearCursorLabel, hideTile, setLabelSuppressed, snapshot]);
+
+  useEffect(() => {
+    const onPopState = (event: PopStateEvent) => {
+      // Handle back navigation from in-document case study
+      if (inDocumentSlugRef.current) {
+        const current = lastSnapshotRef.current ?? readSnapshot();
+        if (current) {
+          setInDocumentSlug(null);
+          beginCollapse(current);
+        }
+      }
+    };
+
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, [beginCollapse]);
 
   useEffect(() => {
     return () => {
@@ -540,6 +604,10 @@ export function CaseStudyTransitionProvider({
       if (pendingCollapseRef.current) return;
       if (isCaseStudyPath(locationPath())) return;
       if (didAssignOpenRef.current) return;
+      
+      // Don't location.assign if we already did in-document navigation
+      if (inDocumentSlugRef.current) return;
+      
       didAssignOpenRef.current = true;
       markPendingOpen(slug);
       window.location.assign(withBasePath(caseStudyHref(slug)));
@@ -677,6 +745,7 @@ export function CaseStudyTransitionProvider({
     () => ({
       phase,
       snapshot,
+      inDocumentSlug,
       openFromTile,
       notifyPageReady,
       completeExpand,
@@ -687,6 +756,7 @@ export function CaseStudyTransitionProvider({
     [
       phase,
       snapshot,
+      inDocumentSlug,
       openFromTile,
       notifyPageReady,
       completeExpand,

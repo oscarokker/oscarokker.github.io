@@ -1898,7 +1898,7 @@ html[data-scroll-locked]::-webkit-scrollbar-thumb:hover {
 .intro-expanded-root {
   position: fixed;
   inset: 0;
-  z-index: 1200;
+  z-index: 1350;
   pointer-events: none;
 }
 
@@ -2549,6 +2549,14 @@ html[data-scroll-locked]::-webkit-scrollbar-thumb:hover {
   inset: 0;
   z-index: 1300;
   pointer-events: none;
+}
+
+.case-study-in-document-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 1250;
+  overflow-y: auto;
+  background: var(--color-bg);
 }
 
 /* First paint of a morph navigation: hide destination until React covering is up. */
