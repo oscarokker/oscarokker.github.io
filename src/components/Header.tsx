@@ -1,14 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, type MouseEvent } from "react";
 import { useCaseStudyTransitionOptional } from "@/components/case-studies/CaseStudiesTransition";
 import { isCaseStudyPath } from "@/lib/case-study-href";
 import { useTheme } from "@/components/ThemeProvider";
 import { useCursorLabelOptional } from "@/hooks/useCursorLabel";
-import { withBasePath } from "@/lib/base-path";
 
 interface HeaderProps {
   visible?: boolean;
@@ -63,14 +61,18 @@ export function Header({ visible = true }: HeaderProps) {
         onClick={handleHomeClick}
       >
         <span className="inline-flex size-8 items-center justify-center">
-          <Image
-            src={withBasePath("/or-logo.png")}
-            alt="Oscar Rode logo"
-            width={40}
-            height={40}
+          <svg
+            width="32"
+            height="32"
+            viewBox="0 0 64 64"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
             className="header-logo block size-8"
-            priority
-          />
+            aria-label="Oscar Rode logo"
+          >
+            <path d="M3.5 32C9.5 30 29.3425 22.5 42.58 0L24.62 41.5C26.7325 32 25.2325 32.5 3.5 32Z" fill="currentColor"/>
+            <path d="M60.5 32C54.5 34 34.6575 41.5 21.42 64L39.38 22.5C37.2675 32 38.7675 31.5 60.5 32Z" fill="currentColor"/>
+          </svg>
         </span>
       </Link>
 
