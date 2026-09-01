@@ -5,7 +5,18 @@ import {
   getCaseStudy,
   getPublishedCaseStudySlugs,
   isComingSoonCaseStudy,
+  type CaseStudyCoverId,
 } from "@/data/case-studies";
+
+const COVER_PHOTOS: Partial<
+  Record<CaseStudyCoverId, { src: string; width: number; height: number }>
+> = {
+  voyage: {
+    src: "/case-studies/cheapvoyage-picture-1.png",
+    width: 1440,
+    height: 1024,
+  },
+};
 
 export const dynamicParams = false;
 
@@ -23,7 +34,8 @@ export async function generateMetadata({
   if (!study || isComingSoonCaseStudy(slug)) return { title: "Case study" };
 
   const canonicalUrl = `https://oscarrode.com/case-studies/${slug}/`;
-  const coverImage = `/case-studies/${study.cover}-cover.png`;
+  const coverPhoto = COVER_PHOTOS[study.cover];
+  const coverImage = coverPhoto?.src || `/case-studies/${study.cover}-cover.png`;
 
   return {
     title: study.title,
@@ -40,6 +52,8 @@ export async function generateMetadata({
       images: [
         {
           url: coverImage,
+          width: coverPhoto?.width,
+          height: coverPhoto?.height,
           alt: study.coverLabel,
         },
       ],
@@ -62,6 +76,9 @@ export default async function CaseStudyPage({
   const study = getCaseStudy(slug);
   if (!study || isComingSoonCaseStudy(slug)) notFound();
 
+  const coverPhoto = COVER_PHOTOS[study.cover];
+  const coverImage = coverPhoto?.src || `/case-studies/${study.cover}-cover.png`;
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",
@@ -73,8 +90,7 @@ export default async function CaseStudyPage({
       name: "Oscar Rode",
       url: "https://oscarrode.com/",
     },
-    datePublished: "2024-01-01",
-    image: `https://oscarrode.com/case-studies/${study.cover}-cover.png`,
+    image: `https://oscarrode.com${coverImage}`,
     publisher: {
       "@type": "Person",
       name: "Oscar Rode",
