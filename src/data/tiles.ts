@@ -185,6 +185,21 @@ export const tiles: TileData[] = [
       comingSoon: true,
     },
   },
+  {
+    id: "moonlit",
+    categories: ["music"],
+    size: "1x1",
+    variant: "music",
+    props: {
+      title: "Moonlit",
+      subtitle: "Original Track",
+      description: "Atmospheric soundscapes under the night sky.",
+      coverSrc: "/moonlit-cover.jpg",
+      youtubeId: "H-DNcJ-KnTE",
+      videoTitle: "Moonlit",
+      videoArtist: "Oscar Rode",
+    },
+  },
 ];
 
 export const filters = [
