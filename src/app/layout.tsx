@@ -9,7 +9,7 @@ import "./globals.css";
 
 const SITE_TITLE = "Oscar Rode — UX Designer & Hardcore Builder";
 const SITE_DESCRIPTION =
-  "Portfolio of Oscar Rode, UX Designer specializing in Human-AI interaction. Based in Copenhagen.";
+  "Portfolio of Oscar Rode, UX/UI Designer specializing in Human-AI interaction and product design. Based in Copenhagen, Denmark. Co-founder and UX designer of CheapVoyage, an AI-driven conversational travel planner.";
 
 const lora = Lora({
   variable: "--font-lora",
@@ -32,12 +32,24 @@ export const metadata: Metadata = {
     template: "%s — Oscar Rode",
   },
   description: SITE_DESCRIPTION,
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
     title: SITE_TITLE,
     description: SITE_DESCRIPTION,
     type: "website",
     locale: "en_GB",
-    images: ["/oscar-rode-profile-picture.png"],
+    url: "https://oscarrode.com/",
+    siteName: "Oscar Rode Portfolio",
+    images: [
+      {
+        url: "/oscar-rode-profile-picture.png",
+        width: 800,
+        height: 800,
+        alt: "Oscar Rode",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
