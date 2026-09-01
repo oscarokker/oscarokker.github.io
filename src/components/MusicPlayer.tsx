@@ -6,6 +6,7 @@ import {
   useLayoutEffect,
   useMemo,
   useRef,
+  useState,
   type CSSProperties,
   type KeyboardEvent as ReactKeyboardEvent,
   type MouseEvent as ReactMouseEvent,
@@ -91,9 +92,13 @@ function youtubeEmbedSrc(youtubeId: string, startSeconds?: number): string {
     modestbranding: "1",
     playsinline: "1",
     autoplay: "1",
+    enablejsapi: "1",
   });
   if (startSeconds && startSeconds > 0) {
     params.set("start", String(Math.floor(startSeconds)));
+  }
+  if (typeof window !== "undefined") {
+    params.set("origin", window.location.origin);
   }
   return `https://www.youtube-nocookie.com/embed/${youtubeId}?${params.toString()}`;
 }
@@ -135,10 +140,16 @@ export function MusicPlayer() {
   const phaseRef = useRef<"enter" | "open" | "exit" | "docked">("enter");
   const hasStartedRef = useRef(false);
   const iframeReadyRef = useRef(false);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const ytPlayerRef = useRef<any>(null);
+  // Start as true - assume autoplay works. API will update if paused/ended.
+  const [isYouTubePlaying, setIsYouTubePlaying] = useState(true);
+  const isMiniRef = useRef(false);
 
   const visible = playerState !== "hidden";
   const isExpanded = playerState === "expanded";
   const isMini = playerState === "mini";
+  isMiniRef.current = isMini;
 
   const track = currentTrack;
   const heading = track?.videoTitle ?? track?.title ?? "";
@@ -153,11 +164,81 @@ export function MusicPlayer() {
     if (!hasStartedRef.current) {
       hasStartedRef.current = true;
     }
+    // Reset playing flag for new track (assume autoplay)
+    setIsYouTubePlaying(true);
     return youtubeEmbedSrc(
       track.youtubeId,
       useStartSeconds ? track.startSeconds : undefined,
     );
   }, [track?.youtubeId, track?.startSeconds]);
+
+  // Load YouTube IFrame API
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    
+    // Check if API is already loaded
+    if ((window as any).YT && (window as any).YT.Player) {
+      return;
+    }
+
+    // Load the API if not already present
+    if (!document.querySelector('script[src*="youtube.com/iframe_api"]')) {
+      const tag = document.createElement("script");
+      tag.src = "https://www.youtube.com/iframe_api";
+      const firstScriptTag = document.getElementsByTagName("script")[0];
+      firstScriptTag.parentNode?.insertBefore(tag, firstScriptTag);
+    }
+  }, []);
+
+  // Initialize YouTube Player once per track
+  useEffect(() => {
+    if (!track?.youtubeId) return;
+    if (ytPlayerRef.current) return; // Already initialized for this track
+
+    const initPlayer = () => {
+      if (!(window as any).YT?.Player || !iframeRef.current) {
+        setTimeout(initPlayer, 100);
+        return;
+      }
+
+      try {
+        ytPlayerRef.current = new (window as any).YT.Player(iframeRef.current, {
+          events: {
+            onStateChange: (event: any) => {
+              const YT = (window as any).YT;
+              const state = event.data;
+              
+              // YT.PlayerState: UNSTARTED (-1), ENDED (0), PLAYING (1), PAUSED (2), BUFFERING (3), CUED (5)
+              const playing = state === YT.PlayerState.PLAYING || state === YT.PlayerState.BUFFERING;
+              setIsYouTubePlaying(playing);
+              
+              // If paused or ended while in mini mode, stop the player
+              if (isMiniRef.current && (state === YT.PlayerState.PAUSED || state === YT.PlayerState.ENDED)) {
+                stopPlayer();
+              }
+            },
+          },
+        });
+      } catch (error) {
+        console.error("Failed to initialize YouTube player:", error);
+      }
+    };
+
+    // Give iframe time to be ready
+    setTimeout(initPlayer, 500);
+
+    return () => {
+      // Only destroy when track changes or component unmounts (not on expanded↔mini)
+      if (ytPlayerRef.current?.destroy) {
+        try {
+          ytPlayerRef.current.destroy();
+        } catch (e) {
+          // Ignore errors during cleanup
+        }
+        ytPlayerRef.current = null;
+      }
+    };
+  }, [track?.youtubeId, stopPlayer]);
 
   const applyRect = useCallback((rect: MorphRect, expanded: boolean) => {
     const card = dialogRef.current;
@@ -310,7 +391,12 @@ export function MusicPlayer() {
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         event.preventDefault();
-        dockToMini();
+        // If already paused/ended, stop. Else dock to mini and let iframe continue.
+        if (!isYouTubePlaying) {
+          stopPlayer();
+        } else {
+          dockToMini();
+        }
         return;
       }
 
@@ -335,21 +421,31 @@ export function MusicPlayer() {
 
     document.addEventListener("keydown", onKeyDown);
     return () => document.removeEventListener("keydown", onKeyDown);
-  }, [isExpanded, dockToMini]);
+  }, [isExpanded, dockToMini, isYouTubePlaying, stopPlayer]);
 
   const handleBackdropClick = useCallback(
     (event: ReactMouseEvent<HTMLButtonElement>) => {
       event.preventDefault();
       if (isExpanded) {
-        dockToMini();
+        // If already paused/ended, stop. Else dock to mini and let iframe continue.
+        if (!isYouTubePlaying) {
+          stopPlayer();
+        } else {
+          dockToMini();
+        }
       }
     },
-    [isExpanded, dockToMini],
+    [isExpanded, dockToMini, isYouTubePlaying, stopPlayer],
   );
 
   const handleMinimize = useCallback(() => {
-    dockToMini();
-  }, [dockToMini]);
+    // If already paused/ended, stop. Else dock to mini and let iframe continue.
+    if (!isYouTubePlaying) {
+      stopPlayer();
+    } else {
+      dockToMini();
+    }
+  }, [dockToMini, isYouTubePlaying, stopPlayer]);
 
   const handleClose = useCallback(() => {
     stopPlayer();
@@ -367,13 +463,20 @@ export function MusicPlayer() {
     (event: ReactKeyboardEvent<HTMLDivElement>) => {
       if (event.key === "Escape" && isExpanded) {
         event.stopPropagation();
-        dockToMini();
+        // If already paused/ended, stop. Else dock to mini and let iframe continue.
+        if (!isYouTubePlaying) {
+          stopPlayer();
+        } else {
+          dockToMini();
+        }
       }
     },
-    [isExpanded, dockToMini],
+    [isExpanded, dockToMini, isYouTubePlaying, stopPlayer],
   );
 
-  if (!visible || !track || !sourceRect) return null;
+  if (!track || !sourceRect) return null;
+  // Only unmount when hidden (real stop). Keep mounted for expanded and mini.
+  if (playerState === "hidden") return null;
 
   const cardStyle: CSSProperties = {
     top: sourceRect.top,
@@ -385,7 +488,7 @@ export function MusicPlayer() {
   return createPortal(
     <div
       className={`intro-expanded-root music-expanded-root ${isMini ? "music-player-mini-mode" : ""}`}
-      data-visible={visible ? "true" : "false"}
+      data-visible={(isExpanded || isMini) ? "true" : "false"}
     >
       {isExpanded && (
         <button
@@ -473,6 +576,7 @@ export function MusicPlayer() {
           <div className="music-morph-player">
             {embedSrc ? (
               <iframe
+                ref={iframeRef}
                 key={track.youtubeId}
                 src={embedSrc}
                 title={iframeTitle}
