@@ -10,6 +10,7 @@ import {
   type ReactElement,
   type ReactNode,
 } from "react";
+import Image from "next/image";
 import { CaseStudyCover } from "@/components/case-studies/CaseStudiesCover";
 import { useCaseStudyTransition } from "@/components/case-studies/CaseStudiesTransition";
 import { MinimizeIcon } from "@/components/ChromeIcons";
@@ -17,6 +18,7 @@ import { CaseStudyImpactIcon } from "@/components/case-studies/CaseStudiesImpact
 import type { CaseStudy, CaseStudyBlockVariant } from "@/data/case-studies";
 import { useSlidingThumb } from "@/hooks/useSlidingThumb";
 import { accentClass } from "@/lib/accent";
+import { withBasePath } from "@/lib/base-path";
 
 interface CaseStudyArticleProps {
   study: CaseStudy;
@@ -276,10 +278,22 @@ export function CaseStudyArticle({ study }: CaseStudyArticleProps) {
                   )}
                   {section.figure ? (
                     <div className="case-study-inline-figure">
-                      <CaseStudyCover
-                        id={section.figure.cover}
-                        label={section.figure.caption}
-                      />
+                      {section.figure.src ? (
+                        <Image
+                          src={withBasePath(section.figure.src)}
+                          alt={section.figure.caption}
+                          width={1204}
+                          height={928}
+                          sizes="(max-width: 680px) 100vw, 680px"
+                          className="case-study-cover-photo"
+                          style={{ width: "100%", height: "auto" }}
+                        />
+                      ) : section.figure.cover ? (
+                        <CaseStudyCover
+                          id={section.figure.cover}
+                          label={section.figure.caption}
+                        />
+                      ) : null}
                       <p className="case-study-caption">{section.figure.caption}</p>
                     </div>
                   ) : null}

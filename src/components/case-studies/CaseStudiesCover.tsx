@@ -15,6 +15,11 @@ const COVER_PHOTOS: Partial<
     width: 1440,
     height: 1024,
   },
+  podcasts: {
+    src: "/case-studies/spotify-source-insights-cover.png",
+    width: 1792,
+    height: 2048,
+  },
 };
 
 export function CaseStudyCover({ id, label }: CaseStudyCoverProps) {

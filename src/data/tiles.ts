@@ -148,15 +148,14 @@ export const tiles: TileData[] = [
   {
     id: "case-study-2",
     categories: ["work"],
-    size: "1x1",
+    size: "2x1",
     variant: "case-study",
     props: {
       title: "AI Sources for Spotify Podcasts",
-      subtitle: "Product design",
+      subtitle: "UX Designer",
       slug: "spotify-podcasts",
       accent: "violet",
-      coverSrc: "/spotify-logo-stylized.jpg",
-      comingSoon: true,
+      coverSrc: "/case-studies/spotify-source-insights-cover.png",
     },
   },
   {

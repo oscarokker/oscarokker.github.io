@@ -22,7 +22,8 @@ export interface CaseStudyImpact {
 }
 
 export interface CaseStudyFigure {
-  cover: CaseStudyCoverId;
+  cover?: CaseStudyCoverId;
+  src?: string;
   caption: string;
 }
 
@@ -153,75 +154,71 @@ export const caseStudies: CaseStudy[] = [
     tileId: "case-study-2",
     title: "AI Sources for Spotify Podcasts",
     accent: "violet",
-    headline: "Streamlining how podcast recommendations explain themselves",
+    headline: "Designing Source Insights to Add Nuance After a Health Podcast",
     intro:
-      "This project explores how Spotify could surface the sources behind AI-shaped podcast recommendations — so a For You row feels authored, not arbitrary. The work focuses on provenance, scanability, and a listening flow that still feels like Spotify.",
-    role: "Design and prototyping.",
+      "Health-curious listeners often finish a longevity episode with a claim still ringing in their ear and no way to sit with it. Source Insights is a post-podcast layer inside Spotify: each claim from the episode can be opened, then read against the host's own sources and against supporting and opposing sources the model found. The AI does not score the claim. It makes the disagreement visible.",
+    role: "UX Designer — group project at ITU Copenhagen",
     cover: "podcasts",
-    coverLabel: "Podcast For You grid",
+    coverLabel: "Source Insights on a Spotify episode page",
     impact: [
       {
-        icon: "lightning",
-        title: "Faster sense-making",
-        body: "Each show tile can reveal why it appeared — a topic, a host, a previous listen — without opening a separate explainability panel.",
+        icon: "sparkle",
+        title: "Claims, not a recap",
+        body: "Isolated statements are what go wrong in a health podcast, not the episode as a whole. The interface extracts four to six claims from the transcript and audio so uncertainty shows up where it actually lives.",
       },
       {
-        icon: "sparkle",
-        title: "Always up-to-date by default",
-        body: "Artwork and metadata stay live from the catalog, so provenance UI never depends on stale, manually exported screenshots.",
+        icon: "scales",
+        title: "Support and contradiction in the same card",
+        body: "Every claim carries the creator's sources, supporting sources, and opposing sources. Medical evidence disagrees; the UI is honest about that instead of picking a winner.",
       },
       {
         icon: "headphones",
-        title: "Listening stays primary",
-        body: "Sources are secondary information: visible on demand, quiet by default, never competing with play.",
+        title: "After listening, not over it",
+        body: "People listen while cooking, commuting, training. The module waits under the episode description so the podcast can stay a podcast.",
       },
     ],
     sections: [
       {
-        heading: "The problem",
+        heading: "Problem",
         variant: "detailed",
         paragraphs: [
-          {
-            text: "Recommendation rows are easy to tap and hard to trust. When an algorithm inserts a new show into For You, listeners have no lightweight way to ask: why this, and based on what?",
-          },
-          {
-            text: "Heavy explainability patterns — long side sheets, model dumps, citation lists — break the lean, visual grammar of a podcast client.",
-          },
+          { text: "Lang Levetid sits in a high-stakes corner of Spotify: health and longevity, where a casual sentence can sound like medical advice. Evidence-oriented listeners did not want a system that called claims true or false. They wanted context they could use to form their own view." },
+          { text: "They also listen while doing something else. A mid-episode interruption would fight the medium. The gap is after the credits: unanswered claims, no sources in reach, and a share button sitting right there." },
         ],
       },
       {
-        heading: "The approach",
+        heading: "Approach",
         paragraphs: [
-          {
-            text: "I treated provenance as a caption, not a destination. A For You grid keeps the artwork-first language of podcast apps; a short source line can expand inline when someone wants the trail.",
-          },
-          {
-            text: "The prototype pulls show metadata as a live catalog rather than frozen mock art, so the UI stays honest as titles and covers change.",
-            variant: "detailed",
-          },
+          { text: "I placed Source Insights on the episode page, under the description, as a collapsible module in Spotify's own grammar. Open it and you get four to six claims. Open a claim and you get a short plain-language restatement, then three stacks: the creator's sources, supporting sources, opposing sources. Open a source and you can leave for the original, or stay for a short AI summary of what it actually found." },
+          { text: "No green, no red, no true/false. Colour that usually means correct would make the model look like a referee. Creator sources stay distinct from model-found ones, so origin is always visible.", variant: "detailed" },
+          { text: "The interaction is optional and a little slow on purpose: each expand is a pause before a conclusion.", variant: "detailed" },
         ],
         figure: {
-          cover: "podcasts",
-          caption:
-            "Artwork stays the hero. Source hints sit underneath, in the same rhythm as a show title.",
+          src: "/case-studies/spotify-source-insights-claims.png",
+          caption: "A claim opens into creator, supporting, and opposing sources — disagreement stays in the episode, not in a separate fact-check product.",
         },
       },
       {
-        heading: "What I learned",
+        heading: "After, not during",
         variant: "detailed",
         paragraphs: [
-          {
-            text: "Listeners did not want a full audit log. They wanted one credible reason, in language that sounds like a friend: because you followed this host, because you finished that series.",
-          },
-          {
-            text: "If the reason is wrong even once, the whole row feels broken. Provenance UI raises the cost of a bad recommendation — which is a feature, not a bug.",
-          },
+          { text: "The design space split cleanly into interventions during listening and interventions after. Interviews said people listen alongside other activities, so real-time claim validation would be a poke in the ear." },
+          { text: "We tried putting creator sources into the transcript anyway. Testers got lost and the reading flow broke. We pulled them out. Source Insights waits until the episode is over, which is when the evidence-oriented listener actually wants to go looking." },
+        ],
+      },
+      {
+        heading: "The model is not a referee",
+        variant: "detailed",
+        paragraphs: [
+          { text: "Generative output can be incomplete, contested, or overconfident. The interface treats that as a design material, not a bug to hide." },
+          { text: "Each insight therefore carries supporting and opposing sources. There are no truth labels and no traffic-light colours, so the model cannot pretend to have judged the claim. Testing still found \"supporting\" and \"opposing\" themselves unclear — we added an explanation rather than a verdict." },
+          { text: "What the primary listener needed was not a score. It was a way to see disagreement, then decide." },
         ],
       },
     ],
     result: {
       paragraphs: [
-        "Provenance stayed inside the For You grammar instead of becoming a separate explainability product. In reviews, one credible reason outperformed a full audit log — and a single wrong reason made the whole row feel broken, which is the right kind of pressure on the recommender.",
+        "Source Insights shipped as a high-fidelity Spotify markup: claim-level context after listening, sources you can inspect, summaries that make a paper skimmable. What remains is not another UI layer. It is discoverability (testers missed the module on a familiar episode page), clearer language for the source categories, and better criteria for which papers an evidence-oriented listener actually wants.",
       ],
     },
   },
