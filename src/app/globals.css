@@ -1535,12 +1535,12 @@ html[data-scroll-locked]::-webkit-scrollbar-thumb:hover {
 }
 
 [data-theme="dark"] .header-logo {
-  filter: invert(1);
+  color: white;
 }
 
 .header-logo {
-  filter: invert(0);
-  transition: filter var(--transition-theme);
+  color: black;
+  transition: color var(--transition-theme);
 }
 
 .site-nav {
