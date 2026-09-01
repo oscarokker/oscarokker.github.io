@@ -142,14 +142,14 @@ export function MusicPlayer() {
   const iframeReadyRef = useRef(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const ytPlayerRef = useRef<any>(null);
-  const [isYouTubePlaying, setIsYouTubePlaying] = useState(false);
+  // Start as true - assume autoplay works. API will update if paused/ended.
+  const [isYouTubePlaying, setIsYouTubePlaying] = useState(true);
+  const isMiniRef = useRef(false);
 
   const visible = playerState !== "hidden";
   const isExpanded = playerState === "expanded";
   const isMini = playerState === "mini";
-  
-  // Only show mini when YouTube is actually playing
-  const shouldShowMini = isMini && isYouTubePlaying;
+  isMiniRef.current = isMini;
 
   const track = currentTrack;
   const heading = track?.videoTitle ?? track?.title ?? "";
@@ -164,6 +164,8 @@ export function MusicPlayer() {
     if (!hasStartedRef.current) {
       hasStartedRef.current = true;
     }
+    // Reset playing flag for new track (assume autoplay)
+    setIsYouTubePlaying(true);
     return youtubeEmbedSrc(
       track.youtubeId,
       useStartSeconds ? track.startSeconds : undefined,
@@ -188,11 +190,10 @@ export function MusicPlayer() {
     }
   }, []);
 
-  // Initialize YouTube Player when iframe is ready
+  // Initialize YouTube Player once per track
   useEffect(() => {
-    if (!iframeRef.current || !track?.youtubeId) return;
-    if (!iframeReadyRef.current) return;
-    if (ytPlayerRef.current) return;
+    if (!track?.youtubeId) return;
+    if (ytPlayerRef.current) return; // Already initialized for this track
 
     const initPlayer = () => {
       if (!(window as any).YT?.Player || !iframeRef.current) {
@@ -212,7 +213,7 @@ export function MusicPlayer() {
               setIsYouTubePlaying(playing);
               
               // If paused or ended while in mini mode, stop the player
-              if (isMini && (state === YT.PlayerState.PAUSED || state === YT.PlayerState.ENDED)) {
+              if (isMiniRef.current && (state === YT.PlayerState.PAUSED || state === YT.PlayerState.ENDED)) {
                 stopPlayer();
               }
             },
@@ -227,6 +228,7 @@ export function MusicPlayer() {
     setTimeout(initPlayer, 500);
 
     return () => {
+      // Only destroy when track changes or component unmounts (not on expanded↔mini)
       if (ytPlayerRef.current?.destroy) {
         try {
           ytPlayerRef.current.destroy();
@@ -236,7 +238,7 @@ export function MusicPlayer() {
         ytPlayerRef.current = null;
       }
     };
-  }, [track?.youtubeId, iframeReadyRef.current, isMini, stopPlayer]);
+  }, [track?.youtubeId, stopPlayer]);
 
   const applyRect = useCallback((rect: MorphRect, expanded: boolean) => {
     const card = dialogRef.current;
@@ -248,8 +250,8 @@ export function MusicPlayer() {
     card.style.width = `${rect.width}px`;
     card.style.height = `${rect.height}px`;
     card.dataset.expanded = expanded ? "true" : "false";
-    card.dataset.mini = (isMini || shouldShowMini) ? "true" : "false";
-  }, [isMini, shouldShowMini]);
+    card.dataset.mini = isMini ? "true" : "false";
+  }, [isMini]);
 
   useLayoutEffect(() => {
     if (!visible || !sourceRect || !track) return;
@@ -283,7 +285,7 @@ export function MusicPlayer() {
     card.style.transition = "none";
 
     if (prefersReducedMotion()) {
-      if (isMini || shouldShowMini) {
+      if (isMini) {
         const miniRect = getMiniTargetRect();
         applyRect(miniRect, false);
         phaseRef.current = "docked";
@@ -317,12 +319,12 @@ export function MusicPlayer() {
       window.cancelAnimationFrame(raf1);
       window.cancelAnimationFrame(raf2);
     };
-  }, [visible, sourceRect, track, isExpanded, isMini, shouldShowMini, applyRect]);
+  }, [visible, sourceRect, track, isExpanded, isMini, applyRect]);
 
   useEffect(() => {
     if (!visible || !track) return;
 
-    if ((isMini || shouldShowMini) && phaseRef.current === "open") {
+    if (isMini && phaseRef.current === "open") {
       // Docking from expanded
       const card = dialogRef.current;
       if (!card) return;
@@ -339,7 +341,7 @@ export function MusicPlayer() {
       applyRect(miniRect, false);
       phaseRef.current = "docked";
     }
-  }, [isMini, shouldShowMini, visible, track, applyRect]);
+  }, [isMini, visible, track, applyRect]);
 
   useEffect(() => {
     if (!isExpanded) return;
@@ -360,7 +362,7 @@ export function MusicPlayer() {
   }, [isExpanded, applyRect]);
 
   useEffect(() => {
-    if (!isMini && !shouldShowMini) return;
+    if (!isMini) return;
 
     const onResize = () => {
       if (phaseRef.current !== "docked") return;
@@ -375,7 +377,7 @@ export function MusicPlayer() {
 
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
-  }, [isMini, shouldShowMini, applyRect]);
+  }, [isMini, applyRect]);
 
   useEffect(() => {
     if (isExpanded) {
@@ -389,11 +391,11 @@ export function MusicPlayer() {
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         event.preventDefault();
-        // Dock to mini if playing, close if paused/ended
-        if (isYouTubePlaying) {
-          dockToMini();
-        } else {
+        // If already paused/ended, stop. Else dock to mini and let iframe continue.
+        if (!isYouTubePlaying) {
           stopPlayer();
+        } else {
+          dockToMini();
         }
         return;
       }
@@ -425,11 +427,11 @@ export function MusicPlayer() {
     (event: ReactMouseEvent<HTMLButtonElement>) => {
       event.preventDefault();
       if (isExpanded) {
-        // Dock to mini if playing, close if paused/ended
-        if (isYouTubePlaying) {
-          dockToMini();
-        } else {
+        // If already paused/ended, stop. Else dock to mini and let iframe continue.
+        if (!isYouTubePlaying) {
           stopPlayer();
+        } else {
+          dockToMini();
         }
       }
     },
@@ -437,11 +439,11 @@ export function MusicPlayer() {
   );
 
   const handleMinimize = useCallback(() => {
-    // Dock to mini if playing, close if paused/ended
-    if (isYouTubePlaying) {
-      dockToMini();
-    } else {
+    // If already paused/ended, stop. Else dock to mini and let iframe continue.
+    if (!isYouTubePlaying) {
       stopPlayer();
+    } else {
+      dockToMini();
     }
   }, [dockToMini, isYouTubePlaying, stopPlayer]);
 
@@ -461,11 +463,11 @@ export function MusicPlayer() {
     (event: ReactKeyboardEvent<HTMLDivElement>) => {
       if (event.key === "Escape" && isExpanded) {
         event.stopPropagation();
-        // Dock to mini if playing, close if paused/ended
-        if (isYouTubePlaying) {
-          dockToMini();
-        } else {
+        // If already paused/ended, stop. Else dock to mini and let iframe continue.
+        if (!isYouTubePlaying) {
           stopPlayer();
+        } else {
+          dockToMini();
         }
       }
     },
@@ -473,7 +475,8 @@ export function MusicPlayer() {
   );
 
   if (!track || !sourceRect) return null;
-  if (!isExpanded && !shouldShowMini) return null;
+  // Only unmount when hidden (real stop). Keep mounted for expanded and mini.
+  if (playerState === "hidden") return null;
 
   const cardStyle: CSSProperties = {
     top: sourceRect.top,
@@ -484,8 +487,8 @@ export function MusicPlayer() {
 
   return createPortal(
     <div
-      className={`intro-expanded-root music-expanded-root ${shouldShowMini ? "music-player-mini-mode" : ""}`}
-      data-visible={(isExpanded || shouldShowMini) ? "true" : "false"}
+      className={`intro-expanded-root music-expanded-root ${isMini ? "music-player-mini-mode" : ""}`}
+      data-visible={(isExpanded || isMini) ? "true" : "false"}
     >
       {isExpanded && (
         <button
@@ -500,14 +503,14 @@ export function MusicPlayer() {
       <div
         ref={dialogRef}
         className={`music-morph-card ${track.coverSrc ? "music-tile--cover" : ""} ${accentClass(track.accent)}`}
-        role={shouldShowMini ? "region" : "dialog"}
+        role={isMini ? "region" : "dialog"}
         aria-modal={isExpanded ? "true" : undefined}
         aria-label={heading}
         data-expanded={isExpanded ? "true" : "false"}
-        data-mini={shouldShowMini ? "true" : "false"}
+        data-mini={isMini ? "true" : "false"}
         style={cardStyle}
         onKeyDown={handleCardKeyDown}
-        onClick={shouldShowMini ? handleMiniClick : undefined}
+        onClick={isMini ? handleMiniClick : undefined}
       >
         {track.coverSrc ? (
           <div
@@ -530,7 +533,7 @@ export function MusicPlayer() {
           </button>
         )}
 
-        {shouldShowMini && (
+        {isMini && (
           <button
             ref={closeRef}
             type="button"
