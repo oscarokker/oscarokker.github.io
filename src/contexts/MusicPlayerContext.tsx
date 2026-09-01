@@ -10,7 +10,6 @@ import {
 
 export interface MusicTrack {
   youtubeId: string;
-  startSeconds?: number;
   title: string;
   subtitle: string;
   description: string;

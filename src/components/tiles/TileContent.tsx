@@ -313,7 +313,6 @@ interface MusicTileProps {
   accent?: string;
   coverSrc?: string;
   youtubeId?: string;
-  startSeconds?: number;
   videoTitle?: string;
   videoArtist?: string;
 }
@@ -363,7 +362,6 @@ export function MusicTile({
   accent,
   coverSrc,
   youtubeId,
-  startSeconds,
   videoTitle,
   videoArtist,
 }: MusicTileProps) {
@@ -382,7 +380,6 @@ export function MusicTile({
     playTrack(
       {
         youtubeId,
-        startSeconds,
         title,
         subtitle,
         description,
@@ -401,7 +398,6 @@ export function MusicTile({
   }, [
     expandable,
     youtubeId,
-    startSeconds,
     title,
     subtitle,
     description,

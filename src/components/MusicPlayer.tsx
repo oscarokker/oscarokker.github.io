@@ -86,7 +86,7 @@ function getMiniTargetRect(): MorphRect {
   return { top, left, width, height };
 }
 
-function youtubeEmbedSrc(youtubeId: string, startSeconds?: number): string {
+function youtubeEmbedSrc(youtubeId: string): string {
   const params = new URLSearchParams({
     rel: "0",
     modestbranding: "1",
@@ -94,9 +94,6 @@ function youtubeEmbedSrc(youtubeId: string, startSeconds?: number): string {
     autoplay: "1",
     enablejsapi: "1",
   });
-  if (startSeconds && startSeconds > 0) {
-    params.set("start", String(Math.floor(startSeconds)));
-  }
   if (typeof window !== "undefined") {
     params.set("origin", window.location.origin);
   }
@@ -159,18 +156,13 @@ export function MusicPlayer() {
 
   const embedSrc = useMemo(() => {
     if (!track?.youtubeId) return "";
-    // Only include startSeconds on first load
-    const useStartSeconds = !hasStartedRef.current;
     if (!hasStartedRef.current) {
       hasStartedRef.current = true;
     }
     // Reset playing flag for new track (assume autoplay)
     setIsYouTubePlaying(true);
-    return youtubeEmbedSrc(
-      track.youtubeId,
-      useStartSeconds ? track.startSeconds : undefined,
-    );
-  }, [track?.youtubeId, track?.startSeconds]);
+    return youtubeEmbedSrc(track.youtubeId);
+  }, [track?.youtubeId]);
 
   // Load YouTube IFrame API
   useEffect(() => {
