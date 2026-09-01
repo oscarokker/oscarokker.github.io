@@ -63,11 +63,9 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
 
   const stopPlayer = useCallback(() => {
     setPlayerState("hidden");
-    // Delay clearing the track to allow exit animation
-    setTimeout(() => {
-      setCurrentTrack(null);
-      setSourceRect(null);
-    }, 500);
+    // Clear immediately to prevent race with next playTrack
+    setCurrentTrack(null);
+    setSourceRect(null);
   }, []);
 
   return (

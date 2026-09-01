@@ -151,6 +151,34 @@ export function MusicPlayer() {
   const isMini = playerState === "mini";
   isMiniRef.current = isMini;
 
+  // Reset all state when player is stopped
+  useEffect(() => {
+    if (playerState === "hidden") {
+      phaseRef.current = "enter";
+      iframeReadyRef.current = false;
+      hasStartedRef.current = false;
+      morphRectRef.current = null;
+      expandedRef.current = false;
+      
+      // Destroy YouTube player instance
+      if (ytPlayerRef.current?.destroy) {
+        try {
+          ytPlayerRef.current.destroy();
+        } catch (e) {
+          // Ignore errors during cleanup
+        }
+        ytPlayerRef.current = null;
+      }
+      
+      // Clear datasets
+      const card = dialogRef.current;
+      if (card) {
+        delete card.dataset.expanded;
+        delete card.dataset.mini;
+      }
+    }
+  }, [playerState]);
+
   const track = currentTrack;
   const heading = track?.videoTitle ?? track?.title ?? "";
   const iframeTitle = track?.videoArtist
@@ -449,8 +477,6 @@ export function MusicPlayer() {
 
   const handleClose = useCallback(() => {
     stopPlayer();
-    iframeReadyRef.current = false;
-    hasStartedRef.current = false;
   }, [stopPlayer]);
 
   const handleMiniClick = useCallback(() => {

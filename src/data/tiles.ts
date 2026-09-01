@@ -78,7 +78,6 @@ export const tiles: TileData[] = [
       description: "Produce, mix, and craft audiovisual experiences.",
       coverSrc: "/feel-alive-background.png",
       youtubeId: "SLBmsHOsuLU",
-      startSeconds: 669,
       videoTitle: "Feel Alive",
       videoArtist: "Oscar Rode",
     },
