@@ -1906,6 +1906,15 @@ html[data-scroll-locked]::-webkit-scrollbar-thumb:hover {
   pointer-events: auto;
 }
 
+/* Mini mode: root stays pointer-events: none, only the card is interactive */
+.music-player-mini-mode {
+  pointer-events: none !important;
+}
+
+.music-player-mini-mode .music-morph-card {
+  pointer-events: auto;
+}
+
 /* Registered so blur interpolates on enter/exit (unregistered custom props snap). */
 @property --overlay-blur {
   syntax: "<length>";
