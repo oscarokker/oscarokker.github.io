@@ -278,7 +278,22 @@ export function CaseStudyArticle({ study }: CaseStudyArticleProps) {
                   )}
                   {section.figure ? (
                     <div className="case-study-inline-figure">
-                      {section.figure.src ? (
+                      {section.figure.images ? (
+                        <div className="case-study-phone-row">
+                          {section.figure.images.map((img, idx) => (
+                            <Image
+                              key={img.src}
+                              src={withBasePath(img.src)}
+                              alt={img.alt}
+                              width={436}
+                              height={904}
+                              sizes="(max-width: 680px) 30vw, 200px"
+                              className="case-study-phone-img"
+                              style={{ width: "100%", height: "auto" }}
+                            />
+                          ))}
+                        </div>
+                      ) : section.figure.src ? (
                         <Image
                           src={withBasePath(section.figure.src)}
                           alt={section.figure.caption}
