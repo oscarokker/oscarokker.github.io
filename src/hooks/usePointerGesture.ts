@@ -1,4 +1,4 @@
-import { useCallback, useRef, type PointerEvent as ReactPointerEvent } from "react";
+import { useCallback, useEffect, useRef, type PointerEvent as ReactPointerEvent } from "react";
 
 interface PointerGestureCallbacks<T = Element> {
   onTap?: (event: ReactPointerEvent<T>) => void;
@@ -34,89 +34,112 @@ export function usePointerGesture<T extends Element = Element>({
     pointerId: null,
   });
 
+  const cleanup = useRef<(() => void) | null>(null);
+
   const handlePointerDown = useCallback(
     (event: ReactPointerEvent<T>) => {
       if (event.button !== 0) return;
+      
+      const pointerId = event.pointerId;
       
       gestureState.current = {
         startX: event.clientX,
         startY: event.clientY,
         isDragging: false,
-        pointerId: event.pointerId,
+        pointerId,
       };
 
-      // Capture pointer to track movement even outside element
-      event.currentTarget.setPointerCapture?.(event.pointerId);
-      
       // Fire immediate callback for visual feedback (e.g., ripples)
       onPointerDownImmediate?.(event);
-    },
-    [onPointerDownImmediate],
-  );
 
-  const handlePointerMove = useCallback(
-    (event: ReactPointerEvent<T>) => {
-      const state = gestureState.current;
-      if (state.pointerId !== event.pointerId) return;
-      if (state.isDragging) return;
+      // Track move/up/cancel via window listeners in capture phase
+      // so we see movement even if finger leaves the tile, without capturing
+      const handleWindowPointerMove = (e: PointerEvent) => {
+        const state = gestureState.current;
+        if (state.pointerId !== e.pointerId) return;
+        if (state.isDragging) return;
 
-      const dx = event.clientX - state.startX;
-      const dy = event.clientY - state.startY;
-      const distance = Math.sqrt(dx * dx + dy * dy);
+        const dx = e.clientX - state.startX;
+        const dy = e.clientY - state.startY;
+        const distance = Math.sqrt(dx * dx + dy * dy);
 
-      if (distance > DRAG_THRESHOLD) {
-        state.isDragging = true;
-        onDragStart?.(event);
-      }
-    },
-    [onDragStart],
-  );
-
-  const handlePointerUp = useCallback(
-    (event: ReactPointerEvent<T>) => {
-      const state = gestureState.current;
-      if (state.pointerId !== event.pointerId) return;
-
-      const wasDragging = state.isDragging;
-      
-      // Reset state
-      gestureState.current = {
-        startX: 0,
-        startY: 0,
-        isDragging: false,
-        pointerId: null,
+        if (distance > DRAG_THRESHOLD) {
+          state.isDragging = true;
+          // Create a synthetic React event-like object for the callback
+          onDragStart?.({ ...e, currentTarget: event.currentTarget } as any);
+        }
       };
 
-      if (wasDragging) {
-        onDragEnd?.();
-      } else {
-        onTap?.(event);
-      }
+      const handleWindowPointerUp = (e: PointerEvent) => {
+        const state = gestureState.current;
+        if (state.pointerId !== e.pointerId) return;
+
+        const wasDragging = state.isDragging;
+        
+        // Reset state
+        gestureState.current = {
+          startX: 0,
+          startY: 0,
+          isDragging: false,
+          pointerId: null,
+        };
+
+        // Remove listeners
+        cleanup.current?.();
+        cleanup.current = null;
+
+        if (wasDragging) {
+          onDragEnd?.();
+        } else {
+          // Create a synthetic React event-like object for the callback
+          onTap?.({ ...e, currentTarget: event.currentTarget } as any);
+        }
+      };
+
+      const handleWindowPointerCancel = (e: PointerEvent) => {
+        if (gestureState.current.pointerId !== e.pointerId) return;
+
+        const wasDragging = gestureState.current.isDragging;
+        
+        gestureState.current = {
+          startX: 0,
+          startY: 0,
+          isDragging: false,
+          pointerId: null,
+        };
+
+        // Remove listeners
+        cleanup.current?.();
+        cleanup.current = null;
+
+        if (wasDragging) {
+          onDragEnd?.();
+        }
+      };
+
+      window.addEventListener('pointermove', handleWindowPointerMove, { capture: true });
+      window.addEventListener('pointerup', handleWindowPointerUp, { capture: true });
+      window.addEventListener('pointercancel', handleWindowPointerCancel, { capture: true });
+
+      cleanup.current = () => {
+        window.removeEventListener('pointermove', handleWindowPointerMove, { capture: true });
+        window.removeEventListener('pointerup', handleWindowPointerUp, { capture: true });
+        window.removeEventListener('pointercancel', handleWindowPointerCancel, { capture: true });
+      };
     },
-    [onTap, onDragEnd],
+    [onPointerDownImmediate, onTap, onDragStart, onDragEnd],
   );
 
-  const handlePointerCancel = useCallback(() => {
-    const wasDragging = gestureState.current.isDragging;
-    
-    gestureState.current = {
-      startX: 0,
-      startY: 0,
-      isDragging: false,
-      pointerId: null,
+  // Cleanup window listeners on unmount
+  useEffect(() => {
+    return () => {
+      cleanup.current?.();
     };
-
-    if (wasDragging) {
-      onDragEnd?.();
-    }
-  }, [onDragEnd]);
+  }, []);
 
   return {
     pointerHandlers: {
       onPointerDown: handlePointerDown,
-      onPointerMove: handlePointerMove,
-      onPointerUp: handlePointerUp,
-      onPointerCancel: handlePointerCancel,
     },
     isDragging: () => gestureState.current.isDragging,
   };
