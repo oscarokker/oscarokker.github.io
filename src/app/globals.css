@@ -775,6 +775,13 @@ html[data-scroll-locked]::-webkit-scrollbar-thumb:hover {
   grid-row: span 2;
 }
 
+/* Mobile: collapse 2×2 tiles to 2×1 (two columns, one row) */
+@media (max-width: 680px), (pointer: coarse) {
+  .tile-size-2x2 {
+    grid-row: span 1;
+  }
+}
+
 .tile-card {
   position: relative;
   display: flex;
