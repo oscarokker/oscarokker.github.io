@@ -240,8 +240,14 @@ export function MusicPlayer() {
               const playing = state === YT.PlayerState.PLAYING || state === YT.PlayerState.BUFFERING;
               setIsYouTubePlaying(playing);
               
-              // If paused or ended while in mini mode, stop the player
-              if (isMiniRef.current && (state === YT.PlayerState.PAUSED || state === YT.PlayerState.ENDED)) {
+              // Mobile: keep button visible when paused, only unmount on ENDED
+              // Desktop mini-player: hide on pause (previous approved behavior)
+              const isMobile = window.matchMedia("(pointer: coarse), (max-width: 680px)").matches;
+              
+              if (isMiniRef.current && state === YT.PlayerState.ENDED) {
+                stopPlayer();
+              } else if (isMiniRef.current && state === YT.PlayerState.PAUSED && !isMobile) {
+                // Desktop mini-player: hide on pause
                 stopPlayer();
               }
             },
@@ -485,6 +491,21 @@ export function MusicPlayer() {
     }
   }, [isMini, expandPlayer]);
 
+  const togglePlayPause = useCallback(() => {
+    if (!ytPlayerRef.current) return;
+    try {
+      const playerState = ytPlayerRef.current.getPlayerState?.();
+      const YT = (window as any).YT;
+      if (playerState === YT?.PlayerState?.PLAYING) {
+        ytPlayerRef.current.pauseVideo();
+      } else {
+        ytPlayerRef.current.playVideo();
+      }
+    } catch (error) {
+      console.error("Failed to toggle play/pause:", error);
+    }
+  }, []);
+
   const handleCardKeyDown = useCallback(
     (event: ReactKeyboardEvent<HTMLDivElement>) => {
       if (event.key === "Escape" && isExpanded) {
@@ -512,19 +533,20 @@ export function MusicPlayer() {
   };
 
   return createPortal(
-    <div
-      className={`intro-expanded-root music-expanded-root ${isMini ? "music-player-mini-mode" : ""}`}
-      data-visible={(isExpanded || isMini) ? "true" : "false"}
-    >
-      {isExpanded && (
-        <button
-          type="button"
-          className="intro-expanded-backdrop"
-          aria-label={`Close ${heading}`}
-          onClick={handleBackdropClick}
-          tabIndex={-1}
-        />
-      )}
+    <>
+      <div
+        className={`intro-expanded-root music-expanded-root ${isMini ? "music-player-mini-mode" : ""}`}
+        data-visible={(isExpanded || isMini) ? "true" : "false"}
+      >
+        {isExpanded && (
+          <button
+            type="button"
+            className="intro-expanded-backdrop"
+            aria-label={`Close ${heading}`}
+            onClick={handleBackdropClick}
+            tabIndex={-1}
+          />
+        )}
 
       <div
         ref={dialogRef}
@@ -617,7 +639,50 @@ export function MusicPlayer() {
           </div>
         </div>
       </div>
-    </div>,
+      </div>
+
+      {/* Mobile music control button */}
+      {isMini && (
+        <button
+          type="button"
+          className="mobile-music-button"
+          aria-label={isYouTubePlaying ? "Pause music" : "Play music"}
+          onClick={(e) => {
+            e.stopPropagation();
+            togglePlayPause();
+          }}
+          data-playing={isYouTubePlaying ? "true" : "false"}
+        >
+          {isYouTubePlaying ? (
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              xmlns="http://www.w3.org/2000/svg"
+              aria-hidden="true"
+            >
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z" />
+            </svg>
+          ) : (
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              xmlns="http://www.w3.org/2000/svg"
+              aria-hidden="true"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <path d="M9.5 11.5L9.5 12.5C9.5 13.6046 10.3954 14.5 11.5 14.5L12.5 14.5C13.6046 14.5 14.5 13.6046 14.5 12.5L14.5 11.5C14.5 10.3954 13.6046 9.5 12.5 9.5L11.5 9.5C10.3954 9.5 9.5 10.3954 9.5 11.5Z" />
+              <path d="M10 8C10 7.44772 10.4477 7 11 7L13 7C13.5523 7 14 7.44772 14 8L14 16C14 16.5523 13.5523 17 13 17L11 17C10.4477 17 10 16.5523 10 16L10 8Z" fill="currentColor" />
+            </svg>
+          )}
+        </button>
+      )}
+    </>,
     document.body,
   );
 }

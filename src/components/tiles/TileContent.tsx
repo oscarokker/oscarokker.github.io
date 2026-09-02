@@ -276,6 +276,11 @@ export function SocialTile({
         <TileChromeHint>
           <CopyIcon />
         </TileChromeHint>
+        {copied && (
+          <span className="social-tile-copied-toast">
+            Email copied
+          </span>
+        )}
         {content}
       </button>
     );
@@ -598,7 +603,7 @@ export function CvTile({
       href={withBasePath(fileSrc)}
       download={downloadFileName}
       className={`tile-card-inner cv-tile no-underline h-full ${accentClass(accent)}`}
-      aria-label="Download CV"
+      aria-label="Download CV (PDF, 7.7 MB)"
     >
       <TileChromeHint>
         <DownloadIcon />
@@ -612,6 +617,7 @@ export function CvTile({
         aria-hidden
         unoptimized
       />
+      <span className="cv-tile-size-hint">7.7 MB</span>
     </a>
   );
 }

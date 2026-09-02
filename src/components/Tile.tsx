@@ -119,6 +119,11 @@ function isComingSoonCaseStudy(tile: TileData): boolean {
   return tile.variant === "case-study" && Boolean(tile.props.comingSoon);
 }
 
+function isInteractiveTile(tile: TileData): boolean {
+  if (isComingSoonCaseStudy(tile)) return false;
+  return true;
+}
+
 export function Tile({ tile, isActive, sortOrder }: TileProps) {
   const comingSoon = isComingSoonCaseStudy(tile);
   // Filter match stays on the slot (FLIP / packing). Coming-soon cards are
@@ -152,7 +157,9 @@ export function Tile({ tile, isActive, sortOrder }: TileProps) {
       <article
         className={className}
         data-active={cardActive}
+        data-coming-soon={comingSoon ? "true" : undefined}
         onPointerDown={handlePointerDown}
+        {...(comingSoon ? { "aria-disabled": "true" } : {})}
         {...(cursor
           ? {
               "data-cursor-label": cursor.label,
