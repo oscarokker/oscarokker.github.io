@@ -2064,18 +2064,25 @@ html[data-scroll-locked]::-webkit-scrollbar-thumb:hover {
   .music-player-mini-mode .music-morph-card {
     pointer-events: none;
     opacity: 0;
-    /* Keep iframe mounted but invisible/inaudible positioning */
-    transform: translateX(-9999px);
+    visibility: hidden;
   }
 
-  /* Ensure iframe is positioned off-screen but still plays audio */
+  /* Keep iframe 1×1 in-flow (iOS Safari pauses off-screen media) */
   .music-player-mini-mode .music-morph-player {
     position: fixed;
-    left: -9999px;
-    top: -9999px;
+    bottom: calc(16px + env(safe-area-inset-bottom));
+    right: calc(16px + env(safe-area-inset-right));
     width: 1px;
     height: 1px;
+    opacity: 0;
     pointer-events: none;
+    z-index: 1399;
+    overflow: hidden;
+  }
+
+  .music-player-mini-mode .music-morph-player iframe {
+    width: 1px;
+    height: 1px;
   }
 }
 

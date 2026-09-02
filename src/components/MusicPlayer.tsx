@@ -240,8 +240,14 @@ export function MusicPlayer() {
               const playing = state === YT.PlayerState.PLAYING || state === YT.PlayerState.BUFFERING;
               setIsYouTubePlaying(playing);
               
-              // If paused or ended while in mini mode, stop the player
-              if (isMiniRef.current && (state === YT.PlayerState.PAUSED || state === YT.PlayerState.ENDED)) {
+              // Mobile: keep button visible when paused, only unmount on ENDED
+              // Desktop mini-player: hide on pause (previous approved behavior)
+              const isMobile = window.matchMedia("(pointer: coarse), (max-width: 680px)").matches;
+              
+              if (isMiniRef.current && state === YT.PlayerState.ENDED) {
+                stopPlayer();
+              } else if (isMiniRef.current && state === YT.PlayerState.PAUSED && !isMobile) {
+                // Desktop mini-player: hide on pause
                 stopPlayer();
               }
             },
