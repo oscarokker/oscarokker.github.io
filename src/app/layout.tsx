@@ -7,7 +7,7 @@ import { THEME_INIT_SCRIPT } from "@/lib/theme";
 import { CASE_STUDY_BOOT_SCRIPT } from "@/lib/case-study-href";
 import "./globals.css";
 
-const SITE_TITLE = "Oscar Rode — UX Designer & Hardcore Builder";
+const SITE_TITLE = "Oscar Rode · Design Portfolio";
 const SITE_DESCRIPTION =
   "Portfolio of Oscar Rode, UX/UI Designer specializing in Human-AI interaction and product design. Based in Copenhagen, Denmark. Co-founder and UX designer of CheapVoyage, an AI-driven conversational travel planner.";
 
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://oscarrode.com"),
   title: {
     default: SITE_TITLE,
-    template: "%s — Oscar Rode",
+    template: "%s · Oscar Rode",
   },
   description: SITE_DESCRIPTION,
   alternates: {
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_GB",
     url: "https://oscarrode.com/",
-    siteName: "Oscar Rode Portfolio",
+    siteName: "Oscar Rode · Design Portfolio",
     images: [
       {
         url: "/oscar-rode-profile-picture.png",
@@ -58,7 +58,7 @@ export const metadata: Metadata = {
     images: ["/oscar-rode-profile-picture.png"],
   },
   icons: {
-    icon: "/or-logo.png",
+    icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
   },
 };
 
