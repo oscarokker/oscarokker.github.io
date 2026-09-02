@@ -1594,6 +1594,7 @@ html[data-scroll-locked]::-webkit-scrollbar-thumb:hover {
   transition: color var(--transition-theme);
 }
 
+/* Desktop: top-center pill */
 .site-nav {
   transform: translateX(-50%) translateY(0);
   transition: transform var(--transition-fast);
@@ -1606,28 +1607,49 @@ html[data-scroll-locked]::-webkit-scrollbar-thumb:hover {
   transition: transform var(--transition-base);
 }
 
+/* Mobile: bottom bar with equal-width buttons */
 @media (pointer: coarse), (max-width: 680px) {
   .site-nav {
-    /* On mobile, position below the header row */
-    top: calc(16px + 44px + 16px + env(safe-area-inset-top));
+    position: fixed;
+    top: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    transform: none;
+    transition: translate var(--transition-fast);
+    padding: 0 max(env(safe-area-inset-right), 12px) max(env(safe-area-inset-bottom), 12px) max(env(safe-area-inset-left), 12px);
     margin-top: 0;
   }
 
-  .nav-pill {
-    max-width: calc(100vw - 32px - env(safe-area-inset-left) - env(safe-area-inset-right));
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
+  .site-nav[data-visible="true"] {
+    translate: 0 0;
   }
 
-  .nav-pill::-webkit-scrollbar {
-    display: none;
+  .site-nav[data-visible="false"] {
+    translate: 0 calc(100% + 16px);
+    pointer-events: none;
+    transition: translate var(--transition-base);
+  }
+
+  .nav-pill {
+    width: 100%;
+    gap: 0;
   }
 
   .nav-pill-button {
+    flex: 1;
     min-height: 44px;
-    padding: 10px 16px;
-    flex-shrink: 0;
+    font-size: max(14px, var(--text-body-sm-size));
+    padding: 10px 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Ensure bottom padding on mobile home grid to prevent content from hiding under nav */
+  .portfolio-main {
+    padding-bottom: calc(64px + env(safe-area-inset-bottom) + 60px);
   }
 }
 
@@ -2065,6 +2087,8 @@ html[data-scroll-locked]::-webkit-scrollbar-thumb:hover {
 @media (pointer: coarse), (max-width: 680px) {
   .mobile-music-button {
     display: flex;
+    /* Raise above bottom nav bar: 44px min-height + 12px gap + 12px padding + safe area */
+    bottom: calc(16px + 44px + 12px + 12px + env(safe-area-inset-bottom));
   }
 
   /* Hide the mini player card on mobile, show button instead */
@@ -2076,7 +2100,8 @@ html[data-scroll-locked]::-webkit-scrollbar-thumb:hover {
   /* Keep iframe 1×1 in-flow (iOS Safari pauses off-screen media) */
   .music-player-mini-mode .music-morph-player {
     position: fixed;
-    bottom: calc(16px + env(safe-area-inset-bottom));
+    /* Match button position */
+    bottom: calc(16px + 44px + 12px + 12px + env(safe-area-inset-bottom));
     right: calc(16px + env(safe-area-inset-right));
     width: 1px;
     height: 1px;
