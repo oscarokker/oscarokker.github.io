@@ -2064,7 +2064,6 @@ html[data-scroll-locked]::-webkit-scrollbar-thumb:hover {
   .music-player-mini-mode .music-morph-card {
     pointer-events: none;
     opacity: 0;
-    visibility: hidden;
   }
 
   /* Keep iframe 1×1 in-flow (iOS Safari pauses off-screen media) */
