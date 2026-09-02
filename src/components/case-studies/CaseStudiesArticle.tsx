@@ -285,8 +285,8 @@ export function CaseStudyArticle({ study }: CaseStudyArticleProps) {
                               key={img.src}
                               src={withBasePath(img.src)}
                               alt={img.alt}
-                              width={436}
-                              height={904}
+                              width={1206}
+                              height={2622}
                               sizes="(max-width: 680px) 30vw, 200px"
                               className="case-study-phone-img"
                               style={{ width: "100%", height: "auto" }}
