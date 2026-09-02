@@ -6,7 +6,6 @@ import {
   useRef,
   type KeyboardEvent,
   type MouseEvent as ReactMouseEvent,
-  type PointerEvent as ReactPointerEvent,
 } from "react";
 import { CaseStudyFace } from "@/components/case-studies/CaseStudiesFace";
 import { caseStudyHref } from "@/lib/case-study-href";
@@ -16,6 +15,7 @@ import {
   useCaseStudyTransition,
 } from "@/components/case-studies/CaseStudiesTransition";
 import { ExpandIcon } from "@/components/ChromeIcons";
+import { usePointerGesture } from "@/hooks/usePointerGesture";
 
 interface CaseStudyTileProps {
   title: string;
@@ -77,19 +77,21 @@ export function CaseStudyTile({
     [accent, coverSrc, openFromTile, slug, subtitle, title],
   );
 
-  const handlePointerDown = useCallback(
-    (event: ReactPointerEvent<HTMLAnchorElement>) => {
-      if (isBusy || event.button !== 0 || isModifiedClick(event)) return;
-      open(event);
-    },
-    [isBusy, open],
-  );
+  const { pointerHandlers } = usePointerGesture({
+    onTap: useCallback(
+      (event: React.PointerEvent<HTMLAnchorElement>) => {
+        if (isBusy || isModifiedClick(event)) return;
+        open(event);
+      },
+      [isBusy, open],
+    ),
+  });
 
   const handleClick = useCallback(
     (event: ReactMouseEvent<HTMLAnchorElement>) => {
       if (event.button !== 0 || isModifiedClick(event)) return;
       event.preventDefault();
-      // Keyboard Enter synthesizes click (detail 0) without pointerdown.
+      // Keyboard Enter synthesizes click (detail 0) without pointer gesture.
       if (event.detail === 0) open();
     },
     [open],
@@ -125,7 +127,7 @@ export function CaseStudyTile({
       className="case-study-tile case-study-tile--expandable"
       aria-expanded={isBusy}
       aria-label={`${title}. Open case study.`}
-      onPointerDown={handlePointerDown}
+      {...pointerHandlers}
       onClick={handleClick}
       onKeyDown={handleKeyDown}
     >

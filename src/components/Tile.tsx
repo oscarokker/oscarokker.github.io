@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, type PointerEvent as ReactPointerEvent } from "react";
+import { useCallback, useRef } from "react";
 import type { TileData, FilterCategory } from "@/lib/types";
 import { CaseStudyTile } from "@/components/tiles/CaseStudyTile";
 import {
@@ -15,7 +15,8 @@ import {
 import { DuolingoTile } from "@/components/tiles/DuolingoTile";
 import { getCaseStudy } from "@/data/case-studies";
 import { accentClass } from "@/lib/accent";
-import { spawnTileClickRipple } from "@/lib/clickRipple";
+import { spawnTileClickRipple, removeRipple } from "@/lib/clickRipple";
+import { usePointerGesture } from "@/hooks/usePointerGesture";
 
 interface TileProps {
   tile: TileData;
@@ -138,14 +139,27 @@ export function Tile({ tile, isActive, sortOrder }: TileProps) {
     .filter(Boolean)
     .join(" ");
   const cursor = cardActive ? getCursorMeta(tile) : null;
+  const activeRippleRef = useRef<HTMLElement | null>(null);
 
-  const handlePointerDown = useCallback(
-    (event: ReactPointerEvent<HTMLElement>) => {
-      if (!cardActive || event.button !== 0) return;
-      spawnTileClickRipple(event.currentTarget, event);
-    },
-    [cardActive],
-  );
+  const { pointerHandlers } = usePointerGesture({
+    onPointerDownImmediate: useCallback(
+      (event: React.PointerEvent<HTMLElement>) => {
+        if (!cardActive) return;
+        activeRippleRef.current = spawnTileClickRipple(event.currentTarget, event);
+      },
+      [cardActive],
+    ),
+    onDragStart: useCallback(() => {
+      if (activeRippleRef.current) {
+        removeRipple(activeRippleRef.current);
+        activeRippleRef.current = null;
+      }
+    }, []),
+    onTap: useCallback(() => {
+      // Ripple already spawned in onPointerDownImmediate
+      activeRippleRef.current = null;
+    }, []),
+  });
 
   return (
     <div
@@ -158,7 +172,7 @@ export function Tile({ tile, isActive, sortOrder }: TileProps) {
         className={className}
         data-active={cardActive}
         data-coming-soon={comingSoon ? "true" : undefined}
-        onPointerDown={handlePointerDown}
+        {...pointerHandlers}
         {...(comingSoon ? { "aria-disabled": "true" } : {})}
         {...(cursor
           ? {

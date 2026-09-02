@@ -1,14 +1,69 @@
 "use client";
 
+import { useCallback } from "react";
 import type { FilterCategory } from "@/lib/types";
 import { filters } from "@/data/tiles";
 import { useHoverThumb } from "@/hooks/useHoverThumb";
 import { useSlidingThumb } from "@/hooks/useSlidingThumb";
+import { usePointerGesture } from "@/hooks/usePointerGesture";
 
 interface NavBarProps {
   activeFilter: FilterCategory;
   onFilterChange: (filter: FilterCategory) => void;
   visible?: boolean;
+}
+
+interface FilterButtonProps {
+  filterId: FilterCategory;
+  label: string;
+  isActive: boolean;
+  onFilterChange: (filter: FilterCategory) => void;
+}
+
+function FilterButton({
+  filterId,
+  label,
+  isActive,
+  onFilterChange,
+}: FilterButtonProps) {
+  const { pointerHandlers } = usePointerGesture({
+    onTap: useCallback(
+      (event: React.PointerEvent<HTMLButtonElement>) => {
+        if (isActive) return;
+        event.preventDefault();
+        onFilterChange(filterId);
+      },
+      [isActive, filterId, onFilterChange],
+    ),
+  });
+
+  const handleClick = useCallback(
+    (event: React.MouseEvent<HTMLButtonElement>) => {
+      // Keyboard Enter synthesizes click (detail 0) without pointer gesture.
+      if (event.detail === 0) {
+        if (isActive) return;
+        onFilterChange(filterId);
+        return;
+      }
+      // Otherwise pointer already handled above. Ignore the follow-up click so a
+      // FLIP/layout shift cannot retarget it onto a neighboring pill.
+      event.preventDefault();
+    },
+    [isActive, filterId, onFilterChange],
+  );
+
+  return (
+    <button
+      type="button"
+      className="nav-pill-button"
+      data-active={isActive}
+      aria-pressed={isActive}
+      {...pointerHandlers}
+      onClick={handleClick}
+    >
+      {label}
+    </button>
+  );
 }
 
 export function NavBar({
@@ -55,30 +110,13 @@ export function NavBar({
           <span className="nav-pill-thumb-surface" />
         </span>
         {filters.map((filter) => (
-          <button
+          <FilterButton
             key={filter.id}
-            type="button"
-            className="nav-pill-button"
-            data-active={activeFilter === filter.id}
-            aria-pressed={activeFilter === filter.id}
-            onPointerDown={(event) => {
-              if (event.button !== 0 || filter.id === activeFilter) return;
-              event.preventDefault();
-              onFilterChange(filter.id);
-            }}
-            onClick={(event) => {
-              // Pointer already handled above. Ignore the follow-up click so a
-              // FLIP/layout shift cannot retarget it onto a neighboring pill.
-              if (event.detail !== 0) {
-                event.preventDefault();
-                return;
-              }
-              if (filter.id === activeFilter) return;
-              onFilterChange(filter.id);
-            }}
-          >
-            {filter.label}
-          </button>
+            filterId={filter.id}
+            label={filter.label}
+            isActive={activeFilter === filter.id}
+            onFilterChange={onFilterChange}
+          />
         ))}
       </div>
     </nav>
