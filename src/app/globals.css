@@ -2843,6 +2843,13 @@ html[data-theme="dark"][data-case-study-boot="cover"] body::before {
   scroll-padding-top: 120px;
 }
 
+@media (pointer: coarse), (max-width: 680px) {
+  .case-study-page {
+    /* On mobile, account for two-row header + sticky pill + spacing */
+    scroll-padding-top: calc(16px + 44px + 16px + 44px + 16px + env(safe-area-inset-top));
+  }
+}
+
 .case-study-ripple-host {
   position: absolute;
   inset: 0;
@@ -2936,6 +2943,13 @@ html[data-theme="dark"][data-case-study-boot="cover"] body::before {
   z-index: 40;
   flex-shrink: 0;
   margin-bottom: 1.5rem;
+}
+
+@media (pointer: coarse), (max-width: 680px) {
+  .case-study-toggle {
+    /* On mobile, position below the header row */
+    top: calc(16px + 44px + 16px + env(safe-area-inset-top));
+  }
 }
 
 .case-study-toggle .nav-pill-button {
