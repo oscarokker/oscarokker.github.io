@@ -2953,6 +2953,36 @@ html[data-theme="dark"][data-case-study-boot="cover"] body::before {
   height: auto;
 }
 
+.case-study-phone-row {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.case-study-phone-img {
+  flex: 1;
+  min-width: 0;
+  object-fit: contain;
+  max-width: 220px;
+}
+
+@media (max-width: 680px) {
+  .case-study-phone-row {
+    gap: 12px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .case-study-phone-img {
+    scroll-snap-align: center;
+    flex-shrink: 0;
+    min-width: 140px;
+  }
+}
+
 .cover-podcasts,
 .cover-thesis,
 .cover-music {

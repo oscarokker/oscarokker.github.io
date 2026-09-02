@@ -24,6 +24,7 @@ export interface CaseStudyImpact {
 export interface CaseStudyFigure {
   cover?: CaseStudyCoverId;
   src?: string;
+  images?: { src: string; alt: string }[];
   caption: string;
 }
 
@@ -194,7 +195,20 @@ export const caseStudies: CaseStudy[] = [
           { text: "The interaction is optional and a little slow on purpose: each expand is a pause before a conclusion.", variant: "detailed" },
         ],
         figure: {
-          src: "/case-studies/spotify-source-insights-claims.png",
+          images: [
+            {
+              src: "/case-studies/spotify-phone-1-claims.png",
+              alt: "Source Insights with the first claim expanded.",
+            },
+            {
+              src: "/case-studies/spotify-phone-2-sources.png",
+              alt: "A claim opened into creator, supporting, and opposing sources.",
+            },
+            {
+              src: "/case-studies/spotify-phone-3-summary.png",
+              alt: "An AI summary of a source under a claim.",
+            },
+          ],
           caption: "A claim opens into creator, supporting, and opposing sources — disagreement stays in the episode, not in a separate fact-check product.",
         },
       },
