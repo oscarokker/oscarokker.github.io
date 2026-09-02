@@ -42,10 +42,13 @@ export function CaseStudyCover({ id, label }: CaseStudyCoverProps) {
             className="case-study-cover-photo"
             style={{ width: "100%", height: "auto" }}
           />
-        ) : null}
-        {id === "podcasts" ? <PodcastArt /> : null}
-        {id === "thesis" ? <ThesisArt /> : null}
-        {id === "music" ? <MusicArt /> : null}
+        ) : (
+          <>
+            {id === "podcasts" ? <PodcastArt /> : null}
+            {id === "thesis" ? <ThesisArt /> : null}
+            {id === "music" ? <MusicArt /> : null}
+          </>
+        )}
       </div>
       <figcaption className="sr-only">{label}</figcaption>
     </figure>
