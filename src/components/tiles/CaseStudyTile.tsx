@@ -79,7 +79,7 @@ export function CaseStudyTile({
 
   const { pointerHandlers } = usePointerGesture({
     onTap: useCallback(
-      (event) => {
+      (event: React.PointerEvent<HTMLAnchorElement>) => {
         if (isBusy || isModifiedClick(event)) return;
         open(event);
       },

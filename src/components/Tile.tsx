@@ -143,7 +143,7 @@ export function Tile({ tile, isActive, sortOrder }: TileProps) {
 
   const { pointerHandlers } = usePointerGesture({
     onPointerDownImmediate: useCallback(
-      (event) => {
+      (event: React.PointerEvent<HTMLElement>) => {
         if (!cardActive) return;
         activeRippleRef.current = spawnTileClickRipple(event.currentTarget, event);
       },

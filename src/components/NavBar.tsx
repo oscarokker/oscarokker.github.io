@@ -28,7 +28,7 @@ function FilterButton({
 }: FilterButtonProps) {
   const { pointerHandlers } = usePointerGesture({
     onTap: useCallback(
-      (event) => {
+      (event: React.PointerEvent<HTMLButtonElement>) => {
         if (isActive) return;
         event.preventDefault();
         onFilterChange(filterId);

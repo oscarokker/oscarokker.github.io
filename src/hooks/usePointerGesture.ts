@@ -1,10 +1,10 @@
 import { useCallback, useRef, type PointerEvent as ReactPointerEvent } from "react";
 
-interface PointerGestureCallbacks {
-  onTap?: (event: ReactPointerEvent) => void;
-  onDragStart?: (event: ReactPointerEvent) => void;
+interface PointerGestureCallbacks<T = Element> {
+  onTap?: (event: ReactPointerEvent<T>) => void;
+  onDragStart?: (event: ReactPointerEvent<T>) => void;
   onDragEnd?: () => void;
-  onPointerDownImmediate?: (event: ReactPointerEvent) => void;
+  onPointerDownImmediate?: (event: ReactPointerEvent<T>) => void;
 }
 
 interface PointerGestureState {
@@ -21,12 +21,12 @@ const DRAG_THRESHOLD = 10; // pixels
  * Only triggers onTap if the pointer hasn't moved more than DRAG_THRESHOLD pixels.
  * Triggers onDragStart when movement exceeds threshold.
  */
-export function usePointerGesture({
+export function usePointerGesture<T extends Element = Element>({
   onTap,
   onDragStart,
   onDragEnd,
   onPointerDownImmediate,
-}: PointerGestureCallbacks) {
+}: PointerGestureCallbacks<T>) {
   const gestureState = useRef<PointerGestureState>({
     startX: 0,
     startY: 0,
@@ -35,7 +35,7 @@ export function usePointerGesture({
   });
 
   const handlePointerDown = useCallback(
-    (event: ReactPointerEvent) => {
+    (event: ReactPointerEvent<T>) => {
       if (event.button !== 0) return;
       
       gestureState.current = {
@@ -55,7 +55,7 @@ export function usePointerGesture({
   );
 
   const handlePointerMove = useCallback(
-    (event: ReactPointerEvent) => {
+    (event: ReactPointerEvent<T>) => {
       const state = gestureState.current;
       if (state.pointerId !== event.pointerId) return;
       if (state.isDragging) return;
@@ -73,7 +73,7 @@ export function usePointerGesture({
   );
 
   const handlePointerUp = useCallback(
-    (event: ReactPointerEvent) => {
+    (event: ReactPointerEvent<T>) => {
       const state = gestureState.current;
       if (state.pointerId !== event.pointerId) return;
 
