@@ -2,7 +2,7 @@
 
 import { CustomCursor } from "@/components/CustomCursor";
 import { Header } from "@/components/Header";
-import { StarfieldBackground } from "@/components/StarfieldBackground";
+import { AuroraBackground } from "@/components/AuroraBackground";
 import { CaseStudyMorphOverlay } from "@/components/case-studies/CaseStudiesMorphOverlay";
 import { CaseStudyTransitionProvider, useCaseStudyTransition } from "@/components/case-studies/CaseStudiesTransition";
 import { CaseStudyArticle } from "@/components/case-studies/CaseStudiesArticle";
@@ -34,7 +34,7 @@ function ShellChrome({ children }: { children: React.ReactNode }) {
 
   return (
     <>
-      <StarfieldBackground />
+      <AuroraBackground />
       <Header visible={headerVisible} />
       {children}
       <InDocumentCaseStudyLayer />
