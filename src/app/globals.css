@@ -725,6 +725,7 @@ html[data-scroll-locked]::-webkit-scrollbar-thumb:hover {
 
   width: var(--grid-width);
   margin-inline: auto;
+  touch-action: pan-y;
 }
 
 /* Wrapper: FLIP translate on the slot (inline, --transition-tile-flip);
