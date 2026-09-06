@@ -802,7 +802,8 @@ html[data-device="tablet"] .portfolio-main {
   transform: translateY(8px);
 }
 
-.tile-slot[data-entrance="visible"] {
+/* Higher specificity to override the FOUC guard above */
+.tile-grid:not([data-entrance-done]) .tile-slot[data-entrance="visible"] {
   opacity: 1;
   transform: translateY(0);
   transition:
@@ -819,7 +820,7 @@ html[data-device="tablet"] .portfolio-main {
 /* Skip animation for reduced motion - show immediately */
 @media (prefers-reduced-motion: reduce) {
   .tile-grid:not([data-entrance-done]) .tile-slot,
-  .tile-slot[data-entrance="visible"],
+  .tile-grid:not([data-entrance-done]) .tile-slot[data-entrance="visible"],
   .tile-grid[data-entrance-done] .tile-slot {
     opacity: 1;
     transform: none;
