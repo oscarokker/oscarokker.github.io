@@ -35,7 +35,7 @@ export const tiles: TileData[] = [
   },
   {
     id: "quote",
-    categories: ["about", "work"],
+    categories: ["about"],
     size: "2x1",
     variant: "quote",
     props: {
@@ -47,7 +47,7 @@ export const tiles: TileData[] = [
   },
   {
     id: "contact-email",
-    categories: ["about"],
+    categories: ["work"],
     size: "1x1",
     variant: "social",
     props: {
@@ -58,7 +58,7 @@ export const tiles: TileData[] = [
   },
   {
     id: "contact-linkedin",
-    categories: ["about", "work"],
+    categories: ["work"],
     size: "1x1",
     variant: "social",
     props: {
@@ -69,7 +69,7 @@ export const tiles: TileData[] = [
   },
   {
     id: "botanica",
-    categories: ["music"],
+    categories: ["side-quests"],
     size: "2x1",
     variant: "music",
     props: {
@@ -84,7 +84,7 @@ export const tiles: TileData[] = [
   },
   {
     id: "quote-ux-principle",
-    categories: ["about", "work"],
+    categories: ["about"],
     size: "2x1",
     variant: "quote",
     props: {
@@ -112,7 +112,7 @@ export const tiles: TileData[] = [
   },
   {
     id: "duolingo",
-    categories: ["side-quests", "about"],
+    categories: ["side-quests"],
     size: "1x1",
     variant: "duolingo",
     props: {
@@ -122,7 +122,7 @@ export const tiles: TileData[] = [
   },
   {
     id: "startup-hub",
-    categories: ["side-quests", "work"],
+    categories: ["work"],
     size: "2x1",
     variant: "logo",
     props: {
@@ -135,7 +135,7 @@ export const tiles: TileData[] = [
   },
   {
     id: "oscar-rode-cv",
-    categories: ["work", "about"],
+    categories: ["work"],
     size: "1x1",
     variant: "cv",
     props: {
@@ -172,7 +172,7 @@ export const tiles: TileData[] = [
   },
   {
     id: "music-production",
-    categories: ["music", "work"],
+    categories: ["work"],
     size: "1x1",
     variant: "case-study",
     props: {
@@ -185,7 +185,7 @@ export const tiles: TileData[] = [
   },
   {
     id: "moonlit",
-    categories: ["music"],
+    categories: ["side-quests"],
     size: "1x1",
     variant: "music",
     props: {
@@ -203,7 +203,6 @@ export const tiles: TileData[] = [
 export const filters = [
   { id: "all" as const, label: "All" },
   { id: "work" as const, label: "Work" },
-  { id: "music" as const, label: "Music" },
   { id: "about" as const, label: "About" },
   { id: "side-quests" as const, label: "Hobbies" },
 ];

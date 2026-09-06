@@ -1,4 +1,4 @@
-export type TileCategory = "work" | "music" | "side-quests" | "about";
+export type TileCategory = "work" | "side-quests" | "about";
 
 export type FilterCategory = "all" | TileCategory;
 
