@@ -61,8 +61,8 @@ export function Portfolio({
       return;
     }
 
-    // Stagger the reveal: ~50ms per tile in reading order
-    const STAGGER_DELAY = 50;
+    // Stagger the reveal: ~80ms per tile in reading order
+    const STAGGER_DELAY = 80;
     
     tiles.forEach((tile, index) => {
       setTimeout(() => {
