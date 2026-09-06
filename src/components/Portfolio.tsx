@@ -61,8 +61,9 @@ export function Portfolio({
       return;
     }
 
-    // Stagger the reveal: ~80ms per tile in reading order
-    const STAGGER_DELAY = 80;
+    // Stagger the reveal: start each tile every 40ms for overlapping animations
+    const STAGGER_DELAY = 40;
+    const ANIMATION_DURATION = 80;
     
     tiles.forEach((tile, index) => {
       setTimeout(() => {
@@ -74,7 +75,7 @@ export function Portfolio({
     });
 
     // Mark entrance as done after all animations complete
-    const totalDuration = tiles.length * STAGGER_DELAY + 300; // stagger + transition duration
+    const totalDuration = tiles.length * STAGGER_DELAY + ANIMATION_DURATION; // stagger + transition duration
     setTimeout(() => {
       setEntranceDone(true);
     }, totalDuration);
