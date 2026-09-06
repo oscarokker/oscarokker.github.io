@@ -66,7 +66,16 @@ export function usePointerGesture<T extends Element = Element>({
         if (distance > DRAG_THRESHOLD) {
           state.isDragging = true;
           // Create a synthetic React event-like object for the callback
-          onDragStart?.({ ...e, currentTarget: event.currentTarget } as any);
+          const syntheticEvent = {
+            ...e,
+            currentTarget: event.currentTarget,
+            nativeEvent: e,
+            preventDefault: () => e.preventDefault(),
+            stopPropagation: () => e.stopPropagation(),
+            isPropagationStopped: () => false,
+            isDefaultPrevented: () => e.defaultPrevented,
+          } as any;
+          onDragStart?.(syntheticEvent);
         }
       };
 
@@ -91,8 +100,17 @@ export function usePointerGesture<T extends Element = Element>({
         if (wasDragging) {
           onDragEnd?.();
         } else {
-          // Create a synthetic React event-like object for the callback
-          onTap?.({ ...e, currentTarget: event.currentTarget } as any);
+          // Create a synthetic React event-like object with working preventDefault
+          const syntheticEvent = {
+            ...e,
+            currentTarget: event.currentTarget,
+            nativeEvent: e,
+            preventDefault: () => e.preventDefault(),
+            stopPropagation: () => e.stopPropagation(),
+            isPropagationStopped: () => false,
+            isDefaultPrevented: () => e.defaultPrevented,
+          } as any;
+          onTap?.(syntheticEvent);
         }
       };
 

@@ -330,7 +330,8 @@
   --radius-md: 20px;
   --radius-full: 9999px;
 
-  /* Grid system — 4 cols desktop; 2 cols below 900px (see media query) */
+  /* Grid system — 4 cols desktop; 2 cols mobile/tablet
+     Desktop fixed-width grid, mobile/tablet fluid to viewport */
   --grid-columns: 4;
   --grid-width: 1024px;
   --grid-gap: 20px;
@@ -339,6 +340,9 @@
       var(--grid-columns)
   );
   --tile-radius: calc(var(--grid-gap) * 1.25);
+  
+  /* Max content width for ultra-wide displays (keeps grid readable on 3840px screens) */
+  --site-max-width: 1440px;
 
   --page-padding: clamp(16px, 4vw, 32px);
   --nav-height: 48px;
@@ -540,6 +544,8 @@ html {
   /* Always-on classic gutter. overflow:hidden drops scrollbar-gutter in some browsers. */
   overflow-y: scroll;
   scrollbar-gutter: stable;
+  /* Supported viewport range: 320px (mobile minimum) to 3840px (4K desktop) */
+  min-width: 320px;
   /* Theme tokens live on :root / [data-theme]; interpolate here so descendants inherit the ease. */
   transition:
     --color-bg var(--transition-theme),
@@ -739,24 +745,27 @@ html[data-scroll-locked]::-webkit-scrollbar-thumb:hover {
 
 /* ─── Grid layout ───────────────────────────────────────────────── */
 
-/* Mobile / narrow: fluid 2-column grid filling the content width */
-@media (max-width: 899px) {
-  :root {
-    --grid-columns: 2;
-    /* Matches .portfolio-main content box (padding already applied) */
-    --grid-width: calc(100vw - 2 * var(--page-padding));
-  }
+/* Mobile / tablet: fluid 2-column grid filling the content width */
+html[data-device="mobile"],
+html[data-device="tablet"] {
+  --grid-columns: 2;
+  /* Matches .portfolio-main content box (padding already applied) */
+  --grid-width: calc(100vw - 2 * var(--page-padding));
+}
 
-  .portfolio-main {
-    /* Fluid 2-col grid fits the viewport — no horizontal scroll needed */
-    overflow-x: clip;
-  }
+html[data-device="mobile"] .portfolio-main,
+html[data-device="tablet"] .portfolio-main {
+  /* Fluid 2-col grid fits the viewport — no horizontal scroll needed */
+  overflow-x: clip;
 }
 
 .portfolio-main {
   padding: calc(var(--nav-height) + 48px) var(--page-padding) 64px;
   /* Desktop fixed 1024px grid may exceed narrow laptop widths */
   overflow-x: auto;
+  /* Max width container for ultra-wide displays */
+  max-width: var(--site-max-width);
+  margin-inline: auto;
 }
 
 .tile-grid {
@@ -784,6 +793,38 @@ html[data-scroll-locked]::-webkit-scrollbar-thumb:hover {
   min-width: 0;
   min-height: 0;
   transform-origin: center;
+}
+
+/* Tile entrance animation (first load only) */
+/* Hide tiles on first paint until entrance cascade begins (prevents FOUC) */
+.tile-grid:not([data-entrance-done]) .tile-slot {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+.tile-slot[data-entrance="visible"] {
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    opacity 300ms cubic-bezier(0.4, 0, 0.2, 1),
+    transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* After entrance completes, tiles use normal FLIP transitions */
+.tile-grid[data-entrance-done] .tile-slot {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Skip animation for reduced motion - show immediately */
+@media (prefers-reduced-motion: reduce) {
+  .tile-grid:not([data-entrance-done]) .tile-slot,
+  .tile-slot[data-entrance="visible"],
+  .tile-grid[data-entrance-done] .tile-slot {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
 }
 
 .tile-slot[data-active="true"] {
@@ -823,10 +864,8 @@ html[data-scroll-locked]::-webkit-scrollbar-thumb:hover {
 }
 
 /* Mobile: collapse 2×2 tiles to 2×1 (two columns, one row) */
-@media (max-width: 680px), (pointer: coarse) {
-  .tile-size-2x2 {
-    grid-row: span 1;
-  }
+html[data-device="mobile"] .tile-size-2x2 {
+  grid-row: span 1;
 }
 
 .tile-card {
@@ -858,14 +897,12 @@ html[data-scroll-locked]::-webkit-scrollbar-thumb:hover {
   filter: grayscale(var(--color-tile-inactive-grayscale));
 }
 
-@media (pointer: coarse), (max-width: 680px) {
-  .tile-slot[data-active="false"] {
-    display: none;
-  }
+html[data-device="mobile"] .tile-slot[data-active="false"] {
+  display: none;
+}
 
-  .tile-card[data-active="false"] {
-    pointer-events: none;
-  }
+html[data-device="mobile"] .tile-card[data-active="false"] {
+  pointer-events: none;
 }
 
 .tile-card[data-active="true"]:hover {
@@ -1330,10 +1367,8 @@ html[data-scroll-locked]::-webkit-scrollbar-thumb:hover {
     translate var(--transition-fast);
 }
 
-@media (max-width: 560px) {
-  .photo-stack-gallery-title {
-    padding: 12px 52px 2.25rem 12px;
-  }
+html[data-device="mobile"] .photo-stack-gallery-title {
+  padding: 12px 52px 2.25rem 12px;
 }
 
 /* ─── Music tile (Botanica overlay) ──────────────────────────────── */
@@ -1572,10 +1607,8 @@ html[data-scroll-locked]::-webkit-scrollbar-thumb:hover {
   outline-offset: 2px;
 }
 
-@media (max-width: 560px) {
-  .music-morph-card[data-mini="true"] {
-    max-width: calc(100vw - 32px);
-  }
+html[data-device="mobile"] .music-morph-card[data-mini="true"] {
+  max-width: calc(100vw - 32px);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1641,63 +1674,63 @@ html[data-scroll-locked]::-webkit-scrollbar-thumb:hover {
   transition: color var(--transition-theme);
 }
 
-/* Desktop: top-center pill */
-.site-nav {
+/* Desktop / tablet: top-center pill */
+html[data-device="desktop"] .site-nav,
+html[data-device="tablet"] .site-nav {
   transform: translateX(-50%) translateY(0);
   transition: transform var(--transition-fast);
   margin-top: 8px;
 }
 
-.site-nav[data-visible="false"] {
+html[data-device="desktop"] .site-nav[data-visible="false"],
+html[data-device="tablet"] .site-nav[data-visible="false"] {
   transform: translateX(-50%) translateY(calc(-100% - 24px));
   pointer-events: none;
   transition: transform var(--transition-base);
 }
 
 /* Mobile: bottom bar with equal-width buttons */
-@media (pointer: coarse), (max-width: 680px) {
-  .site-nav {
-    position: fixed;
-    top: auto;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 50;
-    transform: none;
-    transition: translate var(--transition-fast);
-    padding: 0 max(env(safe-area-inset-right), 12px) max(env(safe-area-inset-bottom), 12px) max(env(safe-area-inset-left), 12px);
-    margin-top: 0;
-  }
+html[data-device="mobile"] .site-nav {
+  position: fixed;
+  top: auto;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  transform: none;
+  transition: translate var(--transition-fast);
+  padding: 0 max(env(safe-area-inset-right), 12px) max(env(safe-area-inset-bottom), 12px) max(env(safe-area-inset-left), 12px);
+  margin-top: 0;
+}
 
-  .site-nav[data-visible="true"] {
-    translate: 0 0;
-  }
+html[data-device="mobile"] .site-nav[data-visible="true"] {
+  translate: 0 0;
+}
 
-  .site-nav[data-visible="false"] {
-    translate: 0 calc(100% + 16px);
-    pointer-events: none;
-    transition: translate var(--transition-base);
-  }
+html[data-device="mobile"] .site-nav[data-visible="false"] {
+  translate: 0 calc(100% + 16px);
+  pointer-events: none;
+  transition: translate var(--transition-base);
+}
 
-  .nav-pill {
-    width: 100%;
-    gap: 0;
-  }
+html[data-device="mobile"] .nav-pill {
+  width: 100%;
+  gap: 0;
+}
 
-  .nav-pill-button {
-    flex: 1;
-    min-height: 44px;
-    font-size: max(14px, var(--text-body-sm-size));
-    padding: 10px 8px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
+html[data-device="mobile"] .nav-pill-button {
+  flex: 1;
+  min-height: 44px;
+  font-size: max(14px, var(--text-body-sm-size));
+  padding: 10px 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
-  /* Ensure bottom padding on mobile home grid to prevent content from hiding under nav */
-  .portfolio-main {
-    padding-bottom: calc(64px + env(safe-area-inset-bottom) + 60px);
-  }
+/* Ensure bottom padding on mobile home grid to prevent content from hiding under nav */
+html[data-device="mobile"] .portfolio-main {
+  padding-bottom: calc(64px + env(safe-area-inset-bottom) + 60px);
 }
 
 .nav-pill {
@@ -1883,11 +1916,9 @@ html[data-scroll-locked]::-webkit-scrollbar-thumb:hover {
   display: none;
 }
 
-@media (pointer: coarse), (max-width: 680px) {
-  .social-tile-copied-toast {
-    display: block;
-    animation: social-tile-toast-in 200ms cubic-bezier(0.4, 0, 0.2, 1);
-  }
+html[data-device="mobile"] .social-tile-copied-toast {
+  display: block;
+  animation: social-tile-toast-in 200ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @keyframes social-tile-toast-in {
@@ -2010,12 +2041,10 @@ html[data-scroll-locked]::-webkit-scrollbar-thumb:hover {
   transform: scale(0.92);
 }
 
-@media (max-width: 560px) {
-  .intro-tile-expand,
-  .intro-expanded-minimize {
-    top: 10px;
-    right: 10px;
-  }
+html[data-device="mobile"] .intro-tile-expand,
+html[data-device="mobile"] .intro-expanded-minimize {
+  top: 10px;
+  right: 10px;
 }
 
 .intro-tile-avatar {
@@ -2131,37 +2160,35 @@ html[data-scroll-locked]::-webkit-scrollbar-thumb:hover {
   transform: scale(0.95);
 }
 
-@media (pointer: coarse), (max-width: 680px) {
-  .mobile-music-button {
-    display: flex;
-    /* Raise above bottom nav bar: 44px min-height + 12px gap + 12px padding + safe area */
-    bottom: calc(16px + 44px + 12px + 12px + env(safe-area-inset-bottom));
-  }
+html[data-device="mobile"] .mobile-music-button {
+  display: flex;
+  /* Raise above bottom nav bar: 44px min-height + 12px gap + 12px padding + safe area */
+  bottom: calc(16px + 44px + 12px + 12px + env(safe-area-inset-bottom));
+}
 
-  /* Hide the mini player card on mobile, show button instead */
-  .music-player-mini-mode .music-morph-card {
-    pointer-events: none;
-    opacity: 0;
-  }
+/* Hide the mini player card on mobile, show button instead */
+html[data-device="mobile"] .music-player-mini-mode .music-morph-card {
+  pointer-events: none;
+  opacity: 0;
+}
 
-  /* Keep iframe 1×1 in-flow (iOS Safari pauses off-screen media) */
-  .music-player-mini-mode .music-morph-player {
-    position: fixed;
-    /* Match button position */
-    bottom: calc(16px + 44px + 12px + 12px + env(safe-area-inset-bottom));
-    right: calc(16px + env(safe-area-inset-right));
-    width: 1px;
-    height: 1px;
-    opacity: 0;
-    pointer-events: none;
-    z-index: 1399;
-    overflow: hidden;
-  }
+/* Keep iframe 1×1 in-flow (iOS Safari pauses off-screen media) */
+html[data-device="mobile"] .music-player-mini-mode .music-morph-player {
+  position: fixed;
+  /* Match button position */
+  bottom: calc(16px + 44px + 12px + 12px + env(safe-area-inset-bottom));
+  right: calc(16px + env(safe-area-inset-right));
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 1399;
+  overflow: hidden;
+}
 
-  .music-player-mini-mode .music-morph-player iframe {
-    width: 1px;
-    height: 1px;
-  }
+html[data-device="mobile"] .music-player-mini-mode .music-morph-player iframe {
+  width: 1px;
+  height: 1px;
 }
 
 /* Registered so blur interpolates on enter/exit (unregistered custom props snap). */
@@ -2383,10 +2410,8 @@ html[data-scroll-locked]::-webkit-scrollbar-thumb:hover {
   outline-offset: 2px;
 }
 
-@media (max-width: 560px) {
-  .intro-morph-expanded {
-    padding: 36px 22px 28px;
-  }
+html[data-device="mobile"] .intro-morph-expanded {
+  padding: 36px 22px 28px;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -3256,28 +3281,26 @@ html[data-theme="dark"][data-case-study-boot="cover"] body::before {
   max-width: 220px;
 }
 
-@media (max-width: 680px) {
-  .case-study-phone-row {
-    gap: 16px;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    justify-content: flex-start;
-    padding: 0 calc((100% - 70%) / 2 - 28px);
-  }
+html[data-device="mobile"] .case-study-phone-row {
+  gap: 16px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  justify-content: flex-start;
+  padding: 0 calc((100% - 70%) / 2 - 28px);
+}
 
-  .case-study-phone-row::-webkit-scrollbar {
-    display: none;
-  }
-  
-  .case-study-phone-img {
-    scroll-snap-align: center;
-    flex-shrink: 0;
-    width: 70%;
-    min-width: 70%;
-    max-width: 70%;
-  }
+html[data-device="mobile"] .case-study-phone-row::-webkit-scrollbar {
+  display: none;
+}
+
+html[data-device="mobile"] .case-study-phone-img {
+  scroll-snap-align: center;
+  flex-shrink: 0;
+  width: 70%;
+  min-width: 70%;
+  max-width: 70%;
 }
 
 .cover-podcasts,
@@ -3488,22 +3511,20 @@ html[data-theme="dark"][data-case-study-boot="cover"] body::before {
   height: 14%;
 }
 
-@media (max-width: 640px) {
-  .case-study-page {
-    padding-bottom: 80px;
-  }
+html[data-device="mobile"] .case-study-page {
+  padding-bottom: 80px;
+}
 
-  .case-study-page-inner {
-    --case-study-stack-gap: 2rem;
-  }
+html[data-device="mobile"] .case-study-page-inner {
+  --case-study-stack-gap: 2rem;
+}
 
-  .case-study-body {
-    --case-study-body-gap: 2rem;
-  }
+html[data-device="mobile"] .case-study-body {
+  --case-study-body-gap: 2rem;
+}
 
-  .case-study-cover-stage {
-    border-radius: 18px;
-  }
+html[data-device="mobile"] .case-study-cover-stage {
+  border-radius: 18px;
 }
 
 @media (prefers-reduced-motion: reduce) {

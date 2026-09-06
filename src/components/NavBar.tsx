@@ -6,6 +6,7 @@ import { filters } from "@/data/tiles";
 import { useHoverThumb } from "@/hooks/useHoverThumb";
 import { useSlidingThumb } from "@/hooks/useSlidingThumb";
 import { usePointerGesture } from "@/hooks/usePointerGesture";
+import { useDevice } from "@/hooks/useDevice";
 
 interface NavBarProps {
   activeFilter: FilterCategory;
@@ -71,6 +72,7 @@ export function NavBar({
   onFilterChange,
   visible = true,
 }: NavBarProps) {
+  const device = useDevice();
   const { containerRef, thumb, thumbReady } = useSlidingThumb(activeFilter);
   const { hoverThumb, hoverVisible, hoverSnap } = useHoverThumb(
     containerRef,
@@ -82,6 +84,7 @@ export function NavBar({
       className="site-nav fixed top-4 left-1/2 z-50 pointer-events-auto"
       aria-label="Portfolio filters"
       data-visible={visible ? "true" : "false"}
+      data-device={device}
       inert={!visible || undefined}
     >
       <div

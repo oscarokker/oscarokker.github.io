@@ -22,6 +22,7 @@ interface TileProps {
   tile: TileData;
   isActive: boolean;
   sortOrder: number;
+  entranceState?: "visible" | null;
 }
 
 interface CursorMeta {
@@ -125,7 +126,7 @@ function isInteractiveTile(tile: TileData): boolean {
   return true;
 }
 
-export function Tile({ tile, isActive, sortOrder }: TileProps) {
+export function Tile({ tile, isActive, sortOrder, entranceState }: TileProps) {
   const comingSoon = isComingSoonCaseStudy(tile);
   // Filter match stays on the slot (FLIP / packing). Coming-soon cards are
   // always visually + interactively inactive, even when the filter matches.
@@ -166,6 +167,7 @@ export function Tile({ tile, isActive, sortOrder }: TileProps) {
       className={`tile-slot tile-size-${tile.size}`}
       data-grid-order={sortOrder}
       data-active={isActive}
+      data-entrance={entranceState || undefined}
       inert={!isActive || undefined}
     >
       <article

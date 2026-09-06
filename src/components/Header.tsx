@@ -7,12 +7,14 @@ import { useCaseStudyTransitionOptional } from "@/components/case-studies/CaseSt
 import { isCaseStudyPath } from "@/lib/case-study-href";
 import { useTheme } from "@/components/ThemeProvider";
 import { useCursorLabelOptional } from "@/hooks/useCursorLabel";
+import { useDevice } from "@/hooks/useDevice";
 
 interface HeaderProps {
   visible?: boolean;
 }
 
 export function Header({ visible = true }: HeaderProps) {
+  const device = useDevice();
   const { theme, toggleTheme } = useTheme();
   const cursor = useCursorLabelOptional();
   const setCursorLabel = cursor?.setCursorLabel;
@@ -48,6 +50,7 @@ export function Header({ visible = true }: HeaderProps) {
     <header
       className="site-header fixed top-0 left-0 right-0 z-50 pointer-events-none"
       data-visible={visible ? "true" : "false"}
+      data-device={device}
       inert={!visible || undefined}
     >
       <div className="site-header-inner">
