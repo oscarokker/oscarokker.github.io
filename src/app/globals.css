@@ -807,8 +807,8 @@ html[data-device="tablet"] .portfolio-main {
   opacity: 1;
   transform: translateY(0);
   transition:
-    opacity 300ms cubic-bezier(0.4, 0, 0.2, 1),
-    transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
+    opacity 80ms cubic-bezier(0.4, 0, 0.2, 1),
+    transform 80ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* After entrance completes, tiles use normal FLIP transitions */
@@ -986,7 +986,7 @@ html[data-device="mobile"] .tile-card[data-active="false"] {
   position: relative;
   align-items: center;
   justify-content: center;
-  padding: 20px 28px;
+  padding: 36px 48px;
 }
 
 .tile-card--logo:hover .intro-tile-expand,
