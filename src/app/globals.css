@@ -796,7 +796,8 @@ html[data-device="tablet"] .portfolio-main {
 }
 
 /* Tile entrance animation (first load only) */
-.tile-slot[data-entrance="animating"] {
+/* Hide tiles on first paint until entrance cascade begins (prevents FOUC) */
+.tile-grid:not([data-entrance-done]) .tile-slot {
   opacity: 0;
   transform: translateY(8px);
 }
@@ -809,10 +810,17 @@ html[data-device="tablet"] .portfolio-main {
     transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Skip animation for reduced motion */
+/* After entrance completes, tiles use normal FLIP transitions */
+.tile-grid[data-entrance-done] .tile-slot {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Skip animation for reduced motion - show immediately */
 @media (prefers-reduced-motion: reduce) {
-  .tile-slot[data-entrance="animating"],
-  .tile-slot[data-entrance="visible"] {
+  .tile-grid:not([data-entrance-done]) .tile-slot,
+  .tile-slot[data-entrance="visible"],
+  .tile-grid[data-entrance-done] .tile-slot {
     opacity: 1;
     transform: none;
     transition: none;

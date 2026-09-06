@@ -22,7 +22,7 @@ interface TileProps {
   tile: TileData;
   isActive: boolean;
   sortOrder: number;
-  entranceState?: "animating" | "visible" | null;
+  entranceState?: "visible" | null;
 }
 
 interface CursorMeta {

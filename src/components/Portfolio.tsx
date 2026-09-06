@@ -6,6 +6,7 @@ import { tiles } from "@/data/tiles";
 import { NavBar } from "@/components/NavBar";
 import { Tile, tileMatchesFilter } from "@/components/Tile";
 import { useHeaderVisibility } from "@/hooks/useHeaderVisibility";
+import { useDevice } from "@/hooks/useDevice";
 import { tileGridOrder, useTileGridFlip } from "@/hooks/useTileGridFlip";
 import {
   FILTER_QUERY_KEY,
@@ -36,12 +37,13 @@ export function Portfolio({
     filterFromLocation,
     () => initialFilter,
   );
+  const device = useDevice();
   const headerVisible = useHeaderVisibility();
   const gridRef = useRef<HTMLDivElement>(null);
   
-  // Track first mount for entrance animation (only animate on initial load)
-  const hasAnimatedRef = useRef(false);
-  const [entranceStates, setEntranceStates] = useState<Record<string, "animating" | "visible" | null>>({});
+  // Track entrance animation completion
+  const [entranceDone, setEntranceDone] = useState(false);
+  const [entranceStates, setEntranceStates] = useState<Record<string, "visible" | null>>({});
 
   useTileGridFlip(gridRef, activeFilter);
 
@@ -51,22 +53,13 @@ export function Portfolio({
 
   // Trigger staggered entrance animation on first mount only
   useEffect(() => {
-    if (hasAnimatedRef.current) return;
-    hasAnimatedRef.current = true;
-
     // Check if user prefers reduced motion
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (prefersReducedMotion) {
-      // Skip animation entirely
+      // Skip animation entirely, mark as done immediately
+      setEntranceDone(true);
       return;
     }
-
-    // Initialize all tiles as "animating"
-    const initialStates: Record<string, "animating" | "visible" | null> = {};
-    tiles.forEach((tile) => {
-      initialStates[tile.id] = "animating";
-    });
-    setEntranceStates(initialStates);
 
     // Stagger the reveal: ~50ms per tile in reading order
     const STAGGER_DELAY = 50;
@@ -79,6 +72,12 @@ export function Portfolio({
         }));
       }, index * STAGGER_DELAY);
     });
+
+    // Mark entrance as done after all animations complete
+    const totalDuration = tiles.length * STAGGER_DELAY + 300; // stagger + transition duration
+    setTimeout(() => {
+      setEntranceDone(true);
+    }, totalDuration);
   }, []);
 
   const onFilterChange = useCallback((filter: FilterCategory) => {
@@ -98,8 +97,13 @@ export function Portfolio({
         onFilterChange={onFilterChange}
         visible={headerVisible}
       />
-      <main className="portfolio-main">
-        <div ref={gridRef} className="tile-grid" role="list">
+      <main className="portfolio-main" data-device={device}>
+        <div
+          ref={gridRef}
+          className="tile-grid"
+          role="list"
+          data-entrance-done={entranceDone || undefined}
+        >
           {tiles.map((tile, index) => {
             const isActive = tileMatchesFilter(tile, activeFilter);
             const entranceState = entranceStates[tile.id];
