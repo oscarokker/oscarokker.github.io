@@ -35,7 +35,7 @@ export const tiles: TileData[] = [
   },
   {
     id: "quote",
-    categories: ["about", "work"],
+    categories: ["about"],
     size: "2x1",
     variant: "quote",
     props: {
@@ -58,7 +58,7 @@ export const tiles: TileData[] = [
   },
   {
     id: "contact-linkedin",
-    categories: ["about", "work"],
+    categories: ["work"],
     size: "1x1",
     variant: "social",
     props: {
@@ -84,7 +84,7 @@ export const tiles: TileData[] = [
   },
   {
     id: "quote-ux-principle",
-    categories: ["about", "work"],
+    categories: ["about"],
     size: "2x1",
     variant: "quote",
     props: {
@@ -112,7 +112,7 @@ export const tiles: TileData[] = [
   },
   {
     id: "duolingo",
-    categories: ["side-quests", "about"],
+    categories: ["side-quests"],
     size: "1x1",
     variant: "duolingo",
     props: {
@@ -135,7 +135,7 @@ export const tiles: TileData[] = [
   },
   {
     id: "oscar-rode-cv",
-    categories: ["work", "about"],
+    categories: ["work"],
     size: "1x1",
     variant: "cv",
     props: {
