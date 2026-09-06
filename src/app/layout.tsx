@@ -5,6 +5,7 @@ import { InlineScript } from "@/components/InlineScript";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { THEME_INIT_SCRIPT } from "@/lib/theme";
 import { CASE_STUDY_BOOT_SCRIPT } from "@/lib/case-study-href";
+import { DEVICE_INIT_SCRIPT } from "@/lib/device";
 import "./globals.css";
 
 const SITE_TITLE = "Oscar Rode · Design Portfolio";
@@ -80,6 +81,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <head>
         <InlineScript html={THEME_INIT_SCRIPT} />
+        <InlineScript html={DEVICE_INIT_SCRIPT} />
         <InlineScript html={CASE_STUDY_BOOT_SCRIPT} />
       </head>
       <body className="min-h-full">

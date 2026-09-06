@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useSyncExternalStore } from "react";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import type { FilterCategory } from "@/lib/types";
 import { tiles } from "@/data/tiles";
 import { NavBar } from "@/components/NavBar";
@@ -38,12 +38,48 @@ export function Portfolio({
   );
   const headerVisible = useHeaderVisibility();
   const gridRef = useRef<HTMLDivElement>(null);
+  
+  // Track first mount for entrance animation (only animate on initial load)
+  const hasAnimatedRef = useRef(false);
+  const [entranceStates, setEntranceStates] = useState<Record<string, "animating" | "visible" | null>>({});
 
   useTileGridFlip(gridRef, activeFilter);
 
   useEffect(() => {
     rememberPortfolioFilter(activeFilter);
   }, [activeFilter]);
+
+  // Trigger staggered entrance animation on first mount only
+  useEffect(() => {
+    if (hasAnimatedRef.current) return;
+    hasAnimatedRef.current = true;
+
+    // Check if user prefers reduced motion
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReducedMotion) {
+      // Skip animation entirely
+      return;
+    }
+
+    // Initialize all tiles as "animating"
+    const initialStates: Record<string, "animating" | "visible" | null> = {};
+    tiles.forEach((tile) => {
+      initialStates[tile.id] = "animating";
+    });
+    setEntranceStates(initialStates);
+
+    // Stagger the reveal: ~50ms per tile in reading order
+    const STAGGER_DELAY = 50;
+    
+    tiles.forEach((tile, index) => {
+      setTimeout(() => {
+        setEntranceStates((prev) => ({
+          ...prev,
+          [tile.id]: "visible",
+        }));
+      }, index * STAGGER_DELAY);
+    });
+  }, []);
 
   const onFilterChange = useCallback((filter: FilterCategory) => {
     rememberPortfolioFilter(filter);
@@ -66,12 +102,14 @@ export function Portfolio({
         <div ref={gridRef} className="tile-grid" role="list">
           {tiles.map((tile, index) => {
             const isActive = tileMatchesFilter(tile, activeFilter);
+            const entranceState = entranceStates[tile.id];
             return (
               <Tile
                 key={tile.id}
                 tile={tile}
                 isActive={isActive}
                 sortOrder={tileGridOrder(index, isActive, activeFilter)}
+                entranceState={entranceState}
               />
             );
           })}
