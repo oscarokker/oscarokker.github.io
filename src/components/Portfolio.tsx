@@ -63,7 +63,7 @@ export function Portfolio({
 
     // Stagger the reveal: start each tile every 40ms for overlapping animations
     const STAGGER_DELAY = 40;
-    const ANIMATION_DURATION = 80;
+    const ANIMATION_DURATION = 120;
     
     tiles.forEach((tile, index) => {
       setTimeout(() => {
