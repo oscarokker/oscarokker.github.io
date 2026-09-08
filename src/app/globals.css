@@ -1722,7 +1722,7 @@ html[data-device="mobile"] .nav-pill {
 html[data-device="mobile"] .nav-pill-button {
   flex: 1;
   min-height: 44px;
-  font-size: max(14px, var(--text-body-sm-size));
+  font-size: 13px;
   padding: 10px 8px;
   white-space: nowrap;
   overflow: hidden;

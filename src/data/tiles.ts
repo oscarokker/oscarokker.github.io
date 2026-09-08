@@ -204,5 +204,5 @@ export const filters = [
   { id: "all" as const, label: "All" },
   { id: "work" as const, label: "Work" },
   { id: "about" as const, label: "About" },
-  { id: "side-quests" as const, label: "Hobbies" },
+  { id: "side-quests" as const, label: "Side Quests" },
 ];
