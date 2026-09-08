@@ -601,8 +601,6 @@ body {
   font-family: var(--font-sans), system-ui, sans-serif;
   font-size: var(--text-body-size);
   line-height: var(--text-body-leading);
-  /* Keep noise behind content while staying above the bg color */
-  isolation: isolate;
 }
 
 /* Light-mode paper grain — monochrome, very subtle; fades out in dark */
@@ -769,7 +767,6 @@ html[data-device="mobile"] .portfolio-main {
 
 .tile-grid {
   position: relative;
-  isolation: isolate;
   display: grid;
   grid-template-columns: repeat(var(--grid-columns), var(--grid-cell));
   grid-auto-rows: var(--grid-cell);
