@@ -330,8 +330,8 @@
   --radius-md: 20px;
   --radius-full: 9999px;
 
-  /* Grid system — 4 cols desktop; 2 cols mobile/tablet
-     Desktop fixed-width grid, mobile/tablet fluid to viewport */
+  /* Grid system — 4 cols desktop/tablet; 2 cols mobile
+     Desktop/tablet fixed-width grid, mobile fluid to viewport */
   --grid-columns: 4;
   --grid-width: 1020px;
   --grid-gap: 20px;
@@ -745,16 +745,14 @@ html[data-scroll-locked]::-webkit-scrollbar-thumb:hover {
 
 /* ─── Grid layout ───────────────────────────────────────────────── */
 
-/* Mobile / tablet: fluid 2-column grid filling the content width */
-html[data-device="mobile"],
-html[data-device="tablet"] {
+/* Mobile: fluid 2-column grid filling the content width */
+html[data-device="mobile"] {
   --grid-columns: 2;
   /* Matches .portfolio-main content box (padding already applied), capped at 1020px */
   --grid-width: min(1020px, calc(100vw - 2 * var(--page-padding)));
 }
 
-html[data-device="mobile"] .portfolio-main,
-html[data-device="tablet"] .portfolio-main {
+html[data-device="mobile"] .portfolio-main {
   /* Fluid 2-col grid fits the viewport — no horizontal scroll needed */
   overflow-x: clip;
 }
