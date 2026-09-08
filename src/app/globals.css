@@ -333,7 +333,7 @@
   /* Grid system — 4 cols desktop; 2 cols mobile/tablet
      Desktop fixed-width grid, mobile/tablet fluid to viewport */
   --grid-columns: 4;
-  --grid-width: 1024px;
+  --grid-width: 1020px;
   --grid-gap: 20px;
   --grid-cell: calc(
     (var(--grid-width) - (var(--grid-columns) - 1) * var(--grid-gap)) /
@@ -749,8 +749,8 @@ html[data-scroll-locked]::-webkit-scrollbar-thumb:hover {
 html[data-device="mobile"],
 html[data-device="tablet"] {
   --grid-columns: 2;
-  /* Matches .portfolio-main content box (padding already applied) */
-  --grid-width: calc(100vw - 2 * var(--page-padding));
+  /* Matches .portfolio-main content box (padding already applied), capped at 1020px */
+  --grid-width: min(1020px, calc(100vw - 2 * var(--page-padding)));
 }
 
 html[data-device="mobile"] .portfolio-main,
