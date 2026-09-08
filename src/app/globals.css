@@ -748,8 +748,9 @@ html[data-scroll-locked]::-webkit-scrollbar-thumb:hover {
 /* Mobile: fluid 2-column grid filling the content width */
 html[data-device="mobile"] {
   --grid-columns: 2;
-  /* Matches .portfolio-main content box (padding already applied), capped at 1020px */
-  --grid-width: min(1020px, calc(100vw - 2 * var(--page-padding)));
+  /* Matches .portfolio-main content box (padding already applied).
+     Enforce 320px minimum to preserve grid integrity at narrow viewports, capped at 1020px. */
+  --grid-width: min(1020px, max(320px, calc(100vw - 2 * var(--page-padding))));
 }
 
 html[data-device="mobile"] .portfolio-main {
@@ -777,6 +778,7 @@ html[data-device="mobile"] .portfolio-main {
   gap: var(--grid-gap);
 
   width: var(--grid-width);
+  min-width: 320px;
   margin-inline: auto;
   touch-action: pan-y;
 }
