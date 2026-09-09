@@ -1,6 +1,7 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import type { FilterCategory } from "@/lib/types";
 import { filters } from "@/data/tiles";
 import { useHoverThumb } from "@/hooks/useHoverThumb";
@@ -73,11 +74,47 @@ export function NavBar({
   visible = true,
 }: NavBarProps) {
   const device = useDevice();
+  const pathname = usePathname();
+  const isHome = pathname === "/";
   const { containerRef, thumb, thumbReady } = useSlidingThumb(activeFilter);
   const { hoverThumb, hoverVisible, hoverSnap } = useHoverThumb(
     containerRef,
     activeFilter,
   );
+  
+  const [entranceState, setEntranceState] = useState<"pending" | "visible" | "done">("pending");
+  
+  // Trigger entrance animation on home page first mount
+  useEffect(() => {
+    if (!isHome) {
+      setEntranceState("done");
+      return;
+    }
+    
+    // Check if user prefers reduced motion
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReducedMotion) {
+      setEntranceState("done");
+      return;
+    }
+    
+    // Start chrome entrance ~100ms before first tile (or ~half the tile delay)
+    const chromeDelay = 0; // Start immediately, tiles start at index * 70ms
+    const chromeAnimDuration = 400;
+    
+    const showTimer = setTimeout(() => {
+      setEntranceState("visible");
+    }, chromeDelay);
+    
+    const doneTimer = setTimeout(() => {
+      setEntranceState("done");
+    }, chromeDelay + chromeAnimDuration);
+    
+    return () => {
+      clearTimeout(showTimer);
+      clearTimeout(doneTimer);
+    };
+  }, [isHome]);
 
   return (
     <nav
@@ -85,6 +122,9 @@ export function NavBar({
       aria-label="Portfolio filters"
       data-visible={visible ? "true" : "false"}
       data-device={device}
+      data-entrance-pending={isHome && entranceState === "pending" ? true : undefined}
+      data-entrance-visible={isHome && entranceState === "visible" ? true : undefined}
+      data-entrance-done={isHome && entranceState === "done" ? true : undefined}
       inert={!visible || undefined}
     >
       <div

@@ -4,7 +4,7 @@
 **Theme:** light + dark (first-class pair)  
 **Living document:** update when the live site changes; Kern (design) proposes, Mosaic (code) confirms tokens match CSS. Oscar can ask anytime for improvements.
 
-Oscar Rode’s portfolio is a personal UX/UI surface — not a SaaS landing page. Visitors should quickly see the design work, the case studies, and who he is to work with. The system is a **bento tile grid** on a warm off-white parchment in light mode, and a deep indigo canvas with a soft amber edge glow in dark mode. Display type is an editorial serif (Lora); UI and body are a calm sans (Open Sans). Soft rounded tiles, pill filters, and quiet elevation make the grid feel tactile and slightly playful without becoming loud. Case-study pages are a quieter editorial column: product figures and looping demos finish the sentence above them — they never decorate.
+Oscar Rode's portfolio is a personal UX/UI surface — not a SaaS landing page. Visitors should quickly see the design work, the case studies, and who he is to work with. The system is a **bento tile grid** on a warm off-white parchment in light mode, and a deep indigo canvas with a soft amber edge glow in dark mode. Display type is an editorial serif (Lora); UI and body are a calm sans (Open Sans). Soft rounded tiles, pill filters, and quiet elevation make the grid feel tactile and slightly playful without becoming loud. Case-study pages are a quieter editorial column: product figures and looping demos finish the sentence above them — they never decorate.
 
 This file is the contract for future design and implementation. Prefer these tokens over inventing new colors, radii, or type roles.
 
@@ -115,6 +115,34 @@ Tiles use soft dual shadows: `--shadow-tile`, hover `--shadow-tile-hover`, press
 | `--transition-theme` | 0.35s | Light/dark |
 | `--transition-reading` | 0.42s | Detailed/Summary folds |
 
+#### Home "bento assemble" intro
+
+Feel: the site assembles itself saying hi. Pleasant; almost want to refresh. Never blocks use. Total choreography ~1.0–1.2s (hard range 0.8–1.4s).
+
+**Per tile (home grid only on full load/refresh):**
+
+| Prop | From | To |
+|---|---|---|
+| opacity | 0 | 1 |
+| transform | translateY(20px) | translateY(0) |
+| filter | blur(6px) | blur(0) |
+
+- **Duration per tile:** 0.55s
+- **Ease:** `cubic-bezier(0.16, 1, 0.3, 1)` — matches `--transition-tile-flip` / reading
+- **Stagger:** 0.07s between consecutive tiles, row-major top→bottom. Overlap. Cap total stagger so more tiles don't push past ~1.2s total choreography.
+
+**Chrome:** Header (logo + theme) and filter pill fade/rise with half the tile delay (or start ~100ms before first tile) — secondary to the bento.
+
+**Must:**
+- `pointer-events` normal during animation — no interaction gate
+- `prefers-reduced-motion: reduce` → final state immediately
+- clear `will-change` after animation completes
+- no percent loader / full-screen trap / bounce springs
+
+Don't re-run the full intro on every client filter change (optional lighter reflow later — out of scope).
+
+---
+
 Respect `prefers-reduced-motion`. On coarse pointers, hide custom cursor / hover-only labels.
 
 ---
@@ -151,7 +179,7 @@ Visible but not fake-tappable: `aria-disabled`, no press scale, default cursor.
 
 ---
 
-## Do’s and Don’ts
+## Do's and Don'ts
 
 ### Do
 - Keep parchment (light) and midnight indigo (dark) as the only canvases; let amber glow stay atmospheric in dark, not a brand flood
@@ -162,14 +190,14 @@ Visible but not fake-tappable: `aria-disabled`, no press scale, default cursor.
 - Write case studies as decision beats with figures that prove the beat
 - Prefer existing `--color-tile-*` accents over inventing one-off hexes
 
-### Don’t
-- Don’t set the light canvas to pure `#ffffff` — parchment is the signature
-- Don’t cover logo/theme with the filter pill on small viewports
-- Don’t leave case-study media with square corners or near-black left-aligned captions
-- Don’t put research stills into the Source Insights phone-row carousel
-- Don’t let the music iframe intercept taps
-- Don’t add SaaS marketing chrome (pricing tables, multi CTA pill pairs) that fights the personal bento
-- Don’t introduce a third typeface without updating this file and the CSS together
+### Don't
+- Don't set the light canvas to pure `#ffffff` — parchment is the signature
+- Don't cover logo/theme with the filter pill on small viewports
+- Don't leave case-study media with square corners or near-black left-aligned captions
+- Don't put research stills into the Source Insights phone-row carousel
+- Don't let the music iframe intercept taps
+- Don't add SaaS marketing chrome (pricing tables, multi CTA pill pairs) that fights the personal bento
+- Don't introduce a third typeface without updating this file and the CSS together
 
 ---
 
@@ -190,7 +218,7 @@ Visible but not fake-tappable: `aria-disabled`, no press scale, default cursor.
 - **Home:** photography and product UI live *inside* tiles (music covers, trek photos, case covers) — the grid is the composition.
 - **Case studies:** product shots, research artifacts, short looping demos. No stock lifestyle filler.
 - **Personality:** side quests (Himalaya, Duolingo, music) are allowed; Work filter must still surface real case studies first.
-- **Dark mode:** distinctive — indigo field + amber edge. Preserve it; don’t flatten to generic gray dark mode.
+- **Dark mode:** distinctive — indigo field + amber edge. Preserve it; don't flatten to generic gray dark mode.
 
 ---
 
@@ -239,9 +267,9 @@ Call these out when found; fix in CSS + this file together:
 
 | Role | Owns |
 |------|------|
-| **Kern** | Taste, Do/Don’t, inconsistency callouts, proposed token changes |
+| **Kern** | Taste, Do/Don't, inconsistency callouts, proposed token changes |
 | **Mosaic** | CSS variables, component implementation, PR to keep DESIGN.md ↔ code true |
-| **Oscar** | Personality, which projects define “who I am to work with,” veto / evolve the living doc |
+| **Oscar** | Personality, which projects define "who I am to work with," veto / evolve the living doc |
 
 **Sources informing this draft (Refero patterns, not clones):**
 

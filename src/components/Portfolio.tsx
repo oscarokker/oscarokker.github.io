@@ -61,9 +61,17 @@ export function Portfolio({
       return;
     }
 
-    // Stagger the reveal: start each tile every 40ms for overlapping animations
-    const STAGGER_DELAY = 40;
-    const ANIMATION_DURATION = 120;
+    // Stagger the reveal: 70ms per tile, capped to keep total choreography within ~1.0-1.2s
+    const STAGGER_DELAY = 70;
+    const ANIMATION_DURATION = 550;
+    const TARGET_TOTAL_DURATION = 1100; // Target ~1.1s total (range 1.0-1.2s)
+    const MAX_TOTAL_DURATION = 1400; // Hard cap at 1.4s
+    
+    // Calculate if we need to compress stagger
+    const uncappedTotal = tiles.length * STAGGER_DELAY + ANIMATION_DURATION;
+    const actualStagger = uncappedTotal > MAX_TOTAL_DURATION
+      ? Math.max(10, (TARGET_TOTAL_DURATION - ANIMATION_DURATION) / tiles.length)
+      : STAGGER_DELAY;
     
     tiles.forEach((tile, index) => {
       setTimeout(() => {
@@ -71,11 +79,11 @@ export function Portfolio({
           ...prev,
           [tile.id]: "visible",
         }));
-      }, index * STAGGER_DELAY);
+      }, index * actualStagger);
     });
 
     // Mark entrance as done after all animations complete
-    const totalDuration = tiles.length * STAGGER_DELAY + ANIMATION_DURATION; // stagger + transition duration
+    const totalDuration = tiles.length * actualStagger + ANIMATION_DURATION;
     setTimeout(() => {
       setEntranceDone(true);
     }, totalDuration);
