@@ -2465,7 +2465,12 @@ html[data-device="mobile"] .intro-morph-expanded {
   height: 64px;
   object-fit: contain;
   display: block;
-  border-radius: 16px;
+}
+
+html[data-device="mobile"] .cv-tile-logo {
+  /* Match social tiles: 32px at 320px → 48px at 767px */
+  width: clamp(32px, calc(32px + (100vw - 320px) * 16 / 447), 48px);
+  height: clamp(32px, calc(32px + (100vw - 320px) * 16 / 447), 48px);
 }
 
 .cv-tile-size-hint {
