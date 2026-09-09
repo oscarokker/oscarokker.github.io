@@ -2842,36 +2842,6 @@ html[data-device="mobile"] .cv-tile-logo {
   max-width: none;
 }
 
-.case-study-face-scrim {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  background:
-    linear-gradient(
-      180deg,
-      rgba(8, 12, 18, 0.18) 0%,
-      rgba(8, 12, 18, 0.12) 42%,
-      rgba(8, 12, 18, 0.72) 100%
-    );
-}
-
-.case-study-face--cover .text-h1,
-.case-study-face--cover .case-study-coming-soon {
-  color: #f5f7fa;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
-}
-
-[data-theme="light"] .case-study-face-scrim {
-  background:
-    linear-gradient(
-      180deg,
-      rgba(8, 12, 18, 0.22) 0%,
-      rgba(8, 12, 18, 0.16) 42%,
-      rgba(8, 12, 18, 0.78) 100%
-    );
-}
-
 .case-study-morph-root {
   position: fixed;
   inset: 0;

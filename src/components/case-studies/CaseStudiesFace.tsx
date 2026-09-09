@@ -17,21 +17,18 @@ export function CaseStudyFace({
 }: CaseStudyFaceProps) {
   return (
     <div
-      className={`tile-card-inner case-study-face relative justify-end ${accentClass(accent)} h-full ${coverSrc ? "case-study-face--cover" : ""}`}
+      className={`tile-card-inner case-study-face relative ${accentClass(accent)} h-full ${coverSrc ? "case-study-face--cover" : ""} ${!coverSrc && comingSoon ? "justify-center items-center" : ""}`}
     >
       {coverSrc ? (
-        <>
-          <div className="case-study-face-cover-wrap" aria-hidden>
-            <Image
-              src={withBasePath(coverSrc)}
-              alt=""
-              fill
-              sizes="(max-width: 680px) 50vw, 280px"
-              className="case-study-face-cover"
-            />
-          </div>
-          <div className="case-study-face-scrim" />
-        </>
+        <div className="case-study-face-cover-wrap" aria-hidden>
+          <Image
+            src={withBasePath(coverSrc)}
+            alt=""
+            fill
+            sizes="(max-width: 680px) 50vw, 280px"
+            className="case-study-face-cover"
+          />
+        </div>
       ) : (
         <div
           className="absolute inset-0 opacity-[0.08]"
@@ -41,20 +38,13 @@ export function CaseStudyFace({
           }}
         />
       )}
-      <div className="relative z-[2]">
-        <h2
-          className={`text-h1 m-0 ${coverSrc ? "" : "text-[var(--color-text-primary)]"}`}
-        >
-          {title}
-        </h2>
-        {comingSoon ? (
-          <p
-            className={`case-study-coming-soon text-caption m-0 mt-1 ${coverSrc ? "" : "text-[var(--color-text-primary)]"}`}
-          >
+      {!coverSrc && comingSoon ? (
+        <div className="relative z-[2]">
+          <p className="case-study-coming-soon text-caption m-0 text-[var(--color-text-primary)]">
             coming soon
           </p>
-        ) : null}
-      </div>
+        </div>
+      ) : null}
     </div>
   );
 }
