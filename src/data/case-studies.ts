@@ -25,6 +25,7 @@ export interface CaseStudyFigure {
   cover?: CaseStudyCoverId;
   src?: string;
   images?: { src: string; alt: string }[];
+  layout?: "phones" | "gallery";
   videoSrc?: string;
   poster?: string;
   caption: string;
@@ -270,6 +271,7 @@ export const caseStudies: CaseStudy[] = [
               alt: "An AI summary of a source under a claim.",
             },
           ],
+          layout: "phones",
           caption: "A claim opens into creator, supporting, and opposing sources — disagreement stays in the episode, not in a separate fact-check product.",
         },
       },

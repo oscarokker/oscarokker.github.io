@@ -304,20 +304,37 @@ export function CaseStudyArticle({ study }: CaseStudyArticleProps) {
                           style={{ width: "100%", height: "auto", borderRadius: "inherit" }}
                         />
                       ) : section.figure.images ? (
-                        <div className="case-study-phone-row">
-                          {section.figure.images.map((img, idx) => (
-                            <Image
-                              key={img.src}
-                              src={withBasePath(img.src)}
-                              alt={img.alt}
-                              width={1206}
-                              height={2622}
-                              sizes="(max-width: 680px) 30vw, 200px"
-                              className="case-study-phone-img"
-                              style={{ width: "100%", height: "auto" }}
-                            />
-                          ))}
-                        </div>
+                        section.figure.layout === "phones" ? (
+                          <div className="case-study-phone-row">
+                            {section.figure.images.map((img) => (
+                              <Image
+                                key={img.src}
+                                src={withBasePath(img.src)}
+                                alt={img.alt}
+                                width={1206}
+                                height={2622}
+                                sizes="(max-width: 680px) 30vw, 200px"
+                                className="case-study-phone-img"
+                                style={{ width: "100%", height: "auto" }}
+                              />
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="case-study-figure-gallery">
+                            {section.figure.images.map((img) => (
+                              <Image
+                                key={img.src}
+                                src={withBasePath(img.src)}
+                                alt={img.alt}
+                                width={1600}
+                                height={900}
+                                sizes="(max-width: 680px) 100vw, 680px"
+                                className="case-study-gallery-img"
+                                style={{ width: "100%", height: "auto" }}
+                              />
+                            ))}
+                          </div>
+                        )
                       ) : section.figure.src ? (
                         <Image
                           src={withBasePath(section.figure.src)}
