@@ -1956,6 +1956,11 @@ html[data-device="mobile"] .social-tile-icon {
   height: clamp(32px, calc(32px + (100vw - 320px) * 16 / 447), 48px);
 }
 
+[data-theme="dark"] a[aria-label="X"] .social-tile-icon {
+  filter: invert(1);
+  transition: filter var(--transition-theme);
+}
+
 .social-tile-button {
   position: relative;
   width: 100%;
