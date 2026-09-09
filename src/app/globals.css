@@ -1719,11 +1719,14 @@ html[data-device="mobile"] .nav-pill {
 html[data-device="mobile"] .nav-pill-button {
   flex: 1;
   min-height: 44px;
-  font-size: 13px;
   padding: 10px 8px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+html[data-device="mobile"] .site-nav .nav-pill-button {
+  font-size: 0.75rem;
 }
 
 /* Ensure bottom padding on mobile home grid to prevent content from hiding under nav */
@@ -1802,6 +1805,10 @@ html[data-device="mobile"] .portfolio-main {
   cursor: pointer;
   white-space: nowrap;
   transition: color var(--transition-fast);
+}
+
+.site-nav .nav-pill-button {
+  font-size: 0.875rem;
 }
 
 .nav-pill-button[data-active="true"] {
