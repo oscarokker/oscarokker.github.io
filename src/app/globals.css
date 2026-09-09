@@ -749,6 +749,7 @@ html[data-device="mobile"] {
   /* Matches .portfolio-main content box (padding already applied).
      Enforce 320px minimum to preserve grid integrity at narrow viewports, capped at 1020px. */
   --grid-width: min(1020px, max(320px, calc(100vw - 2 * var(--page-padding))));
+  --nav-height: 40px;
 }
 
 html[data-device="mobile"] .portfolio-main {
@@ -1630,23 +1631,30 @@ html[data-device="mobile"] .music-morph-card[data-mini="true"] {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px var(--page-padding);
+  height: var(--nav-height);
+  box-sizing: border-box;
+  padding-inline: var(--page-padding);
   padding-left: max(var(--page-padding), env(safe-area-inset-left));
   padding-right: max(var(--page-padding), env(safe-area-inset-right));
-  padding-top: max(16px, env(safe-area-inset-top));
+  /* Safe-area-inset-top adds above the 40/48px content bar */
+  margin-top: env(safe-area-inset-top);
 }
 
 .header-logo-link {
-  min-width: 44px;
-  min-height: 44px;
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  min-height: 40px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
 }
 
 .theme-toggle-btn {
-  min-width: 44px;
-  min-height: 44px;
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  min-height: 40px;
 }
 
 .site-header[data-visible="true"] {
@@ -1957,8 +1965,8 @@ html[data-device="mobile"] .social-tile-copied-toast {
   flex-shrink: 0;
   width: 40px;
   height: 40px;
-  min-width: 44px;
-  min-height: 44px;
+  min-width: 40px;
+  min-height: 40px;
   padding: 0;
   border: none;
   outline: none;
