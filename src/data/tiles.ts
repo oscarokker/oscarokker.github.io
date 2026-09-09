@@ -123,7 +123,7 @@ export const tiles: TileData[] = [
   {
     id: "startup-hub",
     categories: ["work"],
-    size: "2x1",
+    size: "1x1",
     variant: "logo",
     props: {
       imageSrc: "/itu-nextgen-logo.png",
