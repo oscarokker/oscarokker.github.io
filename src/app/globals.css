@@ -1932,8 +1932,8 @@ html[data-device="mobile"] .portfolio-main {
 /* ─── Social tile ─────────────────────────────────────────────────── */
 
 .social-tile-icon {
-  width: 64px;
-  height: 64px;
+  width: 56px;
+  height: 56px;
   object-fit: contain;
   display: block;
 }
