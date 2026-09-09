@@ -3217,13 +3217,15 @@ html[data-theme="dark"][data-case-study-boot="cover"] body::before {
 .case-study-inline-figure {
   margin-top: 0.5rem;
   margin-inline: -20px;
+  overflow: hidden;
 }
 
 .case-study-caption {
-  margin: 0.85rem 0 0;
+  margin: 12px 0 0;
   padding-inline: 20px;
   font-size: var(--text-body-sm-size);
-  color: var(--color-text-tertiary);
+  color: var(--color-text-secondary);
+  text-align: center;
 }
 
 .sr-only {
@@ -3262,6 +3264,8 @@ html[data-theme="dark"][data-case-study-boot="cover"] body::before {
   display: block;
   width: 100%;
   height: auto;
+  border-radius: 24px;
+  overflow: hidden;
 }
 
 .case-study-phone-row {
@@ -3277,6 +3281,7 @@ html[data-theme="dark"][data-case-study-boot="cover"] body::before {
   min-width: 0;
   object-fit: contain;
   max-width: 220px;
+  border-radius: 24px;
 }
 
 html[data-device="mobile"] .case-study-phone-row {
@@ -3311,7 +3316,7 @@ html[data-device="mobile"] .case-study-phone-img {
 .case-study-gallery-img {
   width: 100%;
   height: auto;
-  border-radius: 8px;
+  border-radius: 24px;
 }
 
 @media (min-width: 768px) {
