@@ -3,14 +3,12 @@ import { accentClass } from "@/lib/accent";
 import { withBasePath } from "@/lib/base-path";
 
 interface CaseStudyFaceProps {
-  title: string;
   accent?: string;
   coverSrc?: string;
   comingSoon?: boolean;
 }
 
 export function CaseStudyFace({
-  title,
   accent,
   coverSrc,
   comingSoon,

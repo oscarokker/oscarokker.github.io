@@ -109,7 +109,6 @@ export function CaseStudyTile({
 
   const face = (
     <CaseStudyFace
-      title={title}
       accent={accent}
       coverSrc={coverSrc}
       comingSoon={comingSoon}

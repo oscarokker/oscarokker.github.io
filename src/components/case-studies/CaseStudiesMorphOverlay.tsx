@@ -189,7 +189,6 @@ export function CaseStudyMorphOverlay() {
         onClick={handleClick}
       >
         <CaseStudyFace
-          title={snapshot.title}
           accent={snapshot.accent}
           coverSrc={snapshot.coverSrc}
           comingSoon={snapshot.comingSoon}
