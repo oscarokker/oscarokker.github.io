@@ -1629,14 +1629,19 @@ html[data-device="mobile"] .music-morph-card[data-mini="true"] {
 
 /* ─── Navigation ────────────────────────────────────────────────── */
 
-.site-header {
+.site-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  pointer-events: none;
   will-change: transform, translate;
   transition: translate var(--transition-fast);
 }
 
 /* Chrome entrance animation (first load only) */
-/* Start slightly before tiles or with ~half delay for secondary entrance */
-.site-header[data-entrance-pending] {
+.site-nav[data-entrance-pending] {
   opacity: 0;
   transform: translateY(-12px);
   will-change: opacity, transform;
@@ -1645,28 +1650,28 @@ html[data-device="mobile"] .music-morph-card[data-mini="true"] {
     transform 400ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.site-header[data-entrance-visible] {
+.site-nav[data-entrance-visible] {
   opacity: 1;
   transform: translateY(0);
 }
 
-.site-header[data-entrance-done] {
+.site-nav[data-entrance-done] {
   opacity: 1;
   transform: translateY(0);
   will-change: auto;
 }
 
-/* Desktop / tablet nav pill also needs translation reset */
+/* Desktop / tablet: no translateX needed (nav is full-width) */
 html[data-device="desktop"] .site-nav[data-entrance-visible],
 html[data-device="tablet"] .site-nav[data-entrance-visible],
 html[data-device="desktop"] .site-nav[data-entrance-done],
 html[data-device="tablet"] .site-nav[data-entrance-done] {
-  transform: translateX(-50%) translateY(0);
+  transform: translateY(0);
 }
 
 html[data-device="desktop"] .site-nav[data-entrance-pending],
 html[data-device="tablet"] .site-nav[data-entrance-pending] {
-  transform: translateX(-50%) translateY(-12px);
+  transform: translateY(-12px);
 }
 
 /* Mobile bottom nav: opacity-only entrance (no vertical movement) */
@@ -1701,7 +1706,7 @@ html[data-device="mobile"] .site-nav[data-entrance-done] {
   html[data-device="tablet"] .site-nav[data-entrance-visible],
   html[data-device="desktop"] .site-nav[data-entrance-done],
   html[data-device="tablet"] .site-nav[data-entrance-done] {
-    transform: translateX(-50%) translateY(0);
+    transform: translateY(0);
   }
 
   html[data-device="mobile"] .site-nav[data-entrance-pending],
@@ -1711,20 +1716,26 @@ html[data-device="mobile"] .site-nav[data-entrance-done] {
   }
 }
 
-.site-header-inner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  margin: max(24px, env(safe-area-inset-top)) max(48px, env(safe-area-inset-right)) 24px max(48px, env(safe-area-inset-left));
+/* Mobile: filters move to bottom via CSS (same nav element) */
+html[data-device="mobile"] .site-nav-filters {
+  position: fixed;
+  top: auto;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  transform: none;
+  padding: 0 max(env(safe-area-inset-right), 12px) max(env(safe-area-inset-bottom), 12px) max(env(safe-area-inset-left), 12px);
 }
 
-.site-nav-center {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-width: 0;
+/* Mobile: hide top and filters separately (filters are position fixed) */
+html[data-device="mobile"] .site-nav[data-visible="false"] .site-nav-top {
+  translate: 0 calc(-100% - 24px);
+  transition: translate var(--transition-base);
+}
+
+html[data-device="mobile"] .site-nav[data-visible="false"] .site-nav-filters {
+  translate: 0 calc(100% + 16px);
+  transition: translate var(--transition-base);
 }
 
 .header-logo-link {
@@ -1744,18 +1755,49 @@ html[data-device="mobile"] .site-nav[data-entrance-done] {
   min-height: 40px;
 }
 
-.site-header[data-visible="true"] {
+/* Desktop/tablet: hide top bar and filters by sliding up */
+.site-nav[data-visible="true"] .site-nav-top {
   translate: 0 0;
 }
 
-.site-header[data-visible="false"] {
+.site-nav[data-visible="false"] .site-nav-top {
   translate: 0 calc(-100% - 24px);
-  pointer-events: none;
   transition: translate var(--transition-base);
 }
 
-.site-header[data-visible="false"] .pointer-events-auto {
+html[data-device="desktop"] .site-nav[data-visible="false"] .site-nav-filters,
+html[data-device="tablet"] .site-nav[data-visible="false"] .site-nav-filters {
+  translate: 0 calc(-100% - 24px);
+  transition: translate var(--transition-base);
   pointer-events: none;
+}
+
+.site-nav[data-visible="false"] .pointer-events-auto {
+  pointer-events: none;
+}
+
+/* Desktop/tablet: unified top bar with logo | filters | theme */
+.site-nav-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin: max(24px, env(safe-area-inset-top)) max(48px, env(safe-area-inset-right)) 24px max(48px, env(safe-area-inset-left));
+}
+
+.site-nav-filters {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: max(24px, env(safe-area-inset-top));
+  pointer-events: none;
+}
+
+.site-nav-filters > * {
+  pointer-events: auto;
 }
 
 [data-theme="dark"] .header-logo {
@@ -1767,20 +1809,26 @@ html[data-device="mobile"] .site-nav[data-entrance-done] {
   transition: color var(--transition-theme);
 }
 
-/* Mobile: adjust header layout for smaller screens (keep 48px horizontal margins as Oscar requested) */
-html[data-device="mobile"] .site-header-inner {
+/* Mobile: adjust top bar (logo + theme) */
+html[data-device="mobile"] .site-nav-top {
   margin: max(24px, env(safe-area-inset-top)) max(48px, env(safe-area-inset-right)) 24px max(48px, env(safe-area-inset-left));
   gap: 12px;
 }
 
+/* Mobile: full-width pill with equal chips */
 html[data-device="mobile"] .nav-pill {
+  width: 100%;
   gap: 0;
 }
 
 html[data-device="mobile"] .nav-pill-button {
-  padding: 8px 12px;
+  flex: 1;
+  min-height: 44px;
+  padding: 10px 8px;
   font-size: 13px;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .nav-pill {
