@@ -142,16 +142,7 @@ export function QuoteTile({ text, subtitle, showQuoteIcon }: QuoteTileProps) {
       className={`tile-card-inner items-center justify-center text-center gap-2.5 ${accentClass()}`}
     >
       {showQuoteIcon ? (
-        <Image
-          src={withBasePath("/quote-symbol.svg")}
-          alt=""
-          width={24}
-          height={24}
-          className="shrink-0"
-          style={{ opacity: 0.4 }}
-          aria-hidden
-          unoptimized
-        />
+        <span className="quote-tile-mark shrink-0" aria-hidden />
       ) : null}
       <blockquote
         className="text-h2 text-[var(--color-text-primary)] m-0 italic"
