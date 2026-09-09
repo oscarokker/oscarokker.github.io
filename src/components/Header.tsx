@@ -2,18 +2,75 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState, type MouseEvent } from "react";
+import { useCallback, useEffect, useRef, useState, type MouseEvent } from "react";
 import { useCaseStudyTransitionOptional } from "@/components/case-studies/CaseStudiesTransition";
 import { isCaseStudyPath } from "@/lib/case-study-href";
 import { useTheme } from "@/components/ThemeProvider";
 import { useCursorLabelOptional } from "@/hooks/useCursorLabel";
 import { useDevice } from "@/hooks/useDevice";
+import type { FilterCategory } from "@/lib/types";
+import { filters } from "@/data/tiles";
+import { useHoverThumb } from "@/hooks/useHoverThumb";
+import { useSlidingThumb } from "@/hooks/useSlidingThumb";
+import { usePointerGesture } from "@/hooks/usePointerGesture";
 
 interface HeaderProps {
   visible?: boolean;
+  activeFilter?: FilterCategory;
+  onFilterChange?: (filter: FilterCategory) => void;
 }
 
-export function Header({ visible = true }: HeaderProps) {
+interface FilterButtonProps {
+  filterId: FilterCategory;
+  label: string;
+  isActive: boolean;
+  onFilterChange: (filter: FilterCategory) => void;
+}
+
+function FilterButton({
+  filterId,
+  label,
+  isActive,
+  onFilterChange,
+}: FilterButtonProps) {
+  const { pointerHandlers } = usePointerGesture({
+    onTap: useCallback(
+      (event: React.PointerEvent<HTMLButtonElement>) => {
+        if (isActive) return;
+        event.preventDefault();
+        onFilterChange(filterId);
+      },
+      [isActive, filterId, onFilterChange],
+    ),
+  });
+
+  const handleClick = useCallback(
+    (event: React.MouseEvent<HTMLButtonElement>) => {
+      if (event.detail === 0) {
+        if (isActive) return;
+        onFilterChange(filterId);
+        return;
+      }
+      event.preventDefault();
+    },
+    [isActive, filterId, onFilterChange],
+  );
+
+  return (
+    <button
+      type="button"
+      className="nav-pill-button"
+      data-active={isActive}
+      aria-pressed={isActive}
+      {...pointerHandlers}
+      onClick={handleClick}
+    >
+      {label}
+    </button>
+  );
+}
+
+export function Header({ visible = true, activeFilter, onFilterChange }: HeaderProps) {
   const device = useDevice();
   const { theme, toggleTheme } = useTheme();
   const cursor = useCursorLabelOptional();
@@ -29,6 +86,12 @@ export function Header({ visible = true }: HeaderProps) {
     phase === "expanding" ||
     phase === "covering" ||
     phase === "revealing";
+
+  const { containerRef, thumb, thumbReady } = useSlidingThumb(activeFilter ?? "all");
+  const { hoverThumb, hoverVisible, hoverSnap } = useHoverThumb(
+    containerRef,
+    activeFilter ?? "all",
+  );
   
   const [entranceState, setEntranceState] = useState<"pending" | "visible" | "done">("pending");
   const isHome = pathname === "/";
@@ -81,6 +144,8 @@ export function Header({ visible = true }: HeaderProps) {
     return null;
   }
 
+  const showFilters = activeFilter !== undefined && onFilterChange !== undefined;
+
   return (
     <header
       className="site-header fixed top-0 left-0 right-0 z-50 pointer-events-none"
@@ -117,6 +182,49 @@ export function Header({ visible = true }: HeaderProps) {
             </svg>
           </span>
         </Link>
+
+        {showFilters && (
+          <nav
+            className={visible ? "pointer-events-auto site-nav-center" : "site-nav-center"}
+            aria-label="Portfolio filters"
+          >
+            <div
+              ref={containerRef}
+              className="nav-pill"
+              data-thumb-ready={thumbReady ? "true" : "false"}
+              data-hover-visible={hoverVisible ? "true" : "false"}
+              data-hover-snap={hoverSnap ? "true" : "false"}
+            >
+              <span
+                className="nav-pill-hover-thumb"
+                aria-hidden
+                style={{
+                  transform: `translateX(${hoverThumb.x}px)`,
+                  width: hoverThumb.width,
+                }}
+              />
+              <span
+                className="nav-pill-thumb"
+                aria-hidden
+                style={{
+                  transform: `translateX(${thumb.x}px)`,
+                  width: thumb.width,
+                }}
+              >
+                <span className="nav-pill-thumb-surface" />
+              </span>
+              {filters.map((filter) => (
+                <FilterButton
+                  key={filter.id}
+                  filterId={filter.id}
+                  label={filter.label}
+                  isActive={activeFilter === filter.id}
+                  onFilterChange={onFilterChange}
+                />
+              ))}
+            </div>
+          </nav>
+        )}
 
         <div
           className={

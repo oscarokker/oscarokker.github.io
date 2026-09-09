@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import type { FilterCategory } from "@/lib/types";
 import { tiles } from "@/data/tiles";
-import { NavBar } from "@/components/NavBar";
+import { Header } from "@/components/Header";
 import { Tile, tileMatchesFilter } from "@/components/Tile";
 import { useHeaderVisibility } from "@/hooks/useHeaderVisibility";
 import { useDevice } from "@/hooks/useDevice";
@@ -102,10 +102,10 @@ export function Portfolio({
 
   return (
     <>
-      <NavBar
+      <Header
+        visible={headerVisible}
         activeFilter={activeFilter}
         onFilterChange={onFilterChange}
-        visible={headerVisible}
       />
       <main className="portfolio-main" data-device={device}>
         <div
