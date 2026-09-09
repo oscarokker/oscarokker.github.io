@@ -64,7 +64,7 @@ export const tiles: TileData[] = [
     props: {
       label: "LinkedIn",
       href: "https://www.linkedin.com/in/oscarrode/",
-      icon: "/linkedin-icon.png",
+      icon: "/linkedin-icon.svg",
     },
   },
   {
