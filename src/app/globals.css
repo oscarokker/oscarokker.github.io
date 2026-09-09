@@ -992,8 +992,13 @@ html[data-device="mobile"] .tile-card[data-active="false"] {
 
 /* Quote tile mark icon: theme-aware highlight color with adjusted opacity for readability */
 .quote-tile-mark {
-  color: var(--color-highlight);
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  background-color: var(--color-highlight);
   opacity: 0.5;
+  -webkit-mask: url(/quote-symbol.svg) center / contain no-repeat;
+  mask: url(/quote-symbol.svg) center / contain no-repeat;
 }
 
 [data-theme="dark"] .quote-tile-mark {
