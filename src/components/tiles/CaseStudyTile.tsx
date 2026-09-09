@@ -14,7 +14,7 @@ import {
   rectFromElement,
   useCaseStudyTransition,
 } from "@/components/case-studies/CaseStudiesTransition";
-import { ExpandIcon } from "@/components/ChromeIcons";
+import { FullscreenFrameIcon } from "@/components/ChromeIcons";
 import { usePointerGesture } from "@/hooks/usePointerGesture";
 
 interface CaseStudyTileProps {
@@ -132,7 +132,7 @@ export function CaseStudyTile({
       onKeyDown={handleKeyDown}
     >
       <span className="intro-chrome-icon-btn intro-tile-expand" aria-hidden>
-        <ExpandIcon />
+        <FullscreenFrameIcon />
       </span>
       {face}
     </a>

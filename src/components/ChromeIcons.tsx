@@ -61,3 +61,15 @@ export function DownloadIcon() {
     </svg>
   );
 }
+
+/** Square frame icon with four L-corners for case study fullscreen. */
+export function FullscreenFrameIcon() {
+  return (
+    <svg {...chromeIconSvgProps}>
+      <polyline points="4 9 4 4 9 4" />
+      <polyline points="15 4 20 4 20 9" />
+      <polyline points="20 15 20 20 15 20" />
+      <polyline points="9 20 4 20 4 15" />
+    </svg>
+  );
+}
