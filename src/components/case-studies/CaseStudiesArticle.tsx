@@ -100,6 +100,19 @@ export function CaseStudyArticle({ study }: CaseStudyArticleProps) {
   );
   const [mode, setMode] = useState<ReadingMode>("detailed");
   const { containerRef: toggleRef, thumb, thumbReady } = useSlidingThumb(mode);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+
+  useLayoutEffect(() => {
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setPrefersReducedMotion(mediaQuery.matches);
+    
+    const handleChange = (e: MediaQueryListEvent) => {
+      setPrefersReducedMotion(e.matches);
+    };
+    
+    mediaQuery.addEventListener("change", handleChange);
+    return () => mediaQuery.removeEventListener("change", handleChange);
+  }, []);
 
   useLayoutEffect(() => {
     window.scrollTo({ top: 0, behavior: "instant" });
@@ -278,7 +291,19 @@ export function CaseStudyArticle({ study }: CaseStudyArticleProps) {
                   )}
                   {section.figure ? (
                     <div className="case-study-inline-figure">
-                      {section.figure.images ? (
+                      {section.figure.videoSrc ? (
+                        <video
+                          src={withBasePath(section.figure.videoSrc)}
+                          poster={section.figure.poster ? withBasePath(section.figure.poster) : undefined}
+                          muted
+                          playsInline
+                          loop
+                          autoPlay={!prefersReducedMotion}
+                          preload="metadata"
+                          className="case-study-cover-photo"
+                          style={{ width: "100%", height: "auto", borderRadius: "inherit" }}
+                        />
+                      ) : section.figure.images ? (
                         <div className="case-study-phone-row">
                           {section.figure.images.map((img, idx) => (
                             <Image
