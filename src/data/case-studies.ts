@@ -106,7 +106,7 @@ export const caseStudies: CaseStudy[] = [
         ],
         figure: {
           src: "/case-studies/cheapvoyage/problem-lean-canvas.jpg",
-          caption: "Business frame while the product was still a wicked problem — not the final UX.",
+          caption: "Holding the tension — business model, product, and brand at once.",
         },
       },
       {
@@ -126,7 +126,7 @@ export const caseStudies: CaseStudy[] = [
             { src: "/case-studies/cheapvoyage/beat1-question-map.jpg", alt: "Question map circling the choosing phase" },
             { src: "/case-studies/cheapvoyage/beat1-customer-canvas.jpg", alt: "Customer canvas with traveller mapped and value proposition left blank" },
           ],
-          caption: "Chose choosing. Traveller mapped; offer left blank on purpose. Pink sticky = untested hypothesis.",
+          caption: "Traveller first, offer blank — we knew the person before the product.",
         },
       },
       {
@@ -139,7 +139,7 @@ export const caseStudies: CaseStudy[] = [
         ],
         figure: {
           src: "/case-studies/cheapvoyage/beat2-components-1.0.jpg",
-          caption: "1.0 system that looked clever to us and cold to travellers.",
+          caption: "The wrong fantasy: beating the system, not going somewhere.",
         },
       },
       {
@@ -152,7 +152,7 @@ export const caseStudies: CaseStudy[] = [
         ],
         figure: {
           src: "/case-studies/cheapvoyage/beat3-moodboard.jpg",
-          caption: "Orange + teal, paper grain, bird with leaf-wing — adventure without losing trust.",
+          caption: "Warm analog materials — flight without losing trust.",
         },
       },
       {
@@ -180,7 +180,7 @@ export const caseStudies: CaseStudy[] = [
         ],
         figure: {
           src: "/case-studies/cheapvoyage/beat6-where-to-next.jpg",
-          caption: "Samtalebaseret interface — constraints in conversation, not a form.",
+          caption: "Constraints in conversation, not a form.",
         },
       },
       {
@@ -201,7 +201,7 @@ export const caseStudies: CaseStudy[] = [
         figure: {
           videoSrc: "/case-studies/cheapvoyage/beat7-8-demo.mp4",
           poster: "/case-studies/cheapvoyage/beat7-8-poster.jpg",
-          caption: "No city/date form — constraints in conversation, then inspectable legs.",
+          caption: "Conversation to inspectable legs — beats 6–8 in motion.",
         },
       },
     ],
