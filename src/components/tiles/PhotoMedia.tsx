@@ -64,23 +64,16 @@ export function PhotoStackPreview({
   const frames = images.slice(0, 3);
 
   return (
-    <>
-      <div className="photo-stack-frames" aria-hidden>
-        {frames.map((src, index) => (
-          <div key={`${src}-${index}`} className="photo-stack-frame">
-            <PhotoMedia
-              src={src}
-              alt=""
-              sizes="(max-width: 768px) 45vw, 220px"
-            />
-          </div>
-        ))}
-      </div>
-      <div className="photo-stack-scrim">
-        <h2 id={titleId} className="photo-stack-title text-h3 m-0">
-          {title}
-        </h2>
-      </div>
-    </>
+    <div className="photo-stack-frames" aria-hidden>
+      {frames.map((src, index) => (
+        <div key={`${src}-${index}`} className="photo-stack-frame">
+          <PhotoMedia
+            src={src}
+            alt=""
+            sizes="(max-width: 768px) 45vw, 220px"
+          />
+        </div>
+      ))}
+    </div>
   );
 }
