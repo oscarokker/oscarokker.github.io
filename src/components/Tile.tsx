@@ -82,7 +82,7 @@ function getCursorMeta(tile: TileData): CursorMeta | null {
       };
     case "photo-stack":
       return {
-        label: "Expand to see my Himalayan trekking photos 🏔️",
+        label: "See my Himalayan trekking photos 🏔️",
         accent: tile.props.accent,
       };
   }
