@@ -13,7 +13,6 @@ import {
   PhotoStackTile,
 } from "@/components/tiles/TileContent";
 import { DuolingoTile } from "@/components/tiles/DuolingoTile";
-import { getCaseStudy } from "@/data/case-studies";
 import { accentClass } from "@/lib/accent";
 import { spawnTileClickRipple, removeRipple } from "@/lib/clickRipple";
 import { usePointerGesture } from "@/hooks/usePointerGesture";
@@ -49,9 +48,8 @@ function getCursorMeta(tile: TileData): CursorMeta | null {
       };
     case "case-study": {
       if (tile.props.comingSoon) return null;
-      const study = getCaseStudy(tile.props.slug);
       return {
-        label: study?.headline ?? `Open ${tile.props.title}`,
+        label: tile.props.title,
         accent: tile.props.accent,
       };
     }
