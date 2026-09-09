@@ -100,6 +100,19 @@ export function CaseStudyArticle({ study }: CaseStudyArticleProps) {
   );
   const [mode, setMode] = useState<ReadingMode>("detailed");
   const { containerRef: toggleRef, thumb, thumbReady } = useSlidingThumb(mode);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+
+  useLayoutEffect(() => {
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setPrefersReducedMotion(mediaQuery.matches);
+    
+    const handleChange = (e: MediaQueryListEvent) => {
+      setPrefersReducedMotion(e.matches);
+    };
+    
+    mediaQuery.addEventListener("change", handleChange);
+    return () => mediaQuery.removeEventListener("change", handleChange);
+  }, []);
 
   useLayoutEffect(() => {
     window.scrollTo({ top: 0, behavior: "instant" });
@@ -278,21 +291,50 @@ export function CaseStudyArticle({ study }: CaseStudyArticleProps) {
                   )}
                   {section.figure ? (
                     <div className="case-study-inline-figure">
-                      {section.figure.images ? (
-                        <div className="case-study-phone-row">
-                          {section.figure.images.map((img, idx) => (
-                            <Image
-                              key={img.src}
-                              src={withBasePath(img.src)}
-                              alt={img.alt}
-                              width={1206}
-                              height={2622}
-                              sizes="(max-width: 680px) 30vw, 200px"
-                              className="case-study-phone-img"
-                              style={{ width: "100%", height: "auto" }}
-                            />
-                          ))}
-                        </div>
+                      {section.figure.videoSrc ? (
+                        <video
+                          src={withBasePath(section.figure.videoSrc)}
+                          poster={section.figure.poster ? withBasePath(section.figure.poster) : undefined}
+                          muted
+                          playsInline
+                          loop
+                          autoPlay={!prefersReducedMotion}
+                          preload="metadata"
+                          className="case-study-cover-photo"
+                          style={{ width: "100%", height: "auto", borderRadius: "inherit" }}
+                        />
+                      ) : section.figure.images ? (
+                        section.figure.layout === "phones" ? (
+                          <div className="case-study-phone-row">
+                            {section.figure.images.map((img) => (
+                              <Image
+                                key={img.src}
+                                src={withBasePath(img.src)}
+                                alt={img.alt}
+                                width={1206}
+                                height={2622}
+                                sizes="(max-width: 680px) 30vw, 200px"
+                                className="case-study-phone-img"
+                                style={{ width: "100%", height: "auto" }}
+                              />
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="case-study-figure-gallery">
+                            {section.figure.images.map((img) => (
+                              <Image
+                                key={img.src}
+                                src={withBasePath(img.src)}
+                                alt={img.alt}
+                                width={1600}
+                                height={900}
+                                sizes="(max-width: 680px) 100vw, 680px"
+                                className="case-study-gallery-img"
+                                style={{ width: "100%", height: "auto" }}
+                              />
+                            ))}
+                          </div>
+                        )
                       ) : section.figure.src ? (
                         <Image
                           src={withBasePath(section.figure.src)}

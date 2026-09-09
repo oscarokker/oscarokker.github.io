@@ -25,6 +25,9 @@ export interface CaseStudyFigure {
   cover?: CaseStudyCoverId;
   src?: string;
   images?: { src: string; alt: string }[];
+  layout?: "phones" | "gallery";
+  videoSrc?: string;
+  poster?: string;
   caption: string;
 }
 
@@ -69,24 +72,24 @@ export const caseStudies: CaseStudy[] = [
     headline: "Designing a Conversational Interface to Make Travel Planning Easy",
     intro:
       "CheapVoyage is an AI-driven travel planner that surfaces affordable flights and trains across Europe through a chat interface. I designed and built the product end-to-end so that finding a cheaper route feels like asking a knowledgeable friend — not filling out a form.",
-    role: "Co-Founder and UX Designer",
+    role: "Co-Founder and UX Designer. I owned research, brand, design system, and the React/Vite frontend. My co-founders handled the backend, database, scraping, and search infrastructure. My job was to translate technical possibilities into something travellers could actually use.",
     cover: "voyage",
     coverLabel: "CheapVoyage chat planner",
     impact: [
       {
-        icon: "lightning",
-        title: "Seamless Trip Planning",
-        body: "A single conversational thread replaced multi-step search forms, so people could go from intent to a comparable set of routes without leaving the chat.",
+        icon: "chat-circle",
+        title: "Seamless trip planning",
+        body: "One conversational thread instead of multi-step forms — people could go from intent to a comparable set of routes without leaving the chat.",
       },
       {
         icon: "money",
-        title: "Unconventional Cheaper Options",
-        body: "The interface privileges price and transfer pain equally — so a slower train can win when it is the smarter trade, not only the cheapest flight.",
+        title: "Unconventional cheaper options",
+        body: "Price and transfer pain were weighed equally — a slower train could win when it was the smarter trade, not only when it was the cheapest flight.",
       },
       {
         icon: "scales",
-        title: "Easy Comparison of Flight and Train Options",
-        body: "Suggestions stay inspectable: every recommendation shows the source itinerary, so the model assists without hiding how the answer was built.",
+        title: "Easy flight/train comparison",
+        body: "Every suggestion showed the source itinerary — the model assisted without hiding how the answer was built.",
       },
     ],
     sections: [
@@ -95,58 +98,117 @@ export const caseStudies: CaseStudy[] = [
         variant: "detailed",
         paragraphs: [
           {
-            text: "Booking Europe on a budget usually means tab-hopping between airlines, train operators, and comparison sites. People know roughly when they want to go, but not which combination of modes will actually be cheapest or least painful.",
+            text: "Budget travel across Europe usually means tab-hopping between airlines, train operators, and comparison sites. People know roughly when they want to go, but not which combination of modes will actually be cheapest or least painful. Existing planners either lock you into a destination too early or dump a wall of fares — neither matches how people actually plan: tentatively, with constraints that change mid-sentence.",
           },
           {
-            text: "Existing planners either assume a destination is already decided, or they dump a wall of fares. Neither matches how people actually plan: tentatively, with constraints that change mid-sentence.",
-          },
-        ],
-      },
-      {
-        heading: "Approach",
-        paragraphs: [
-          {
-            text: "I designed a chat-first planner where constraints arrive in natural language — dates, cities, a budget, a willingness to overnight on a train — and the system returns comparable itineraries instead of a single booked ticket.",
-          },
-          {
-            text: "The visual language stays quiet: a pale canvas, a compact route card, and a transcript that can be edited. The AI is present as a collaborator in the thread, not as a mascot or a modal.",
+            text: "Building a startup is not the usual UX/UI brief — and that is the point. Affordable travel is a wicked problem: product, tech, business model, and brand all pull on each other, and the designer's job is to hold that tension long enough to make something people can actually use.",
             variant: "detailed",
           },
         ],
         figure: {
-          cover: "voyage",
-          caption:
-            "Route cards sit in the same thread as the question, so comparison never leaves the conversation.",
+          src: "/case-studies/cheapvoyage/problem-lean-canvas.jpg",
+          caption: "Holding the tension — business model, product, and brand at once.",
         },
       },
       {
-        heading: "CheapVoyage 1.0",
+        heading: "How they actually choose",
         variant: "detailed",
         paragraphs: [
           {
-            text: "People forgive a slower answer if they can see why it was chosen. Hiding the itinerary behind a chat bubble made the product feel magical for a moment and untrustworthy the next.",
+            text: "We fell in love with the problem. We mapped the entire flow — search, choose, order — then circled the choosing phase: how much time people spent comparing options, which factors won, what was nice to have. We filled out the customer canvas with the traveller first and left the value proposition deliberately blank. We wanted to know the traveller before we knew the offer.",
           },
           {
-            text: "The design work was as much about what the model should not say: no false precision on prices, no locked destination until the traveller is ready.",
+            text: "What emerged: affordability beat convenience. A stable connection mattered when you're planning on the road. Budget, safety worries, self-transfer doubt, the stress of changing plans, environmental impact — those were the pains. Culture, status from having travelled the world, money saved to spend elsewhere, looking good by having saved money — those were the gains.",
+            variant: "detailed",
+          },
+        ],
+        figure: {
+          images: [
+            { src: "/case-studies/cheapvoyage/beat1-question-map.jpg", alt: "Question map circling the choosing phase" },
+            { src: "/case-studies/cheapvoyage/beat1-customer-canvas.jpg", alt: "Customer canvas with traveller mapped and value proposition left blank" },
+          ],
+          caption: "Traveller first, offer blank — we knew the person before the product.",
+        },
+      },
+      {
+        heading: "Looking like a hacker",
+        variant: "detailed",
+        paragraphs: [
+          {
+            text: "Dark mint with a \"hack the system\" vibe read clever to us and cold to travellers. It was the wrong fantasy: beating the algorithm, not going somewhere.",
+          },
+        ],
+        figure: {
+          src: "/case-studies/cheapvoyage/beat2-components-1.0.jpg",
+          caption: "The wrong fantasy: beating the system, not going somewhere.",
+        },
+      },
+      {
+        heading: "Warmth without losing trust",
+        variant: "detailed",
+        paragraphs: [
+          {
+            text: "We shifted to warm orange and teal, paper texture, a modern-analog feel. The bird with a leaf-wing became our mark: flight without losing trust. That component system became version 1.0, which we built in React/Vite.",
+          },
+        ],
+        figure: {
+          src: "/case-studies/cheapvoyage/beat3-moodboard.jpg",
+          caption: "Warm analog materials — flight without losing trust.",
+        },
+      },
+      {
+        heading: "Slightly different search isn't enough",
+        paragraphs: [
+          {
+            text: "Summer 2025: Google Flights launched Flight Deals — essentially what we were building. Three founders can't compete with Google on that surface. We were forced to choose: differentiate with a memorable experience, not just a sharper fare grid.",
           },
         ],
       },
       {
-        heading: "The Data Problem",
-        variant: "detailed",
+        heading: "Planning was the burden",
         paragraphs: [
           {
-            text: "Europe's cheapest path is rarely in one catalog. Airline fares, rail operators, and overnight trains update on different clocks, so a chat answer can sound sure and still be stale.",
-          },
-          {
-            text: "I treated the model as a compositor, not a source of truth: every suggestion had to point back at a concrete itinerary, and prices stayed ranges until a live quote could confirm them.",
+            text: "The real pain wasn't finding one cheap ticket — it was months of lifestyle travel becoming a second job, with constraints that change mid-sentence.",
           },
         ],
+      },
+      {
+        heading: "Conversation instead of forms",
+        paragraphs: [
+          {
+            text: "Version 2.0 introduced a conversational — samtalebaseret — interface: where you are, where you're going, how long, flights or trains. Lightness over information dump. The complexity stayed in the system.",
+          },
+        ],
+        figure: {
+          src: "/case-studies/cheapvoyage/beat6-where-to-next.jpg",
+          caption: "Constraints in conversation, not a form.",
+        },
+      },
+      {
+        heading: "Europe, flights and trains",
+        paragraphs: [
+          {
+            text: "We scoped to Europe, where rail is a real alternative. Fly versus train lived in one conversational thread, including sustainability — not only price. One conversation could hold a whole loop — Copenhagen to Paris to Amsterdam and back — then land as inspectable legs with both plane and train options per segment. No city/date form; no locked destination until you were ready.",
+          },
+        ],
+      },
+      {
+        heading: "Inspectable suggestions",
+        paragraphs: [
+          {
+            text: "Every suggestion pointed at a concrete itinerary. The model composed options; it was not the source of truth. No false precision. No locked destination until the traveller was ready.",
+          },
+        ],
+        figure: {
+          videoSrc: "/case-studies/cheapvoyage/beat7-8-demo.mp4",
+          poster: "/case-studies/cheapvoyage/beat7-8-poster.jpg",
+          caption: "Conversation to inspectable legs — beats 6–8 in motion.",
+        },
       },
     ],
     result: {
       paragraphs: [
-        "CheapVoyage shipped as a working conversational planner: one thread for constraints, inspectable route cards, and a quieter visual language than booking forms. The remaining work is coverage and freshness of the underlying data — not another layer of UI.",
+        "Shipped as a working conversational planner for affordable Europe routes: one thread, inspectable cards, quieter than booking forms. Remaining work is data coverage and freshness — not another UI layer.",
       ],
     },
   },
@@ -209,6 +271,7 @@ export const caseStudies: CaseStudy[] = [
               alt: "An AI summary of a source under a claim.",
             },
           ],
+          layout: "phones",
           caption: "A claim opens into creator, supporting, and opposing sources — disagreement stays in the episode, not in a separate fact-check product.",
         },
       },

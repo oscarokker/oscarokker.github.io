@@ -3301,6 +3301,25 @@ html[data-device="mobile"] .case-study-phone-img {
   max-width: 70%;
 }
 
+.case-study-figure-gallery {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+.case-study-gallery-img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+@media (min-width: 768px) {
+  .case-study-figure-gallery {
+    gap: 20px;
+  }
+}
+
 .cover-podcasts,
 .cover-thesis,
 .cover-music {
