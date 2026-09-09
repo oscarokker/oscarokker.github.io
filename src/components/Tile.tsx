@@ -42,6 +42,9 @@ function getCursorMeta(tile: TileData): CursorMeta | null {
       if (tile.props.label === "LinkedIn") {
         return { label: "Connect with me on LinkedIn 🤝", accent: tile.props.accent };
       }
+      if (tile.props.label === "X") {
+        return { label: "Follow me on X", accent: tile.props.accent };
+      }
       return {
         label: `Open ${tile.props.label}`,
         accent: tile.props.accent,

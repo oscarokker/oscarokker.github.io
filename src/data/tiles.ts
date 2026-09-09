@@ -68,6 +68,17 @@ export const tiles: TileData[] = [
     },
   },
   {
+    id: "contact-x",
+    categories: ["work"],
+    size: "1x1",
+    variant: "social",
+    props: {
+      label: "X",
+      href: "https://x.com/oscarrode",
+      icon: "/x-icon.svg",
+    },
+  },
+  {
     id: "botanica",
     categories: ["side-quests"],
     size: "2x1",
