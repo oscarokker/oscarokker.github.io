@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, type MouseEvent } from "react";
+import { useEffect, useRef, useState, type MouseEvent } from "react";
 import { useCaseStudyTransitionOptional } from "@/components/case-studies/CaseStudiesTransition";
 import { isCaseStudyPath } from "@/lib/case-study-href";
 import { useTheme } from "@/components/ThemeProvider";
@@ -29,6 +29,9 @@ export function Header({ visible = true }: HeaderProps) {
     phase === "expanding" ||
     phase === "covering" ||
     phase === "revealing";
+  
+  const [entranceState, setEntranceState] = useState<"pending" | "visible" | "done">("pending");
+  const isHome = pathname === "/";
 
   const handleHomeClick = (event: MouseEvent<HTMLAnchorElement>) => {
     if (pathname === "/") {
@@ -41,6 +44,38 @@ export function Header({ visible = true }: HeaderProps) {
     if (!themeToggleRef.current?.matches(":hover")) return;
     setCursorLabel?.({ text: cursorLabel });
   }, [cursorLabel, setCursorLabel]);
+  
+  // Trigger entrance animation on home page first mount
+  useEffect(() => {
+    if (!isHome) {
+      setEntranceState("done");
+      return;
+    }
+    
+    // Check if user prefers reduced motion
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReducedMotion) {
+      setEntranceState("done");
+      return;
+    }
+    
+    // Chrome starts immediately; tiles begin 80ms later (TILE_START_OFFSET in Portfolio)
+    const chromeDelay = 0;
+    const chromeAnimDuration = 400;
+    
+    const showTimer = setTimeout(() => {
+      setEntranceState("visible");
+    }, chromeDelay);
+    
+    const doneTimer = setTimeout(() => {
+      setEntranceState("done");
+    }, chromeDelay + chromeAnimDuration);
+    
+    return () => {
+      clearTimeout(showTimer);
+      clearTimeout(doneTimer);
+    };
+  }, [isHome]);
 
   if (insideCaseStudy) {
     return null;
@@ -51,6 +86,9 @@ export function Header({ visible = true }: HeaderProps) {
       className="site-header fixed top-0 left-0 right-0 z-50 pointer-events-none"
       data-visible={visible ? "true" : "false"}
       data-device={device}
+      data-entrance-pending={isHome && entranceState === "pending" ? true : undefined}
+      data-entrance-visible={isHome && entranceState === "visible" ? true : undefined}
+      data-entrance-done={isHome && entranceState === "done" ? true : undefined}
       inert={!visible || undefined}
     >
       <div className="site-header-inner">
