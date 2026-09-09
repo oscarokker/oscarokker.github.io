@@ -1834,10 +1834,16 @@ html[data-device="mobile"] .portfolio-main {
 /* ─── Social tile ─────────────────────────────────────────────────── */
 
 .social-tile-icon {
-  width: 56px;
-  height: 56px;
+  width: 64px;
+  height: 64px;
   object-fit: contain;
   display: block;
+}
+
+html[data-device="mobile"] .social-tile-icon {
+  /* Scale from 32px at 320px viewport to 48px at 767px viewport */
+  width: clamp(32px, calc(32px + (100vw - 320px) * 16 / 447), 48px);
+  height: clamp(32px, calc(32px + (100vw - 320px) * 16 / 447), 48px);
 }
 
 .social-tile-button {
