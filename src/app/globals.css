@@ -1673,6 +1673,18 @@ html[data-device="tablet"] .site-nav[data-entrance-pending] {
   transform: translateX(-50%) translateY(-12px);
 }
 
+/* Mobile bottom nav: opacity-only entrance (no vertical movement) */
+html[data-device="mobile"] .site-nav[data-entrance-pending] {
+  opacity: 0;
+  transform: none;
+}
+
+html[data-device="mobile"] .site-nav[data-entrance-visible],
+html[data-device="mobile"] .site-nav[data-entrance-done] {
+  opacity: 1;
+  transform: none;
+}
+
 /* Skip animation for reduced motion - show immediately */
 @media (prefers-reduced-motion: reduce) {
   .site-header[data-entrance-pending],
@@ -1694,6 +1706,12 @@ html[data-device="tablet"] .site-nav[data-entrance-pending] {
   html[data-device="desktop"] .site-nav[data-entrance-done],
   html[data-device="tablet"] .site-nav[data-entrance-done] {
     transform: translateX(-50%) translateY(0);
+  }
+
+  html[data-device="mobile"] .site-nav[data-entrance-pending],
+  html[data-device="mobile"] .site-nav[data-entrance-visible],
+  html[data-device="mobile"] .site-nav[data-entrance-done] {
+    transform: none;
   }
 }
 
