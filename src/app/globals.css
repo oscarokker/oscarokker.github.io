@@ -331,13 +331,13 @@
   --radius-full: 9999px;
 
   /* Grid system — 4 cols desktop/tablet; 2 cols mobile
-     Desktop/tablet fixed-width grid, mobile fluid to viewport */
+     Desktop/tablet: explicit 240×240px cells with 20px gap (total width: 1020px)
+     Mobile: fluid 2-column grid */
   --grid-columns: 4;
-  --grid-width: 1020px;
+  --grid-cell: 240px;
   --grid-gap: 20px;
-  --grid-cell: calc(
-    (var(--grid-width) - (var(--grid-columns) - 1) * var(--grid-gap)) /
-      var(--grid-columns)
+  --grid-width: calc(
+    var(--grid-columns) * var(--grid-cell) + (var(--grid-columns) - 1) * var(--grid-gap)
   );
   --tile-radius: calc(var(--grid-gap) * 1.25);
   
@@ -749,6 +749,8 @@ html[data-device="mobile"] {
   /* Matches .portfolio-main content box (padding already applied).
      Enforce 320px minimum to preserve grid integrity at narrow viewports, capped at 1020px. */
   --grid-width: min(1020px, max(320px, calc(100vw - 2 * var(--page-padding))));
+  /* Fluid cell size derived from viewport width */
+  --grid-cell: calc((var(--grid-width) - (var(--grid-columns) - 1) * var(--grid-gap)) / var(--grid-columns));
   --nav-height: 40px;
 }
 
