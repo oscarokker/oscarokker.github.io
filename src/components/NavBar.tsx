@@ -98,8 +98,8 @@ export function NavBar({
       return;
     }
     
-    // Start chrome entrance ~100ms before first tile (or ~half the tile delay)
-    const chromeDelay = 0; // Start immediately, tiles start at index * 70ms
+    // Chrome starts immediately; tiles begin 80ms later (TILE_START_OFFSET in Portfolio)
+    const chromeDelay = 0;
     const chromeAnimDuration = 400;
     
     const showTimer = setTimeout(() => {

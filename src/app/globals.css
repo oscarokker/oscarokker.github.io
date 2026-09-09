@@ -817,7 +817,7 @@ html[data-device="mobile"] .portfolio-main {
 .tile-grid[data-entrance-done] .tile-slot {
   opacity: 1;
   transform: translateY(0);
-  filter: blur(0);
+  filter: none;
   will-change: auto;
 }
 
