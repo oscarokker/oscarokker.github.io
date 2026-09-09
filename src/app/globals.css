@@ -3105,7 +3105,7 @@ html[data-theme="dark"][data-case-study-boot="cover"] body::before {
 .case-study-header,
 .case-study-intro,
 .case-study-section {
-  padding-inline: 20px;
+  padding-inline: 24px;
 }
 
 .case-study-header {
@@ -3216,13 +3216,13 @@ html[data-theme="dark"][data-case-study-boot="cover"] body::before {
 
 .case-study-inline-figure {
   margin-top: 0.5rem;
-  margin-inline: -20px;
+  margin-inline: -24px;
   overflow: hidden;
 }
 
 .case-study-caption {
   margin: 12px 0 0;
-  padding-inline: 20px;
+  padding-inline: 24px;
   font-size: var(--text-body-sm-size);
   color: var(--color-text-secondary);
   text-align: center;
