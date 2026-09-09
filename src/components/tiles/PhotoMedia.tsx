@@ -51,15 +51,11 @@ export function PhotoMedia({
 }
 
 interface PhotoStackPreviewProps {
-  title: string;
   images: string[];
-  titleId?: string;
 }
 
 export function PhotoStackPreview({
-  title,
   images,
-  titleId,
 }: PhotoStackPreviewProps) {
   const frames = images.slice(0, 3);
 

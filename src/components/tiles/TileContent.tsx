@@ -565,7 +565,7 @@ export function PhotoStackTile({
         <TileChromeHint>
           <ExpandIcon />
         </TileChromeHint>
-        <PhotoStackPreview title={title} images={images} />
+        <PhotoStackPreview images={images} />
       </div>
 
       {mounted && sourceRect && (

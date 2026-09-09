@@ -484,7 +484,7 @@ export function PhotoStackTileExpanded({
 
         <div ref={scrollRef} className="photo-stack-morph-scroll">
           <div className="photo-stack-morph-collapsed" aria-hidden>
-            <PhotoStackPreview title={title} images={images} />
+            <PhotoStackPreview images={images} />
           </div>
 
           <div className="photo-stack-morph-body">
