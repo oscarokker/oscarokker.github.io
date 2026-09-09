@@ -1,14 +1,3 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="CV">
-  <rect width="64" height="64" rx="14" fill="#1A1A18"/>
-  <rect x="16" y="12" width="32" height="40" rx="3" fill="none" stroke="#F5F5F1" stroke-width="2.5"/>
-  <text
-    x="32"
-    y="38"
-    text-anchor="middle"
-    font-family="Georgia, 'Times New Roman', serif"
-    font-size="14"
-    font-weight="600"
-    fill="#F5F5F1"
-    letter-spacing="1"
-  >CV</text>
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M50 44V16C50 14.4087 49.3679 12.8826 48.2426 11.7574C47.1174 10.6321 45.5913 10 44 10H10M10 10C8.4087 10 6.88258 10.6321 5.75736 11.7574C4.63214 12.8826 4 14.4087 4 16C4 18.5 6 20 6 20M10 10C11.5913 10 13.1174 10.6321 14.2426 11.7574C15.3679 12.8826 16 14.4087 16 16V48C16 49.5913 16.6321 51.1174 17.7574 52.2426C18.8826 53.3679 20.4087 54 22 54M26 26H42M26 34H42M22 54C23.5913 54 25.1174 53.3679 26.2426 52.2426C27.3679 51.1174 28 49.5913 28 48C28 45.5 26 44 26 44H54C54 44 56 45.5 56 48C56 49.5913 55.3679 51.1174 54.2426 52.2426C53.1174 53.3679 51.5913 54 50 54H22Z" stroke="#2409D6" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
