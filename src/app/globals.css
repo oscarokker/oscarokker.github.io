@@ -345,7 +345,7 @@
   --site-max-width: 1440px;
 
   --page-padding: clamp(16px, 4vw, 32px);
-  --nav-height: 96px;
+  --nav-height: 48px;
 
   /* Motion */
   --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
@@ -760,7 +760,8 @@ html[data-device="mobile"] .portfolio-main {
 }
 
 .portfolio-main {
-  padding: calc(var(--nav-height) + 48px) var(--page-padding) 64px;
+  /* Top padding: top margin (24px) + nav bar height + bottom margin (24px) */
+  padding: calc(24px + var(--nav-height) + 24px + 48px) var(--page-padding) 64px;
   /* Desktop fixed 1024px grid may exceed narrow laptop widths */
   overflow-x: auto;
   /* Max width container for ultra-wide displays */
@@ -1714,13 +1715,16 @@ html[data-device="mobile"] .site-nav[data-entrance-done] {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: var(--nav-height);
-  box-sizing: border-box;
-  padding-inline: var(--page-padding);
-  padding-left: max(var(--page-padding), env(safe-area-inset-left));
-  padding-right: max(var(--page-padding), env(safe-area-inset-right));
-  /* Safe-area-inset-top adds above the 40/48px content bar */
-  margin-top: env(safe-area-inset-top);
+  gap: 16px;
+  margin: max(24px, env(safe-area-inset-top)) max(48px, env(safe-area-inset-right)) 24px max(48px, env(safe-area-inset-left));
+}
+
+.site-nav-center {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 0;
 }
 
 .header-logo-link {
@@ -1763,9 +1767,9 @@ html[data-device="mobile"] .site-nav[data-entrance-done] {
   transition: color var(--transition-theme);
 }
 
-/* Mobile: adjust header layout for smaller screens */
+/* Mobile: adjust header layout for smaller screens (keep 48px horizontal margins as Oscar requested) */
 html[data-device="mobile"] .site-header-inner {
-  margin: max(24px, env(safe-area-inset-top)) max(24px, env(safe-area-inset-right)) 24px max(24px, env(safe-area-inset-left));
+  margin: max(24px, env(safe-area-inset-top)) max(48px, env(safe-area-inset-right)) 24px max(48px, env(safe-area-inset-left));
   gap: 12px;
 }
 

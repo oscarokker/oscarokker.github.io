@@ -1,20 +1,16 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import type { FilterCategory } from "@/lib/types";
 import { tiles } from "@/data/tiles";
-import { Header } from "@/components/Header";
 import { Tile, tileMatchesFilter } from "@/components/Tile";
-import { useHeaderVisibility } from "@/hooks/useHeaderVisibility";
 import { useDevice } from "@/hooks/useDevice";
 import { tileGridOrder, useTileGridFlip } from "@/hooks/useTileGridFlip";
 import {
   FILTER_QUERY_KEY,
-  homeHrefForFilter,
   parseFilterParam,
   rememberPortfolioFilter,
 } from "@/lib/portfolio-filter";
-import { withBasePath } from "@/lib/base-path";
 
 function subscribeToLocation(onStoreChange: () => void) {
   window.addEventListener("popstate", onStoreChange);
@@ -38,7 +34,6 @@ export function Portfolio({
     () => initialFilter,
   );
   const device = useDevice();
-  const headerVisible = useHeaderVisibility();
   const gridRef = useRef<HTMLDivElement>(null);
   
   // Track entrance animation completion
@@ -90,23 +85,8 @@ export function Portfolio({
     }, totalDuration);
   }, []);
 
-  const onFilterChange = useCallback((filter: FilterCategory) => {
-    rememberPortfolioFilter(filter);
-    window.history.replaceState(
-      null,
-      "",
-      withBasePath(homeHrefForFilter(filter)),
-    );
-    window.dispatchEvent(new PopStateEvent("popstate"));
-  }, []);
-
   return (
     <>
-      <Header
-        visible={headerVisible}
-        activeFilter={activeFilter}
-        onFilterChange={onFilterChange}
-      />
       <main className="portfolio-main" data-device={device}>
         <div
           ref={gridRef}
