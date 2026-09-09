@@ -990,6 +990,16 @@ html[data-device="mobile"] .tile-card[data-active="false"] {
   padding: 22px 24px;
 }
 
+/* Quote tile mark icon: theme-aware highlight color with adjusted opacity for readability */
+.quote-tile-mark {
+  color: var(--color-highlight);
+  opacity: 0.5;
+}
+
+[data-theme="dark"] .quote-tile-mark {
+  opacity: 0.85;
+}
+
 .logo-tile {
   position: relative;
   align-items: center;

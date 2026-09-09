@@ -147,8 +147,7 @@ export function QuoteTile({ text, subtitle, showQuoteIcon }: QuoteTileProps) {
           alt=""
           width={24}
           height={24}
-          className="shrink-0"
-          style={{ opacity: 0.4 }}
+          className="shrink-0 quote-tile-mark"
           aria-hidden
           unoptimized
         />
