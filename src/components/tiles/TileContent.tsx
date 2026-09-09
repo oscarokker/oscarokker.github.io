@@ -226,8 +226,8 @@ export function SocialTile({
         <Image
           src={withBasePath(icon)}
           alt=""
-          width={64}
-          height={64}
+          width={56}
+          height={56}
           className="social-tile-icon"
           aria-hidden
         />
