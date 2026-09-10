@@ -2657,7 +2657,9 @@ html[data-device="mobile"] .cv-tile-logo {
   font-size: 3rem;
   font-weight: 800;
   line-height: 1;
-  letter-spacing: -0.04em;
+  letter-spacing: 0;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
   background-image: linear-gradient(to top, #ff7544, #ff9305);
   -webkit-background-clip: text;
   background-clip: text;
