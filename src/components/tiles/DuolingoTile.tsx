@@ -19,12 +19,15 @@ function useAnimatedCounter(
 ): number | null {
   const [displayValue, setDisplayValue] = useState<number | null>(null);
   const rafRef = useRef<number | null>(null);
-  const startTimeRef = useRef<number | null>(null);
-  const startValueRef = useRef<number>(0);
 
   useEffect(() => {
+    // Cancel any ongoing animation
+    if (rafRef.current !== null) {
+      cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+    }
+
     if (target === null) {
-      setDisplayValue(null);
       return;
     }
 
@@ -34,34 +37,36 @@ function useAnimatedCounter(
     ).matches;
 
     if (prefersReducedMotion) {
-      setDisplayValue(target);
+      // Skip animation, jump to target
+      rafRef.current = requestAnimationFrame(() => {
+        setDisplayValue(target);
+      });
       return;
     }
 
-    // Start animation from 0
-    startValueRef.current = 0;
-    startTimeRef.current = null;
+    // Animate from 0 to target
+    let startTime: number | null = null;
+    const startValue = 0;
 
     const animate = (timestamp: number) => {
-      if (startTimeRef.current === null) {
-        startTimeRef.current = timestamp;
+      if (startTime === null) {
+        startTime = timestamp;
       }
 
-      const elapsed = timestamp - startTimeRef.current;
+      const elapsed = timestamp - startTime;
       const progress = Math.min(elapsed / duration, 1);
 
       // Ease-out cubic easing
       const eased = 1 - Math.pow(1 - progress, 3);
 
-      const current = Math.round(
-        startValueRef.current + (target - startValueRef.current) * eased
-      );
+      const current = Math.round(startValue + (target - startValue) * eased);
       setDisplayValue(current);
 
       if (progress < 1) {
         rafRef.current = requestAnimationFrame(animate);
       } else {
         setDisplayValue(target);
+        rafRef.current = null;
       }
     };
 
@@ -70,6 +75,7 @@ function useAnimatedCounter(
     return () => {
       if (rafRef.current !== null) {
         cancelAnimationFrame(rafRef.current);
+        rafRef.current = null;
       }
     };
   }, [target, duration]);
