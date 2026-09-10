@@ -1006,6 +1006,11 @@ html[data-device="mobile"] .tile-card[data-active="false"] {
   opacity: 0.85;
 }
 
+.quote-tile-subtitle {
+  color: var(--color-text-primary);
+  opacity: 0.4;
+}
+
 .logo-tile {
   position: relative;
   align-items: center;
