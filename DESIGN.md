@@ -131,7 +131,18 @@ Feel: the site assembles itself saying hi. Pleasant; almost want to refresh. Nev
 - **Ease:** `cubic-bezier(0.16, 1, 0.3, 1)` — matches `--transition-tile-flip` / reading
 - **Stagger:** 0.07s between consecutive tiles, row-major top→bottom. Overlap. Cap total stagger so more tiles don't push past ~1.2s total choreography.
 
-**Chrome:** Header (logo + theme) and filter pill fade/rise with half the tile delay (or start ~100ms before first tile) — secondary to the bento.
+**Chrome:** Header (logo + theme) and desktop/tablet filter pill **assemble from above** — same opacity/blur/ease as tiles, but `translateY(-20px)` (from top instead of bottom).
+
+| Prop | From | To |
+|---|---|---|
+| opacity | 0 | 1 |
+| transform | translateY(-20px) | translateY(0) |
+| filter | blur(6px) | blur(0) |
+
+- **Duration:** 0.55s
+- **Ease:** `cubic-bezier(0.16, 1, 0.3, 1)` — matches tiles
+- **Stagger:** Header (logo + theme) at 0ms; top filter pill at ~70ms; tiles start at 80ms — chrome leads by a hair
+- **Mobile bottom filter bar:** opacity + blur only; **no** translateY (don't animate as if from top when it sits at bottom)
 
 **Must:**
 - `pointer-events` normal during animation — no interaction gate
