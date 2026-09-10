@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { accentClass } from "@/lib/accent";
 import { withBasePath } from "@/lib/base-path";
 import { duolingoProfileUrl, type DuolingoStats } from "@/lib/duolingo";
@@ -11,6 +11,81 @@ interface DuolingoTileProps {
   username: string;
   userId: number;
   accent?: string;
+}
+
+function useAnimatedCounter(
+  target: number | null,
+  duration = 800
+): number | null {
+  const [displayValue, setDisplayValue] = useState<number | null>(null);
+  const rafRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    // Cancel any ongoing animation
+    if (rafRef.current !== null) {
+      cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+    }
+
+    if (target === null) {
+      return;
+    }
+
+    // Check for reduced motion preference
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+
+    if (prefersReducedMotion) {
+      // Skip animation, jump to target immediately
+      // Intentionally synchronous for instant UI update
+      // eslint-disable-next-line
+      setDisplayValue(target);
+      return;
+    }
+
+    // Show 0 immediately, then animate to target
+    // Intentionally synchronous for instant UI update
+    // eslint-disable-next-line
+    setDisplayValue(0);
+
+    // Animate from 0 to target
+    let startTime: number | null = null;
+    const startValue = 0;
+
+    const animate = (timestamp: number) => {
+      if (startTime === null) {
+        startTime = timestamp;
+      }
+
+      const elapsed = timestamp - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+
+      // Ease-out cubic easing
+      const eased = 1 - Math.pow(1 - progress, 3);
+
+      const current = Math.round(startValue + (target - startValue) * eased);
+      setDisplayValue(current);
+
+      if (progress < 1) {
+        rafRef.current = requestAnimationFrame(animate);
+      } else {
+        setDisplayValue(target);
+        rafRef.current = null;
+      }
+    };
+
+    rafRef.current = requestAnimationFrame(animate);
+
+    return () => {
+      if (rafRef.current !== null) {
+        cancelAnimationFrame(rafRef.current);
+        rafRef.current = null;
+      }
+    };
+  }, [target, duration]);
+
+  return displayValue;
 }
 
 export function DuolingoTile({ username, userId, accent }: DuolingoTileProps) {
@@ -38,6 +113,8 @@ export function DuolingoTile({ username, userId, accent }: DuolingoTileProps) {
     };
   }, []);
 
+  const animatedStreak = useAnimatedCounter(stats?.streak ?? null);
+
   const profileUrl = stats?.profileUrl ?? duolingoProfileUrl(userId);
   const streakLabel = stats
     ? `${stats.streak} day streak`
@@ -56,7 +133,7 @@ export function DuolingoTile({ username, userId, accent }: DuolingoTileProps) {
       <span className="intro-chrome-icon-btn intro-tile-expand" aria-hidden>
         <ExternalLinkIcon />
       </span>
-      <div className="duolingo-streak" aria-live="polite">
+      <div className="duolingo-streak">
         <Image
           src={withBasePath("/duolingo-streak-fire.svg")}
           alt=""
@@ -66,8 +143,16 @@ export function DuolingoTile({ username, userId, accent }: DuolingoTileProps) {
           aria-hidden
           unoptimized
         />
-        <span className="duolingo-streak-value">
-          {stats ? stats.streak : failed ? "—" : "···"}
+        <span className="duolingo-streak-value" aria-hidden>
+          {animatedStreak !== null
+            ? animatedStreak
+            : failed
+              ? "—"
+              : "···"}
+        </span>
+        {/* Announce final value only, not every animation tick */}
+        <span className="sr-only" aria-live="polite">
+          {stats ? `${stats.streak} day streak` : ""}
         </span>
       </div>
 
