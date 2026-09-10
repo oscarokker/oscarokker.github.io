@@ -124,7 +124,7 @@ export function Header({ visible = true, activeFilter, onFilterChange }: HeaderP
     
     // Chrome starts immediately; tiles begin 80ms later (TILE_START_OFFSET in Portfolio)
     const chromeDelay = 0;
-    const chromeAnimDuration = 400;
+    const chromeAnimDuration = 620; // 550ms animation + 70ms filter pill delay
     
     const showTimer = setTimeout(() => {
       setEntranceState("visible");
