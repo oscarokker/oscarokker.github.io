@@ -13,9 +13,36 @@ interface DuolingoTileProps {
   accent?: string;
 }
 
+/**
+ * Cubic Bézier easing function.
+ * Evaluates a cubic Bézier curve defined by control points (x1, y1, x2, y2)
+ * for a given progress value x (0 to 1), returning the eased y value.
+ *
+ * Uses Newton-Raphson iteration to solve for t given x, then computes y(t).
+ */
+function cubicBezier(x1: number, y1: number, x2: number, y2: number) {
+  return (x: number): number => {
+    if (x <= 0) return 0;
+    if (x >= 1) return 1;
+
+    // Solve for t using Newton-Raphson
+    let t = x;
+    for (let i = 0; i < 8; i++) {
+      const xT = 3 * (1 - t) * (1 - t) * t * x1 + 3 * (1 - t) * t * t * x2 + t * t * t;
+      const dxT = 3 * (1 - t) * (1 - t) * x1 + 6 * (1 - t) * t * (x2 - x1) + 3 * t * t * (1 - x2);
+      
+      if (Math.abs(dxT) < 1e-6) break;
+      t -= (xT - x) / dxT;
+    }
+
+    // Calculate y from t
+    return 3 * (1 - t) * (1 - t) * t * y1 + 3 * (1 - t) * t * t * y2 + t * t * t;
+  };
+}
+
 function useAnimatedCounter(
   target: number | null,
-  duration = 800
+  duration = 1600
 ): number | null {
   const [displayValue, setDisplayValue] = useState<number | null>(null);
   const rafRef = useRef<number | null>(null);
@@ -52,6 +79,7 @@ function useAnimatedCounter(
     // Animate from 0 to target
     let startTime: number | null = null;
     const startValue = 0;
+    const ease = cubicBezier(0.16, 1, 0.3, 1);
 
     const animate = (timestamp: number) => {
       if (startTime === null) {
@@ -61,8 +89,7 @@ function useAnimatedCounter(
       const elapsed = timestamp - startTime;
       const progress = Math.min(elapsed / duration, 1);
 
-      // Ease-out cubic easing
-      const eased = 1 - Math.pow(1 - progress, 3);
+      const eased = ease(progress);
 
       const current = Math.round(startValue + (target - startValue) * eased);
       setDisplayValue(current);
