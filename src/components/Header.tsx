@@ -93,7 +93,8 @@ export function Header({ visible = true, activeFilter, onFilterChange }: HeaderP
     activeFilter ?? "all",
   );
   
-  const [entranceState, setEntranceState] = useState<"pending" | "visible" | "done">("pending");
+  const [topEntrance, setTopEntrance] = useState<"pending" | "visible" | "done">("pending");
+  const [filtersEntrance, setFiltersEntrance] = useState<"pending" | "visible" | "done">("pending");
   const isHome = pathname === "/";
 
   const handleHomeClick = (event: MouseEvent<HTMLAnchorElement>) => {
@@ -111,32 +112,45 @@ export function Header({ visible = true, activeFilter, onFilterChange }: HeaderP
   // Trigger entrance animation on home page first mount
   useEffect(() => {
     if (!isHome) {
-      setEntranceState("done");
+      setTopEntrance("done");
+      setFiltersEntrance("done");
       return;
     }
     
     // Check if user prefers reduced motion
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (prefersReducedMotion) {
-      setEntranceState("done");
+      setTopEntrance("done");
+      setFiltersEntrance("done");
       return;
     }
     
-    // Chrome starts immediately; tiles begin 80ms later (TILE_START_OFFSET in Portfolio)
-    const chromeDelay = 0;
-    const chromeAnimDuration = 620; // 550ms animation + 70ms filter pill delay
+    // Stagger header entrance: top at 0ms, filters at 70ms
+    const topDelay = 0;
+    const filtersDelay = 70;
+    const animDuration = 550;
     
-    const showTimer = setTimeout(() => {
-      setEntranceState("visible");
-    }, chromeDelay);
+    const topShowTimer = setTimeout(() => {
+      setTopEntrance("visible");
+    }, topDelay);
     
-    const doneTimer = setTimeout(() => {
-      setEntranceState("done");
-    }, chromeDelay + chromeAnimDuration);
+    const filtersShowTimer = setTimeout(() => {
+      setFiltersEntrance("visible");
+    }, filtersDelay);
+    
+    const topDoneTimer = setTimeout(() => {
+      setTopEntrance("done");
+    }, topDelay + animDuration);
+    
+    const filtersDoneTimer = setTimeout(() => {
+      setFiltersEntrance("done");
+    }, filtersDelay + animDuration);
     
     return () => {
-      clearTimeout(showTimer);
-      clearTimeout(doneTimer);
+      clearTimeout(topShowTimer);
+      clearTimeout(filtersShowTimer);
+      clearTimeout(topDoneTimer);
+      clearTimeout(filtersDoneTimer);
     };
   }, [isHome]);
 
@@ -151,13 +165,13 @@ export function Header({ visible = true, activeFilter, onFilterChange }: HeaderP
       className="site-nav"
       data-visible={visible ? "true" : "false"}
       data-device={device}
-      data-entrance-pending={isHome && entranceState === "pending" ? true : undefined}
-      data-entrance-visible={isHome && entranceState === "visible" ? true : undefined}
-      data-entrance-done={isHome && entranceState === "done" ? true : undefined}
       aria-label="Site navigation"
       inert={!visible || undefined}
     >
-      <div className="site-nav-top">
+      <div
+        className="site-nav-top"
+        data-entrance={topEntrance}
+      >
         <Link
           href="/"
           className={
@@ -236,6 +250,7 @@ export function Header({ visible = true, activeFilter, onFilterChange }: HeaderP
       {showFilters && (
         <div
           className={visible ? "pointer-events-auto site-nav-filters" : "site-nav-filters"}
+          data-entrance={filtersEntrance}
         >
           <div
             ref={containerRef}
