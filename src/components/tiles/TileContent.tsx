@@ -150,7 +150,7 @@ export function QuoteTile({ text, subtitle, showQuoteIcon }: QuoteTileProps) {
         &ldquo;{text}&rdquo;
       </blockquote>
       {subtitle ? (
-        <p className="text-label text-[var(--color-text-secondary)] m-0">
+        <p className="text-label quote-tile-subtitle m-0">
           {subtitle}
         </p>
       ) : null}
