@@ -331,20 +331,22 @@
   --radius-full: 9999px;
 
   /* Grid system — 4 cols desktop/tablet; 2 cols mobile
-     Desktop/tablet: explicit 240×240px cells with 20px gap (total width: 1020px)
-     Mobile: fluid 2-column grid */
+     Desktop/tablet: max 1020px (4×240 + 3×20), fluid shrink with 24px side margins
+     Mobile: fluid 2-column grid
+     Cell size derives from grid width to maintain proper proportions at all viewport sizes */
   --grid-columns: 4;
-  --grid-cell: 240px;
   --grid-gap: 20px;
-  --grid-width: calc(
-    var(--grid-columns) * var(--grid-cell) + (var(--grid-columns) - 1) * var(--grid-gap)
+  --page-padding: 24px;
+  --grid-width: min(1020px, calc(100vw - 2 * var(--page-padding)));
+  --grid-cell: calc(
+    (var(--grid-width) - (var(--grid-columns) - 1) * var(--grid-gap))
+    / var(--grid-columns)
   );
   --tile-radius: calc(var(--grid-gap) * 1.25);
   
   /* Max content width for ultra-wide displays (keeps grid readable on 3840px screens) */
   --site-max-width: 1440px;
 
-  --page-padding: clamp(16px, 4vw, 32px);
   --nav-height: 48px;
 
   /* Motion */
@@ -743,14 +745,9 @@ html[data-scroll-locked]::-webkit-scrollbar-thumb:hover {
 
 /* ─── Grid layout ───────────────────────────────────────────────── */
 
-/* Mobile: fluid 2-column grid filling the content width */
+/* Mobile: 2-column grid (inherits fluid width/cell formula from root) */
 html[data-device="mobile"] {
   --grid-columns: 2;
-  /* Matches .portfolio-main content box (padding already applied).
-     Enforce 320px minimum to preserve grid integrity at narrow viewports, capped at 1020px. */
-  --grid-width: min(1020px, max(320px, calc(100vw - 2 * var(--page-padding))));
-  /* Fluid cell size derived from viewport width */
-  --grid-cell: calc((var(--grid-width) - (var(--grid-columns) - 1) * var(--grid-gap)) / var(--grid-columns));
   --nav-height: 40px;
 }
 
@@ -762,8 +759,8 @@ html[data-device="mobile"] .portfolio-main {
 .portfolio-main {
   /* Top padding: top margin (24px) + nav bar height + bottom margin (24px) */
   padding: calc(24px + var(--nav-height) + 24px + 48px) var(--page-padding) 64px;
-  /* Desktop fixed 1024px grid may exceed narrow laptop widths */
-  overflow-x: auto;
+  /* Fluid grid with 24px side margins fits all viewport widths */
+  overflow-x: clip;
   /* Max width container for ultra-wide displays */
   max-width: var(--site-max-width);
   margin-inline: auto;

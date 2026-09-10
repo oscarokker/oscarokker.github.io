@@ -85,8 +85,8 @@ Hierarchy comes from **size + serif/sans pairing**, not from many weights.
 
 ## Tokens — Spacing & Shape
 
-**Base:** prefer 4px rhythm; page padding `clamp(16px, 4vw, 32px)` · `--page-padding`  
-**Grid:** `--grid-columns: 4` on tablet+desktop; **2** on mobile (`html[data-device=mobile]` ≤767px). `--grid-width: 1020px` (mobile fluid: `min(1020px, max(320px, …))`), `--grid-gap: 20px`, `--site-max-width: 1440px`  
+**Base:** prefer 4px rhythm; page padding `24px` · `--page-padding`  
+**Grid:** `--grid-columns: 4` on tablet+desktop; **2** on mobile (`html[data-device=mobile]` ≤767px). Max `1020px` (4×240 + 3×20), fluid shrink with 24px side margins; `--grid-gap: 20px`, `--site-max-width: 1440px`  
 **Nav height:** `--nav-height: 48px` (mobile: two rows — logo/theme, then filters)
 
 ### Border radius
@@ -224,7 +224,7 @@ Visible but not fake-tappable: `aria-disabled`, no press scale, default cursor.
 
 ## Layout
 
-- Home: centered bento, max site width 1440px, grid 1020px / 4 columns (2 on mobile ≤767).
+- Home: centered bento, max site width 1440px, grid max 1020px (fluid shrink, 24px side margins) / 4 columns (2 on mobile ≤767).
 - Case study: single column ~680px, generous vertical rhythm, sticky reading toggle clear of copy.
 - Mobile-first chrome: logo | theme on row 1; filters on row 2; safe-area insets on FAB and header.
 
