@@ -224,12 +224,38 @@ Visible but not fake-tappable: `aria-disabled`, no press scale, default cursor.
 
 ---
 
+### Dark-mode ASCII wave (homepage canvas)
+
+Replaces `.aurora-bg` on the **dark homepage only**. Light parchment + paper grain unchanged. Hidden on case-study routes (same gate as the old aurora).
+
+**Intent:** Ambient "built" texture behind the bento — slow wave / breath, readable in tile gaps and page margins. Tiles stay opaque elevated night (`#211f33`); the field must never compete with tile content or frosted nav.
+
+| Param | Lock |
+|-------|------|
+| Stack | Fixed full-viewport `<canvas>`, `z-index: -1`, `pointer-events: none` |
+| Engine | Custom Canvas 2D (no Three/OGL v1). Multi-sine / plasma field (Pantoine-style), **not** Matrix rain |
+| Clear | Midnight `#0d0c14` (or transparent over body bg) |
+| Glyph color | Cool near-white troughs → tip mix with highlight `#8573ff` (≤~40% at peaks). No glow/`shadowBlur` |
+| Canvas opacity | **0.15** start (range 0.12–0.20) |
+| Charset | Soft short ramp `" .·:-=+*#"` (or classic `" .:-=+*#%"`). **Reject** katakana / `01` rain / block-heavy carpets |
+| Cell size | Desktop **14px**; mobile **16px** (fewer cells) |
+| Speed | Leisurely — ~0.35× typical demo speed (aurora was a 30s drift) |
+| FPS | Cap **20–24** desktop; **12–20** mobile; pause when `document.hidden` |
+| Pointer | **Off** by default (or ≤0.25 influence, fine pointer only) |
+| Reduced motion | Static single frame (or still soft field) — no continuous animation |
+| Grain | Drop stacked aurora grain, or keep ≤ half prior strength — ASCII already textures |
+
+**Do:** Leave ~30–50% cells empty/near-empty so midnight air shows; fade with `--transition-theme` like aurora; destroy RAF on light theme / case study / unmount.  
+**Don't:** Vertical digital rain; neon green; interactive tech-demo ripples; animate under case studies; run at uncapped 120Hz RAF; put ASCII in the DOM/`<pre>` for screen readers.
+
+---
+
 ## Imagery & motion language
 
 - **Home:** photography and product UI live *inside* tiles (music covers, trek photos, case covers) — the grid is the composition.
 - **Case studies:** product shots, research artifacts, short looping demos. No stock lifestyle filler.
 - **Personality:** side quests (Himalaya, Duolingo, music) are allowed; Work filter must still surface real case studies first.
-- **Dark mode:** distinctive — indigo field + amber edge. Preserve it; don't flatten to generic gray dark mode.
+- **Dark mode:** distinctive — indigo field + ASCII wave texture. Preserve it; don't flatten to generic gray dark mode.
 
 ---
 
