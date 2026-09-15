@@ -342,7 +342,7 @@
     (var(--grid-width) - (var(--grid-columns) - 1) * var(--grid-gap))
     / var(--grid-columns)
   );
-  --tile-radius: calc(var(--grid-gap) * 1.25);
+  --tile-radius: calc(var(--grid-gap) * 1.4);
   
   /* Max content width for ultra-wide displays (keeps grid readable on 3840px screens) */
   --site-max-width: 1440px;
@@ -748,12 +748,15 @@ html[data-scroll-locked]::-webkit-scrollbar-thumb:hover {
 /* Mobile: 2-column grid (inherits fluid width/cell formula from root) */
 html[data-device="mobile"] {
   --grid-columns: 2;
+  --grid-gap: 12px;
   --nav-height: 40px;
 }
 
 html[data-device="mobile"] .portfolio-main {
   /* Fluid 2-col grid fits the viewport — no horizontal scroll needed */
   overflow-x: clip;
+  /* Clear floating bottom filter pill + safe area */
+  padding-bottom: calc(72px + max(env(safe-area-inset-bottom), 12px));
 }
 
 .portfolio-main {
@@ -1714,6 +1717,59 @@ html[data-device="mobile"] .site-nav-filters {
   transform: none;
   padding: 0 max(env(safe-area-inset-right), 12px) max(env(safe-area-inset-bottom), 12px) max(env(safe-area-inset-left), 12px);
 }
+
+/* Hardened mobile layout: works even if html[data-device] is missing/stale (SSR) */
+@media (max-width: 767px) {
+  :root,
+  html {
+    --grid-columns: 2;
+    --grid-gap: 12px;
+    --nav-height: 40px;
+  }
+
+  .portfolio-main {
+    overflow-x: clip;
+    padding-bottom: calc(72px + max(env(safe-area-inset-bottom), 12px));
+  }
+
+  .site-nav-filters {
+    position: fixed;
+    top: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    transform: none;
+    padding: 0 max(env(safe-area-inset-right), 12px) max(env(safe-area-inset-bottom), 12px) max(env(safe-area-inset-left), 12px);
+  }
+
+  .site-nav[data-visible="false"] .site-nav-filters {
+    translate: 0 calc(100% + 16px);
+    transition: translate var(--transition-base);
+  }
+
+  .nav-pill {
+    width: 100%;
+    gap: 0;
+  }
+
+  .nav-pill-button {
+    flex: 1;
+    min-height: 44px;
+    padding: 10px 8px;
+    font-size: 13px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Entrance: no Y on bottom filters */
+  .site-nav-filters:not([data-entrance="done"]),
+  .site-nav-filters[data-entrance="visible"],
+  .site-nav-filters[data-entrance="done"] {
+    transform: none;
+  }
+}
+
 
 /* Mobile: hide top and filters separately (filters are position fixed) */
 html[data-device="mobile"] .site-nav[data-visible="false"] .site-nav-top {
