@@ -3,7 +3,7 @@
 import { useCallback, useSyncExternalStore } from "react";
 import { CustomCursor } from "@/components/CustomCursor";
 import { Header } from "@/components/Header";
-import { AuroraBackground } from "@/components/AuroraBackground";
+import { AsciiWaveBackground } from "@/components/AsciiWaveBackground";
 import { CaseStudyMorphOverlay } from "@/components/case-studies/CaseStudiesMorphOverlay";
 import { CaseStudyTransitionProvider, useCaseStudyTransition } from "@/components/case-studies/CaseStudiesTransition";
 import { CaseStudyArticle } from "@/components/case-studies/CaseStudiesArticle";
@@ -76,7 +76,7 @@ function ShellChrome({ children }: { children: React.ReactNode }) {
 
   return (
     <>
-      <AuroraBackground />
+      <AsciiWaveBackground />
       <Header 
         visible={headerVisible} 
         activeFilter={isHome ? activeFilter : undefined}
