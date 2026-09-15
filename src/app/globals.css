@@ -734,6 +734,7 @@ html[data-scroll-locked]::-webkit-scrollbar-thumb:hover {
 html[data-device="mobile"] {
   --grid-columns: 2;
   --grid-gap: 16px;
+  --page-padding: 16px;
   --nav-height: 40px;
 }
 
@@ -742,8 +743,6 @@ html[data-device="mobile"] .portfolio-main {
   overflow-x: clip;
   /* Clear floating bottom filter pill + safe area */
   padding-bottom: calc(72px + max(env(safe-area-inset-bottom), 16px));
-  /* Horizontal padding matches tile gap for visual consistency */
-  padding-inline: var(--grid-gap);
 }
 
 .portfolio-main {
@@ -1701,7 +1700,7 @@ html[data-device="mobile"] .site-nav-filters {
   left: 0;
   right: 0;
   transform: none;
-  padding: 0 max(env(safe-area-inset-right), 12px) max(env(safe-area-inset-bottom), 12px) max(env(safe-area-inset-left), 12px);
+  padding: 0 max(env(safe-area-inset-right), 16px) max(env(safe-area-inset-bottom), 16px) max(env(safe-area-inset-left), 16px);
 }
 
 /* Mobile: hide top only; filters stay visible (persistent dock per Kern design lock) */
@@ -1805,14 +1804,13 @@ html[data-device="mobile"] .site-nav-filters {
   html {
     --grid-columns: 2;
     --grid-gap: 16px;
+    --page-padding: 16px;
     --nav-height: 40px;
   }
 
   .portfolio-main {
     overflow-x: clip;
     padding-bottom: calc(72px + max(env(safe-area-inset-bottom), 16px));
-    /* Horizontal padding matches tile gap for visual consistency */
-    padding-inline: var(--grid-gap);
   }
 
   .site-nav-filters {
