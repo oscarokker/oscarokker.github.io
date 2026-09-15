@@ -86,7 +86,7 @@ Hierarchy comes from **size + serif/sans pairing**, not from many weights.
 ## Tokens — Spacing & Shape
 
 **Base:** prefer 4px rhythm; page padding `24px` · `--page-padding`  
-**Grid:** `--grid-columns: 4` on tablet+desktop; **2** on mobile (`html[data-device=mobile]` / `@media (max-width: 767px)`). Max `1020px` (4×240 + 3×20), fluid shrink with 24px side margins; `--grid-gap: 20px` (mobile `12px`); `--site-max-width: 1440px`  
+**Grid:** `--grid-columns: 4` on tablet+desktop; **2** on mobile (`html[data-device=mobile]` / `@media (max-width: 767px)`). Max `1020px` (4×240 + 3×20), fluid shrink with 24px side margins; `--grid-gap: 20px` (mobile `16px`); `--site-max-width: 1440px`  
 **Nav height:** `--nav-height: 48px` (mobile: two rows — logo/theme, then filters)
 
 ### Border radius
@@ -95,7 +95,7 @@ Hierarchy comes from **size + serif/sans pairing**, not from many weights.
 |---------|-------|----------------|
 | Small chrome | `12px` | `--radius-sm` |
 | Medium chrome | `20px` | `--radius-md` |
-| Tiles | `calc(var(--grid-gap) * 1.4)` (28px desktop/tablet; ~16.8px mobile) | `--tile-radius` |
+| Tiles | `calc(var(--grid-gap) * 1.4)` (28px desktop/tablet; ~22.4px mobile) | `--tile-radius` |
 | Pills / thumbs | `9999px` | `--radius-full` |
 | **Case-study figures & videos** | **`24px`** | Always — matches portfolio stills (Rayo-quiet figures) |
 
