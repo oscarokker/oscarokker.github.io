@@ -21,33 +21,8 @@ export const tiles: TileData[] = [
     },
   },
   {
-    id: "case-study-1",
-    categories: ["work"],
-    size: "2x2",
-    variant: "case-study",
-    props: {
-      title: "CheapVoyage",
-      subtitle: "Co-Founder & UX Designer",
-      slug: "cheap-voyage",
-      accent: "teal",
-      coverSrc: "/case-studies/cheapvoyage-picture-1.png",
-    },
-  },
-  {
-    id: "quote",
-    categories: ["about"],
-    size: "2x1",
-    variant: "quote",
-    props: {
-      text: "Great products result from treating design and engineering as a single field.",
-      subtitle: "My Design Principle",
-      showQuoteIcon: true,
-      cursorLabel: "My design process philosophy",
-    },
-  },
-  {
     id: "contact-email",
-    categories: ["work"],
+    categories: ["about"],
     size: "1x1",
     variant: "social",
     props: {
@@ -58,7 +33,7 @@ export const tiles: TileData[] = [
   },
   {
     id: "contact-linkedin",
-    categories: ["work"],
+    categories: ["about"],
     size: "1x1",
     variant: "social",
     props: {
@@ -69,7 +44,7 @@ export const tiles: TileData[] = [
   },
   {
     id: "contact-x",
-    categories: ["work"],
+    categories: ["about"],
     size: "1x1",
     variant: "social",
     props: {
@@ -79,80 +54,16 @@ export const tiles: TileData[] = [
     },
   },
   {
-    id: "botanica",
-    categories: ["side-quests"],
-    size: "2x1",
-    variant: "music",
-    props: {
-      title: "Botanica",
-      subtitle: "Music & Visuals",
-      description: "Produce, mix, and craft audiovisual experiences.",
-      coverSrc: "/feel-alive-background.png",
-      youtubeId: "SLBmsHOsuLU",
-      videoTitle: "Feel Alive",
-      videoArtist: "Oscar Rode",
-    },
-  },
-  {
-    id: "quote-ux-principle",
-    categories: ["about"],
-    size: "2x1",
-    variant: "quote",
-    props: {
-      text: "Great UX should make users feel in control.",
-      subtitle: "My UX Principle",
-      showQuoteIcon: true,
-      cursorLabel: "My UX philosophy",
-    },
-  },
-  {
-    id: "himalaya",
-    categories: ["side-quests"],
-    size: "1x2",
-    variant: "photo-stack",
-    props: {
-      title: "Himalayan Trekking",
-      listingUrl: "/api/himalaya-photos.json",
-      // Collapsed stack only. Expanded gallery streams Manaslu, then Annapurna.
-      images: [
-        "/himalayan-trekking/manaslu-august-2024/PXL_20240804_092734561.jpg",
-        "/himalayan-trekking/manaslu-august-2024/PXL_20240804_095527543.jpg",
-        "/himalayan-trekking/manaslu-august-2024/PXL_20240804_095543347.jpg",
-      ],
-    },
-  },
-  {
-    id: "duolingo",
-    categories: ["side-quests"],
-    size: "1x1",
-    variant: "duolingo",
-    props: {
-      username: "OscarRode",
-      userId: 1000201223,
-    },
-  },
-  {
-    id: "startup-hub",
+    id: "case-study-1",
     categories: ["work"],
-    size: "1x1",
-    variant: "logo",
+    size: "2x2",
+    variant: "case-study",
     props: {
-      imageSrc: "/itu-nextgen-logo.png",
-      alt: "ITU NextGen Innovation & startup hub",
-      label: "Check out ITU NextGen where I got support to run CheapVoyage 🚀",
-      href: "https://www.itunextgen.dk/",
-      openInNewTab: true,
-    },
-  },
-  {
-    id: "oscar-rode-cv",
-    categories: ["work"],
-    size: "1x1",
-    variant: "cv",
-    props: {
-      logoSrc: "/cv-logo.svg",
-      fileSrc: "/Oscar-Rode-CV.pdf",
-      downloadFileName: "Oscar Rode - CV.pdf",
+      title: "CheapVoyage",
+      subtitle: "Co-Founder & UX Designer",
+      slug: "cheap-voyage",
+      accent: "teal",
+      coverSrc: "/case-studies/cheapvoyage-picture-1.png",
     },
   },
   {
@@ -195,6 +106,85 @@ export const tiles: TileData[] = [
     },
   },
   {
+    id: "quote",
+    categories: ["about"],
+    size: "2x1",
+    variant: "quote",
+    props: {
+      text: "Great products result from treating design and engineering as a single field.",
+      subtitle: "My Design Principle",
+      showQuoteIcon: true,
+      cursorLabel: "My design process philosophy",
+    },
+  },
+  {
+    id: "quote-ux-principle",
+    categories: ["about"],
+    size: "2x1",
+    variant: "quote",
+    props: {
+      text: "Great UX should make users feel in control.",
+      subtitle: "My UX Principle",
+      showQuoteIcon: true,
+      cursorLabel: "My UX philosophy",
+    },
+  },
+  {
+    id: "oscar-rode-cv",
+    categories: ["about"],
+    size: "1x1",
+    variant: "cv",
+    props: {
+      logoSrc: "/cv-logo.svg",
+      fileSrc: "/Oscar-Rode-CV.pdf",
+      downloadFileName: "Oscar Rode - CV.pdf",
+    },
+  },
+  {
+    id: "startup-hub",
+    categories: ["about"],
+    size: "1x1",
+    variant: "logo",
+    props: {
+      imageSrc: "/itu-nextgen-logo.png",
+      alt: "ITU NextGen Innovation & startup hub",
+      label: "Check out ITU NextGen where I got support to run CheapVoyage 🚀",
+      href: "https://www.itunextgen.dk/",
+      openInNewTab: true,
+    },
+  },
+  {
+    id: "botanica",
+    categories: ["side-quests"],
+    size: "2x1",
+    variant: "music",
+    props: {
+      title: "Botanica",
+      subtitle: "Music & Visuals",
+      description: "Produce, mix, and craft audiovisual experiences.",
+      coverSrc: "/feel-alive-background.png",
+      youtubeId: "SLBmsHOsuLU",
+      videoTitle: "Feel Alive",
+      videoArtist: "Oscar Rode",
+    },
+  },
+  {
+    id: "himalaya",
+    categories: ["side-quests"],
+    size: "1x2",
+    variant: "photo-stack",
+    props: {
+      title: "Himalayan Trekking",
+      listingUrl: "/api/himalaya-photos.json",
+      // Collapsed stack only. Expanded gallery streams Manaslu, then Annapurna.
+      images: [
+        "/himalayan-trekking/manaslu-august-2024/PXL_20240804_092734561.jpg",
+        "/himalayan-trekking/manaslu-august-2024/PXL_20240804_095527543.jpg",
+        "/himalayan-trekking/manaslu-august-2024/PXL_20240804_095543347.jpg",
+      ],
+    },
+  },
+  {
     id: "moonlit",
     categories: ["side-quests"],
     size: "1x1",
@@ -207,6 +197,16 @@ export const tiles: TileData[] = [
       youtubeId: "H-DNcJ-KnTE",
       videoTitle: "Moonlit",
       videoArtist: "Oscar Rode",
+    },
+  },
+  {
+    id: "duolingo",
+    categories: ["side-quests"],
+    size: "1x1",
+    variant: "duolingo",
+    props: {
+      username: "OscarRode",
+      userId: 1000201223,
     },
   },
 ];
