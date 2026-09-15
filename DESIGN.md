@@ -4,7 +4,7 @@
 **Theme:** light + dark (first-class pair)  
 **Living document:** update when the live site changes; Kern (design) proposes, Mosaic (code) confirms tokens match CSS. Oscar can ask anytime for improvements.
 
-Oscar Rode's portfolio is a personal UX/UI surface — not a SaaS landing page. Visitors should quickly see the design work, the case studies, and who he is to work with. The system is a **bento tile grid** on a warm off-white parchment in light mode, and a deep indigo canvas with a soft amber edge glow in dark mode. Display type is an editorial serif (Lora); UI and body are a calm sans (Open Sans). Soft rounded tiles, pill filters, and quiet elevation make the grid feel tactile and slightly playful without becoming loud. Case-study pages are a quieter editorial column: product figures and looping demos finish the sentence above them — they never decorate.
+Oscar Rode's portfolio is a personal UX/UI surface — not a SaaS landing page. Visitors should quickly see the design work, the case studies, and who he is to work with. The system is a **bento tile grid** on a warm off-white parchment in light mode, and a deep indigo canvas with a soft amber edge glow in dark mode. Display and body both use Satoshi, a warm geometric grotesk with rounded terminals — hierarchy comes from weight + size. Soft rounded tiles, pill filters, and quiet elevation make the grid feel tactile and slightly playful without becoming loud. Case-study pages are a quieter editorial column: product figures and looping demos finish the sentence above them — they never decorate.
 
 This file is the contract for future design and implementation. Prefer these tokens over inventing new colors, radii, or type roles.
 
@@ -57,15 +57,19 @@ This file is the contract for future design and implementation. Prefer these tok
 
 ## Tokens — Typography
 
-### Lora — Display / editorial serif · `--font-lora`
-- **Role:** Name, case-study headlines, quote tiles, display moments
-- **Weights:** display/H1–H2 typically **600**; H3 **500** — medium, not black; do not shout with heavy bold on parchment
-- **Tracking:** slightly negative at larger sizes (`--text-display-tracking: -0.02em`, H1 `-0.015em`, H2 `-0.01em`)
-- **Substitute:** Georgia, ui-serif
+### Satoshi — sole family · `--font-satoshi` / `--font-sans` / `--font-body`
+- **Source:** Fontshare (ITF Free Font License) — self-host WOFF2 via next/font/local. Not Google Fonts.
+- **Why:** Warm geometric grotesk with rounded terminals — matches Phosphor softness; hierarchy from weight + size (no Lora/Open Sans split).
+- **Ship weights:** variable 300–900 (or static 400 · 500 · 700 · 900). Map old 600→700, 800→900.
+- **Fallback:** system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif
 
-### Open Sans — Body / UI · `--font-body` / `--font-sans`
-- **Role:** Body, labels, nav pills, captions, case-study prose
-- **Substitute:** system-ui, sans-serif
+### Role → weight lock
+Display/name/case hero 900; H1 700; H2/tile titles 700; H3 500; body/body-lg 400; labels/captions/nav 500; Duolingo streak 900.
+
+Keep existing size/leading/tracking scale; family becomes Satoshi everywhere.
+
+**Do:** one family sitewide; retire/alias --font-lora/--font-serif.  
+**Don't:** keep Lora for quotes; load from Google; leave 600/800 unmapped.
 
 ### Type scale (CSS already live)
 
@@ -194,7 +198,7 @@ Visible but not fake-tappable: `aria-disabled`, no press scale, default cursor.
 
 ### Do
 - Keep parchment (light) and midnight indigo (dark) as the only canvases; let amber glow stay atmospheric in dark, not a brand flood
-- Pair Lora display with Open Sans body; tighten tracking only at display/heading sizes
+- Use Satoshi for all type; hierarchy from weight (400/500/700/900) + size, not multiple families
 - Use pill geometry for filters and reading toggles; soft tile radius for bento cards; **24px** for case-study media
 - Center figure captions in secondary gray with 12px gap under media
 - Design for mobile thumbs: 44×44 minimum, two-row header, hide filtered tiles, no hover-only labels
@@ -208,7 +212,7 @@ Visible but not fake-tappable: `aria-disabled`, no press scale, default cursor.
 - Don't put research stills into the Source Insights phone-row carousel
 - Don't let the music iframe intercept taps
 - Don't add SaaS marketing chrome (pricing tables, multi CTA pill pairs) that fights the personal bento
-- Don't introduce a third typeface without updating this file and the CSS together
+- Don't introduce a second typeface or load from Google Fonts — Satoshi is self-hosted and covers all roles
 
 ---
 
@@ -288,13 +292,13 @@ Call these out when found; fix in CSS + this file together:
 
 - Canvas light: `#f0eee6` · dark: `#0d0c14`  
 - Text primary / secondary / tertiary as tokens above  
-- Serif headlines (Lora), sans body (Open Sans)  
+- Satoshi for all type: 900 display/hero, 700 H1-H2, 500 H3/labels, 400 body
 - Tiles: soft shadow + `--tile-radius` · Filters: pill `9999px`  
 - Case figures: 24px radius · caption centered secondary · mt 12px  
 - Mobile: 44×44 targets · two-row header · music = round note FAB  
 
 ### Example prompts
-1. **Home tile:** Elevated paper card, tile radius, soft dual shadow, optional teal accent edge, serif title + sans meta.  
+1. **Home tile:** Elevated paper card, tile radius, soft dual shadow, optional teal accent edge, Satoshi title (700) + meta (500).  
 2. **Case figure:** Image/video 24px radius; caption centered, `--color-text-secondary`, margin-top 12px.  
 3. **Filter pill:** Frosted nav fill, active thumb, 44px min height on mobile, horizontal scroll if needed.  
 

@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Lora, Open_Sans } from "next/font/google";
+import localFont from "next/font/local";
 import { AppShell } from "@/components/AppShell";
 import { InlineScript } from "@/components/InlineScript";
 import { ThemeProvider } from "@/components/ThemeProvider";
@@ -12,18 +12,11 @@ const SITE_TITLE = "Oscar Rode · Design Portfolio";
 const SITE_DESCRIPTION =
   "Portfolio of Oscar Rode, UX/UI Designer specializing in Human-AI interaction and product design. Based in Copenhagen, Denmark. Co-founder and UX designer of CheapVoyage, an AI-driven conversational travel planner.";
 
-const lora = Lora({
-  variable: "--font-lora",
-  subsets: ["latin"],
+const satoshi = localFont({
+  src: "../fonts/Satoshi-Variable.woff2",
+  variable: "--font-satoshi",
   display: "swap",
-  style: ["normal", "italic"],
-});
-
-const openSans = Open_Sans({
-  variable: "--font-body",
-  subsets: ["latin"],
-  display: "swap",
-  weight: ["400", "500", "600", "700", "800"],
+  weight: "300 900",
 });
 
 export const metadata: Metadata = {
@@ -74,7 +67,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${lora.variable} ${openSans.variable} h-full antialiased`}
+      className={`${satoshi.variable} h-full antialiased`}
       suppressHydrationWarning
       data-theme="light"
       data-scroll-behavior="smooth"
