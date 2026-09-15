@@ -2156,6 +2156,20 @@ html[data-device="mobile"] .intro-expanded-minimize {
   background: transparent;
 }
 
+/* Mobile: scale avatar between 60px and 120px to keep name/bio readable */
+html[data-device="mobile"] .intro-tile-avatar {
+  width: clamp(60px, calc(60px + (100vw - 320px) * 60 / 447), 120px);
+  height: clamp(60px, calc(60px + (100vw - 320px) * 60 / 447), 120px);
+}
+
+/* Fallback for stale data-device attribute */
+@media (max-width: 767px) {
+  .intro-tile-avatar {
+    width: clamp(60px, calc(60px + (100vw - 320px) * 60 / 447), 120px);
+    height: clamp(60px, calc(60px + (100vw - 320px) * 60 / 447), 120px);
+  }
+}
+
 .intro-tile-avatar-image {
   width: 100%;
   height: 100%;
