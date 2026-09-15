@@ -1707,16 +1707,6 @@ html[data-device="mobile"] .site-nav-filters[data-entrance="done"] {
   }
 }
 
-/* Mobile: filters move to bottom via CSS (same nav element) */
-html[data-device="mobile"] .site-nav-filters {
-  position: fixed;
-  top: auto;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  transform: none;
-  padding: 0 max(env(safe-area-inset-right), 12px) max(env(safe-area-inset-bottom), 12px) max(env(safe-area-inset-left), 12px);
-}
 
 /* Hardened mobile layout: works even if html[data-device] is missing/stale (SSR) */
 @media (max-width: 767px) {
@@ -1833,15 +1823,50 @@ html[data-device="tablet"] .site-nav[data-visible="false"] .site-nav-filters {
   display: flex;
   justify-content: center;
   align-items: center;
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: max(24px, env(safe-area-inset-top));
   pointer-events: none;
 }
 
 .site-nav-filters > * {
   pointer-events: auto;
+}
+
+/* Desktop/tablet: filters sit at top, absolutely positioned */
+html[data-device="tablet"] .site-nav-filters,
+html[data-device="desktop"] .site-nav-filters {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: max(24px, env(safe-area-inset-top));
+}
+
+@media (min-width: 768px) {
+  .site-nav-filters {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: max(24px, env(safe-area-inset-top));
+  }
+}
+
+/* Mobile: filters move to bottom via CSS (same nav element) */
+html[data-device="mobile"] .site-nav-filters {
+  position: fixed;
+  top: auto;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  transform: none;
+  padding: 0 max(env(safe-area-inset-right), 12px) max(env(safe-area-inset-bottom), 12px) max(env(safe-area-inset-left), 12px);
+}
+
+@media (max-width: 767px) {
+  .site-nav-filters {
+    position: fixed;
+    top: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
 }
 
 [data-theme="dark"] .header-logo {
