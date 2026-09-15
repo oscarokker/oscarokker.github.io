@@ -166,7 +166,7 @@ export function Header({ visible = true, activeFilter, onFilterChange }: HeaderP
       data-visible={visible ? "true" : "false"}
       data-device={device}
       aria-label="Site navigation"
-      inert={!visible || undefined}
+      inert={(device !== "mobile" && !visible) || undefined}
     >
       <div
         className="site-nav-top"

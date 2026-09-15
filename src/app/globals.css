@@ -1715,16 +1715,13 @@ html[data-device="mobile"] .site-nav-filters {
   padding: 0 max(env(safe-area-inset-right), 12px) max(env(safe-area-inset-bottom), 12px) max(env(safe-area-inset-left), 12px);
 }
 
-/* Mobile: hide top and filters separately (filters are position fixed) */
+/* Mobile: hide top only; filters stay visible (persistent dock per Kern design lock) */
 html[data-device="mobile"] .site-nav[data-visible="false"] .site-nav-top {
   translate: 0 calc(-100% - 24px);
   transition: translate var(--transition-base);
 }
 
-html[data-device="mobile"] .site-nav[data-visible="false"] .site-nav-filters {
-  translate: 0 calc(100% + 16px);
-  transition: translate var(--transition-base);
-}
+/* Mobile filters: NO translate on scroll — persistent bottom dock */
 
 .header-logo-link {
   width: 40px;
