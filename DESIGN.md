@@ -86,7 +86,7 @@ Hierarchy comes from **size + serif/sans pairing**, not from many weights.
 ## Tokens — Spacing & Shape
 
 **Base:** prefer 4px rhythm; page padding `24px` · `--page-padding`  
-**Grid:** `--grid-columns: 4` on tablet+desktop; **2** on mobile (`html[data-device=mobile]` ≤767px). Max `1020px` (4×240 + 3×20), fluid shrink with 24px side margins; `--grid-gap: 20px`, `--site-max-width: 1440px`  
+**Grid:** `--grid-columns: 4` on tablet+desktop; **2** on mobile (`html[data-device=mobile]` / `@media (max-width: 767px)`). Max `1020px` (4×240 + 3×20), fluid shrink with 24px side margins; `--grid-gap: 20px` (mobile `12px`); `--site-max-width: 1440px`  
 **Nav height:** `--nav-height: 48px` (mobile: two rows — logo/theme, then filters)
 
 ### Border radius
@@ -95,7 +95,7 @@ Hierarchy comes from **size + serif/sans pairing**, not from many weights.
 |---------|-------|----------------|
 | Small chrome | `12px` | `--radius-sm` |
 | Medium chrome | `20px` | `--radius-md` |
-| Tiles | `calc(var(--grid-gap) * 1.25)` (~25px) | `--tile-radius` |
+| Tiles | `calc(var(--grid-gap) * 1.4)` (28px desktop/tablet; ~16.8px mobile) | `--tile-radius` |
 | Pills / thumbs | `9999px` | `--radius-full` |
 | **Case-study figures & videos** | **`24px`** | Always — matches portfolio stills (Rayo-quiet figures) |
 
@@ -164,7 +164,7 @@ Respect `prefers-reduced-motion`. On coarse pointers, hide custom cursor / hover
 Rounded `--tile-radius`, elevated paper fill, soft `--shadow-tile`. Sizes `1x1` / `2x1` / `1x2` / `2x2` on the 4-col grid. Accents via `--color-tile-*`. Inactive (filtered) tiles: hide on mobile; do not leave dim ghosts that eat taps.
 
 ### Filter pill (nav)
-Frosted pill, sliding thumb, labels **All / Work / About / Side Quests** (Music is folded into Side Quests). Mobile: own row under logo+theme; chips ≥44px tall; pill may scroll horizontally — never cover logo/theme.
+Frosted pill, sliding thumb, labels **All / Work / About / Side Quests** (Music is folded into Side Quests). Mobile: floating frosted pill docked at **bottom** (logo+theme stay top); chips ≥44px tall; main content padding clears the pill — never cover logo/theme.
 
 ### Theme toggle
 ≥44×44 hit target. Light parchment ↔ midnight indigo with amber edge character in dark.
