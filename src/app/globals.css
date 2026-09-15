@@ -1998,10 +1998,18 @@ html[data-device="mobile"] .nav-pill-button {
   display: block;
 }
 
+/* Mobile: fixed 48×48 for consistent tap targets */
 html[data-device="mobile"] .social-tile-icon {
-  /* Scale from 32px at 320px viewport to 48px at 767px viewport */
-  width: clamp(32px, calc(32px + (100vw - 320px) * 16 / 447), 48px);
-  height: clamp(32px, calc(32px + (100vw - 320px) * 16 / 447), 48px);
+  width: 48px;
+  height: 48px;
+}
+
+/* Fallback for stale data-device attribute */
+@media (max-width: 767px) {
+  .social-tile-icon {
+    width: 48px;
+    height: 48px;
+  }
 }
 
 [data-theme="dark"] a[aria-label="X"] .social-tile-icon {
@@ -2223,6 +2231,20 @@ html[data-device="mobile"] .intro-expanded-minimize {
   border-radius: 50%;
   overflow: hidden;
   background: transparent;
+}
+
+/* Mobile: scale avatar between 60px and 120px to keep name/bio readable */
+html[data-device="mobile"] .intro-tile-avatar {
+  width: clamp(60px, calc(60px + (100vw - 320px) * 60 / 447), 120px);
+  height: clamp(60px, calc(60px + (100vw - 320px) * 60 / 447), 120px);
+}
+
+/* Fallback for stale data-device attribute */
+@media (max-width: 767px) {
+  .intro-tile-avatar {
+    width: clamp(60px, calc(60px + (100vw - 320px) * 60 / 447), 120px);
+    height: clamp(60px, calc(60px + (100vw - 320px) * 60 / 447), 120px);
+  }
 }
 
 .intro-tile-avatar-image {
@@ -2630,10 +2652,18 @@ html[data-device="mobile"] .intro-morph-expanded {
   display: block;
 }
 
+/* Mobile: fixed 48×48 to match social icons */
 html[data-device="mobile"] .cv-tile-logo {
-  /* Match social tiles: 32px at 320px → 48px at 767px */
-  width: clamp(32px, calc(32px + (100vw - 320px) * 16 / 447), 48px);
-  height: clamp(32px, calc(32px + (100vw - 320px) * 16 / 447), 48px);
+  width: 48px;
+  height: 48px;
+}
+
+/* Fallback for stale data-device attribute */
+@media (max-width: 767px) {
+  .cv-tile-logo {
+    width: 48px;
+    height: 48px;
+  }
 }
 
 .cv-tile-size-hint {
