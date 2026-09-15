@@ -27,8 +27,6 @@ export function AsciiWaveBackground() {
     if (!ctx) return;
 
     const charset = " .·:-=+*#";
-    const isMobile = window.innerWidth <= 767;
-    const cellSize = isMobile ? 16 : 14;
     const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
     const prefersReducedMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)"
@@ -36,10 +34,16 @@ export function AsciiWaveBackground() {
 
     let cols = 0;
     let rows = 0;
+    let cellSize = 14;
+    let frameInterval = 1000 / 22;
 
     const resize = () => {
       const width = window.innerWidth;
       const height = window.innerHeight;
+      const isMobile = width <= 767;
+      cellSize = isMobile ? 16 : 14;
+      const targetFps = isMobile ? 16 : 22;
+      frameInterval = 1000 / targetFps;
       cols = Math.ceil(width / cellSize);
       rows = Math.ceil(height / cellSize);
       canvas.width = cols * cellSize * dpr;
@@ -51,9 +55,6 @@ export function AsciiWaveBackground() {
 
     resize();
     window.addEventListener("resize", resize);
-
-    const targetFps = isMobile ? 16 : 22;
-    const frameInterval = 1000 / targetFps;
     let lastFrameTime = 0;
     let paused = false;
 
