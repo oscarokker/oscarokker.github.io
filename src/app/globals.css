@@ -336,7 +336,7 @@
      Cell size derives from grid width to maintain proper proportions at all viewport sizes */
   --grid-columns: 4;
   --grid-gap: 20px;
-  --page-padding: 24px;
+  --page-padding: 20px;
   --grid-width: min(1020px, calc(100vw - 2 * var(--page-padding)));
   --grid-cell: calc(
     (var(--grid-width) - (var(--grid-columns) - 1) * var(--grid-gap))
@@ -346,7 +346,7 @@
   
   /* Max content width for ultra-wide displays (keeps grid readable on 3840px screens) */
   --site-max-width: 1440px;
-
+  --site-min-width: 320px;
   --nav-height: 48px;
 
   /* Motion */
