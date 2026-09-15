@@ -733,7 +733,8 @@ html[data-scroll-locked]::-webkit-scrollbar-thumb:hover {
 /* Mobile: 2-column grid (inherits fluid width/cell formula from root) */
 html[data-device="mobile"] {
   --grid-columns: 2;
-  --grid-gap: 12px;
+  --grid-gap: 16px;
+  --page-padding: 16px;
   --nav-height: 40px;
 }
 
@@ -741,7 +742,7 @@ html[data-device="mobile"] .portfolio-main {
   /* Fluid 2-col grid fits the viewport — no horizontal scroll needed */
   overflow-x: clip;
   /* Clear floating bottom filter pill + safe area */
-  padding-bottom: calc(72px + max(env(safe-area-inset-bottom), 12px));
+  padding-bottom: calc(72px + max(env(safe-area-inset-bottom), 16px));
 }
 
 .portfolio-main {
@@ -1699,7 +1700,7 @@ html[data-device="mobile"] .site-nav-filters {
   left: 0;
   right: 0;
   transform: none;
-  padding: 0 max(env(safe-area-inset-right), 12px) max(env(safe-area-inset-bottom), 12px) max(env(safe-area-inset-left), 12px);
+  padding: 0 max(env(safe-area-inset-right), 16px) max(env(safe-area-inset-bottom), 16px) max(env(safe-area-inset-left), 16px);
 }
 
 /* Mobile: hide top only; filters stay visible (persistent dock per Kern design lock) */
@@ -1794,7 +1795,7 @@ html[data-device="mobile"] .site-nav-filters {
   left: 0;
   right: 0;
   transform: none;
-  padding: 0 max(env(safe-area-inset-right), 12px) max(env(safe-area-inset-bottom), 12px) max(env(safe-area-inset-left), 12px);
+  padding: 0 max(env(safe-area-inset-right), 16px) max(env(safe-area-inset-bottom), 16px) max(env(safe-area-inset-left), 16px);
 }
 
 /* Hardened mobile layout: works even if html[data-device] is missing/stale (SSR) */
@@ -1802,13 +1803,14 @@ html[data-device="mobile"] .site-nav-filters {
   :root,
   html {
     --grid-columns: 2;
-    --grid-gap: 12px;
+    --grid-gap: 16px;
+    --page-padding: 16px;
     --nav-height: 40px;
   }
 
   .portfolio-main {
     overflow-x: clip;
-    padding-bottom: calc(72px + max(env(safe-area-inset-bottom), 12px));
+    padding-bottom: calc(72px + max(env(safe-area-inset-bottom), 16px));
   }
 
   .site-nav-filters {
@@ -1818,7 +1820,7 @@ html[data-device="mobile"] .site-nav-filters {
     left: 0;
     right: 0;
     transform: none;
-    padding: 0 max(env(safe-area-inset-right), 12px) max(env(safe-area-inset-bottom), 12px) max(env(safe-area-inset-left), 12px);
+    padding: 0 max(env(safe-area-inset-right), 16px) max(env(safe-area-inset-bottom), 16px) max(env(safe-area-inset-left), 16px);
   }
 
   /* Mobile filters: NO translate on scroll — persistent bottom dock (hardened fallback) */
@@ -1857,7 +1859,7 @@ html[data-device="mobile"] .site-nav-filters {
 
 /* Mobile: adjust top bar (logo + theme) */
 html[data-device="mobile"] .site-nav-top {
-  margin: max(24px, env(safe-area-inset-top)) max(48px, env(safe-area-inset-right)) 24px max(48px, env(safe-area-inset-left));
+  margin: max(24px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) 24px max(16px, env(safe-area-inset-left));
   gap: 12px;
 }
 
