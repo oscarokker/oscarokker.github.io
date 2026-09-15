@@ -610,8 +610,8 @@ body::before {
   opacity: 0;
 }
 
-/* Northern lights aurora sits with the grain layer: behind tiles/header/nav/cursor */
-.aurora-bg {
+/* ASCII wave background: dark-mode homepage ambient field */
+.ascii-wave-bg {
   position: fixed;
   inset: 0;
   z-index: -1;
@@ -620,57 +620,11 @@ body::before {
   display: block;
   pointer-events: none;
   opacity: 0;
-  overflow: hidden;
   transition: opacity var(--transition-theme);
 }
 
-.aurora-bg[data-visible="true"] {
-  opacity: 1;
-}
-
-.aurora-bg::before {
-  content: '';
-  position: absolute;
-  inset: -20%;
-  width: 140%;
-  height: 140%;
-  background: linear-gradient(135deg, #EAFFF4 12.5%, #4BE8A0 37.5%, #2E6E80 62.5%, #16224D 87.5%);
-  background: linear-gradient(135deg in oklab, #EAFFF4 12.5%, #4BE8A0 37.5%, #2E6E80 62.5%, #16224D 87.5%);
-  animation: aurora-drift 30s ease-in-out infinite;
-}
-
-.aurora-bg::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: url(/kyokkou-grain.png) repeat;
-  background-size: 256px 256px;
-  image-rendering: pixelated;
-  mix-blend-mode: overlay;
-  opacity: 0.100;
-  pointer-events: none;
-}
-
-@keyframes aurora-drift {
-  0%, 100% {
-    transform: translate(-5%, -5%) rotate(0deg);
-  }
-  33% {
-    transform: translate(0%, -10%) rotate(1deg);
-  }
-  66% {
-    transform: translate(-10%, 0%) rotate(-1deg);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .aurora-bg::before {
-    animation: none;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    transform: none;
-  }
+.ascii-wave-bg[data-visible="true"] {
+  opacity: 0.15;
 }
 
 ::selection {
@@ -735,7 +689,8 @@ html[data-scroll-locked]::-webkit-scrollbar-thumb:hover {
 /* Mobile: 2-column grid (inherits fluid width/cell formula from root) */
 html[data-device="mobile"] {
   --grid-columns: 2;
-  --grid-gap: 12px;
+  --grid-gap: 16px;
+  --page-padding: 16px;
   --nav-height: 40px;
 }
 
@@ -743,7 +698,7 @@ html[data-device="mobile"] .portfolio-main {
   /* Fluid 2-col grid fits the viewport — no horizontal scroll needed */
   overflow-x: clip;
   /* Clear floating bottom filter pill + safe area */
-  padding-bottom: calc(72px + max(env(safe-area-inset-bottom), 12px));
+  padding-bottom: calc(72px + max(env(safe-area-inset-bottom), 16px));
 }
 
 .portfolio-main {
@@ -1701,7 +1656,7 @@ html[data-device="mobile"] .site-nav-filters {
   left: 0;
   right: 0;
   transform: none;
-  padding: 0 max(env(safe-area-inset-right), 12px) max(env(safe-area-inset-bottom), 12px) max(env(safe-area-inset-left), 12px);
+  padding: 0 max(env(safe-area-inset-right), 16px) max(env(safe-area-inset-bottom), 16px) max(env(safe-area-inset-left), 16px);
 }
 
 /* Mobile: hide top only; filters stay visible (persistent dock per Kern design lock) */
@@ -1796,7 +1751,7 @@ html[data-device="mobile"] .site-nav-filters {
   left: 0;
   right: 0;
   transform: none;
-  padding: 0 max(env(safe-area-inset-right), 12px) max(env(safe-area-inset-bottom), 12px) max(env(safe-area-inset-left), 12px);
+  padding: 0 max(env(safe-area-inset-right), 16px) max(env(safe-area-inset-bottom), 16px) max(env(safe-area-inset-left), 16px);
 }
 
 /* Hardened mobile layout: works even if html[data-device] is missing/stale (SSR) */
@@ -1804,13 +1759,14 @@ html[data-device="mobile"] .site-nav-filters {
   :root,
   html {
     --grid-columns: 2;
-    --grid-gap: 12px;
+    --grid-gap: 16px;
+    --page-padding: 16px;
     --nav-height: 40px;
   }
 
   .portfolio-main {
     overflow-x: clip;
-    padding-bottom: calc(72px + max(env(safe-area-inset-bottom), 12px));
+    padding-bottom: calc(72px + max(env(safe-area-inset-bottom), 16px));
   }
 
   .site-nav-filters {
@@ -1820,7 +1776,7 @@ html[data-device="mobile"] .site-nav-filters {
     left: 0;
     right: 0;
     transform: none;
-    padding: 0 max(env(safe-area-inset-right), 12px) max(env(safe-area-inset-bottom), 12px) max(env(safe-area-inset-left), 12px);
+    padding: 0 max(env(safe-area-inset-right), 16px) max(env(safe-area-inset-bottom), 16px) max(env(safe-area-inset-left), 16px);
   }
 
   /* Mobile filters: NO translate on scroll — persistent bottom dock (hardened fallback) */
@@ -1859,7 +1815,7 @@ html[data-device="mobile"] .site-nav-filters {
 
 /* Mobile: adjust top bar (logo + theme) */
 html[data-device="mobile"] .site-nav-top {
-  margin: max(24px, env(safe-area-inset-top)) max(48px, env(safe-area-inset-right)) 24px max(48px, env(safe-area-inset-left));
+  margin: max(24px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) 24px max(16px, env(safe-area-inset-left));
   gap: 12px;
 }
 

@@ -90,7 +90,7 @@ Hierarchy comes from **size + serif/sans pairing**, not from many weights.
 ## Tokens — Spacing & Shape
 
 **Base:** prefer 4px rhythm; page padding `24px` · `--page-padding`  
-**Grid:** `--grid-columns: 4` on tablet+desktop; **2** on mobile (`html[data-device=mobile]` / `@media (max-width: 767px)`). Max `1020px` (4×240 + 3×20), fluid shrink with 24px side margins; `--grid-gap: 20px` (mobile `12px`); `--site-max-width: 1440px`  
+**Grid:** `--grid-columns: 4` on tablet+desktop; **2** on mobile (`html[data-device=mobile]` / `@media (max-width: 767px)`). Max `1020px` (4×240 + 3×20), fluid shrink with 24px side margins; `--grid-gap: 20px` (mobile `16px`); `--site-max-width: 1440px`  
 **Nav height:** `--nav-height: 48px` (mobile: two rows — logo/theme, then filters)
 
 ### Border radius
@@ -99,7 +99,7 @@ Hierarchy comes from **size + serif/sans pairing**, not from many weights.
 |---------|-------|----------------|
 | Small chrome | `12px` | `--radius-sm` |
 | Medium chrome | `20px` | `--radius-md` |
-| Tiles | `calc(var(--grid-gap) * 1.4)` (28px desktop/tablet; ~16.8px mobile) | `--tile-radius` |
+| Tiles | `calc(var(--grid-gap) * 1.4)` (28px desktop/tablet; ~22.4px mobile) | `--tile-radius` |
 | Pills / thumbs | `9999px` | `--radius-full` |
 | **Case-study figures & videos** | **`24px`** | Always — matches portfolio stills (Rayo-quiet figures) |
 
@@ -228,12 +228,38 @@ Visible but not fake-tappable: `aria-disabled`, no press scale, default cursor.
 
 ---
 
+### Dark-mode ASCII wave (homepage canvas)
+
+Replaces `.aurora-bg` on the **dark homepage only**. Light parchment + paper grain unchanged. Hidden on case-study routes (same gate as the old aurora).
+
+**Intent:** Ambient "built" texture behind the bento — slow wave / breath, readable in tile gaps and page margins. Tiles stay opaque elevated night (`#211f33`); the field must never compete with tile content or frosted nav.
+
+| Param | Lock |
+|-------|------|
+| Stack | Fixed full-viewport `<canvas>`, `z-index: -1`, `pointer-events: none` |
+| Engine | Custom Canvas 2D (no Three/OGL v1). Multi-sine / plasma field (Pantoine-style), **not** Matrix rain |
+| Clear | Midnight `#0d0c14` (or transparent over body bg) |
+| Glyph color | Cool near-white troughs → tip mix with highlight `#8573ff` (≤~40% at peaks). No glow/`shadowBlur` |
+| Canvas opacity | **0.15** start (range 0.12–0.20) |
+| Charset | Soft short ramp `" .·:-=+*#"` (or classic `" .:-=+*#%"`). **Reject** katakana / `01` rain / block-heavy carpets |
+| Cell size | Desktop **14px**; mobile **16px** (fewer cells) |
+| Speed | Leisurely — ~0.35× typical demo speed (aurora was a 30s drift) |
+| FPS | Cap **20–24** desktop; **12–20** mobile; pause when `document.hidden` |
+| Pointer | **Off** by default (or ≤0.25 influence, fine pointer only) |
+| Reduced motion | Static single frame (or still soft field) — no continuous animation |
+| Grain | Drop stacked aurora grain, or keep ≤ half prior strength — ASCII already textures |
+
+**Do:** Leave ~30–50% cells empty/near-empty so midnight air shows; fade with `--transition-theme` like aurora; destroy RAF on light theme / case study / unmount.  
+**Don't:** Vertical digital rain; neon green; interactive tech-demo ripples; animate under case studies; run at uncapped 120Hz RAF; put ASCII in the DOM/`<pre>` for screen readers.
+
+---
+
 ## Imagery & motion language
 
 - **Home:** photography and product UI live *inside* tiles (music covers, trek photos, case covers) — the grid is the composition.
 - **Case studies:** product shots, research artifacts, short looping demos. No stock lifestyle filler.
 - **Personality:** side quests (Himalaya, Duolingo, music) are allowed; Work filter must still surface real case studies first.
-- **Dark mode:** distinctive — indigo field + amber edge. Preserve it; don't flatten to generic gray dark mode.
+- **Dark mode:** distinctive — indigo field + ASCII wave texture. Preserve it; don't flatten to generic gray dark mode.
 
 ---
 
