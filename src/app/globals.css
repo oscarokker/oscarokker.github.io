@@ -458,34 +458,36 @@
   --color-highlight: var(--color-highlight);
   --color-border: var(--color-border);
 
-  --font-serif: var(--font-lora);
-  --font-sans: var(--font-body);
+  --font-sans: var(--font-satoshi);
+  --font-body: var(--font-satoshi);
+  --font-serif: var(--font-satoshi);
+  --font-lora: var(--font-satoshi);
 }
 
 /* ─── Typography System ────────────────────────────────────────── */
 
 .text-display {
-  font-family: var(--font-lora), Georgia, serif;
+  font-family: var(--font-satoshi), system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   font-size: var(--text-display-size);
   line-height: var(--text-display-leading);
   letter-spacing: var(--text-display-tracking);
-  font-weight: 600;
+  font-weight: 900;
 }
 
 .text-h1 {
-  font-family: var(--font-lora), Georgia, serif;
+  font-family: var(--font-satoshi), system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   font-size: var(--text-h1-size);
   line-height: var(--text-h1-leading);
   letter-spacing: var(--text-h1-tracking);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .text-h2 {
-  font-family: var(--font-lora), Georgia, serif;
+  font-family: var(--font-satoshi), system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   font-size: var(--text-h2-size);
   line-height: var(--text-h2-leading);
   letter-spacing: var(--text-h2-tracking);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .text-body {
@@ -507,7 +509,7 @@
   font-size: var(--text-label-size);
   line-height: var(--text-label-leading);
   letter-spacing: var(--text-label-tracking);
-  font-weight: 600;
+  font-weight: 500;
   text-transform: uppercase;
 }
 
@@ -2250,7 +2252,7 @@ html[data-device="mobile"] .intro-tile-avatar {
   justify-content: center;
   width: 100%;
   height: 100%;
-  font-family: var(--font-lora), Georgia, serif;
+  font-family: var(--font-satoshi), system-ui, sans-serif;
   font-size: clamp(1.75rem, 4vw, 2.25rem);
   font-weight: 500;
   color: var(--color-accent);
@@ -2718,7 +2720,7 @@ html[data-device="mobile"] .cv-tile-logo {
 .duolingo-streak-value {
   font-family: var(--font-sans), system-ui, sans-serif;
   font-size: 3rem;
-  font-weight: 800;
+  font-weight: 900;
   line-height: 1;
   letter-spacing: 0;
   font-variant-numeric: tabular-nums;
@@ -3282,13 +3284,13 @@ html[data-theme="dark"][data-case-study-boot="cover"] body::before {
 .case-study-headline,
 .case-study-section h2,
 .case-study-impact h3 {
-  font-family: var(--font-lora), Georgia, serif;
+  font-family: var(--font-satoshi), system-ui, sans-serif;
 }
 
 .case-study-headline {
   margin: 0;
   font-size: clamp(1.85rem, 4.2vw, 2.65rem);
-  font-weight: 600;
+  font-weight: 900;
   letter-spacing: -0.03em;
   line-height: 1.15;
   color: var(--color-text-primary);
@@ -3311,7 +3313,7 @@ html[data-theme="dark"][data-case-study-boot="cover"] body::before {
 .case-study-section h2 {
   margin: 0;
   font-size: var(--text-h2-size);
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: var(--text-h2-tracking);
   color: var(--color-text-primary);
 }
@@ -3359,7 +3361,7 @@ html[data-theme="dark"][data-case-study-boot="cover"] body::before {
 .case-study-impact h3 {
   margin: 0 0 0.3rem;
   font-size: var(--text-h3-size);
-  font-weight: 600;
+  font-weight: 500;
   color: var(--color-text-primary);
 }
 
