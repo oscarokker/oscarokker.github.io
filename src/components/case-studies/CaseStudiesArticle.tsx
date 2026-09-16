@@ -302,7 +302,7 @@ export function CaseStudyArticle({ study }: CaseStudyArticleProps) {
                             autoPlay={!prefersReducedMotion}
                             preload="metadata"
                             className="case-study-cover-photo"
-                            style={{ width: "100%", height: "auto", borderRadius: "inherit" }}
+                            style={{ width: "100%", height: "auto" }}
                           />
                         ) : section.figure.images ? (
                           section.figure.layout === "phones" ? (
