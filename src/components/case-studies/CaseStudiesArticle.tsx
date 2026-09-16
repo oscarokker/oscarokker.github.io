@@ -291,66 +291,73 @@ export function CaseStudyArticle({ study }: CaseStudyArticleProps) {
                   )}
                   {section.figure ? (
                     <div className="case-study-inline-figure">
-                      {section.figure.videoSrc ? (
-                        <video
-                          src={withBasePath(section.figure.videoSrc)}
-                          poster={section.figure.poster ? withBasePath(section.figure.poster) : undefined}
-                          muted
-                          playsInline
-                          loop
-                          autoPlay={!prefersReducedMotion}
-                          preload="metadata"
-                          className="case-study-cover-photo"
-                          style={{ width: "100%", height: "auto", borderRadius: "inherit" }}
-                        />
-                      ) : section.figure.images ? (
-                        section.figure.layout === "phones" ? (
-                          <div className="case-study-phone-row">
-                            {section.figure.images.map((img) => (
-                              <Image
-                                key={img.src}
-                                src={withBasePath(img.src)}
-                                alt={img.alt}
-                                width={1206}
-                                height={2622}
-                                sizes="(max-width: 680px) 30vw, 200px"
-                                className="case-study-phone-img"
-                                style={{ width: "100%", height: "auto" }}
-                              />
-                            ))}
-                          </div>
-                        ) : (
-                          <div className="case-study-figure-gallery">
-                            {section.figure.images.map((img) => (
-                              <Image
-                                key={img.src}
-                                src={withBasePath(img.src)}
-                                alt={img.alt}
-                                width={1600}
-                                height={900}
-                                sizes="(max-width: 680px) 100vw, 680px"
-                                className="case-study-gallery-img"
-                                style={{ width: "100%", height: "auto" }}
-                              />
-                            ))}
-                          </div>
-                        )
-                      ) : section.figure.src ? (
-                        <Image
-                          src={withBasePath(section.figure.src)}
-                          alt={section.figure.caption}
-                          width={1204}
-                          height={928}
-                          sizes="(max-width: 680px) 100vw, 680px"
-                          className="case-study-cover-photo"
-                          style={{ width: "100%", height: "auto" }}
-                        />
-                      ) : section.figure.cover ? (
-                        <CaseStudyCover
-                          id={section.figure.cover}
-                          label={section.figure.caption}
-                        />
-                      ) : null}
+                      <div className="case-study-figure-wrapper">
+                        {section.figure.videoSrc ? (
+                          <video
+                            src={withBasePath(section.figure.videoSrc)}
+                            poster={section.figure.poster ? withBasePath(section.figure.poster) : undefined}
+                            muted
+                            playsInline
+                            loop
+                            autoPlay={!prefersReducedMotion}
+                            preload="metadata"
+                            className="case-study-cover-photo"
+                            style={{ width: "100%", height: "auto", borderRadius: "inherit" }}
+                          />
+                        ) : section.figure.images ? (
+                          section.figure.layout === "phones" ? (
+                            <div className="case-study-phone-row">
+                              {section.figure.images.map((img) => (
+                                <Image
+                                  key={img.src}
+                                  src={withBasePath(img.src)}
+                                  alt={img.alt}
+                                  width={1206}
+                                  height={2622}
+                                  sizes="(max-width: 680px) 30vw, 200px"
+                                  className="case-study-phone-img"
+                                  style={{ width: "100%", height: "auto" }}
+                                />
+                              ))}
+                            </div>
+                          ) : (
+                            <div className="case-study-figure-gallery">
+                              {section.figure.images.map((img) => (
+                                <Image
+                                  key={img.src}
+                                  src={withBasePath(img.src)}
+                                  alt={img.alt}
+                                  width={1600}
+                                  height={900}
+                                  sizes="(max-width: 680px) 100vw, 680px"
+                                  className="case-study-gallery-img"
+                                  style={{ width: "100%", height: "auto" }}
+                                />
+                              ))}
+                            </div>
+                          )
+                        ) : section.figure.src ? (
+                          <Image
+                            src={withBasePath(section.figure.src)}
+                            alt={section.figure.caption}
+                            width={1204}
+                            height={928}
+                            sizes="(max-width: 680px) 100vw, 680px"
+                            className="case-study-cover-photo"
+                            style={{ width: "100%", height: "auto" }}
+                          />
+                        ) : section.figure.cover ? (
+                          <CaseStudyCover
+                            id={section.figure.cover}
+                            label={section.figure.caption}
+                          />
+                        ) : null}
+                        {section.figure.label && (
+                          <span className="case-study-figure-label" aria-label={`Version ${section.figure.label}`}>
+                            {section.figure.label}
+                          </span>
+                        )}
+                      </div>
                       <p className="case-study-caption">{section.figure.caption}</p>
                     </div>
                   ) : null}

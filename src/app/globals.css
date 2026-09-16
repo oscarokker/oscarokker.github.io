@@ -3398,6 +3398,30 @@ html[data-device="mobile"] .nav-pill.case-study-toggle .nav-pill-button {
   overflow: hidden;
 }
 
+.case-study-figure-wrapper {
+  position: relative;
+}
+
+.case-study-figure-label {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  padding: 6px 12px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--color-text-primary);
+  background: var(--color-bg-elevated);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  pointer-events: none;
+  z-index: 1;
+}
+
+html[data-theme="dark"] .case-study-figure-label {
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+}
+
 .case-study-caption {
   margin: 12px 0 0;
   padding-inline: 24px;
