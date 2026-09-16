@@ -116,10 +116,10 @@ export const caseStudies: CaseStudy[] = [
         variant: "detailed",
         paragraphs: [
           {
-            text: "We fell in love with the problem. We mapped the entire flow — search, choose, order — then circled the choosing phase: how much time people spent comparing options, which factors won, what was nice to have. We filled out the customer canvas with the traveller first and left the value proposition deliberately blank. We wanted to know the traveller before we knew the offer.",
+            text: "We fell in love with the problem. We mapped the entire flow — search, choose, order — then circled the choosing phase: how much time people spent comparing options, which factors won, what was nice to have. What emerged: affordability beat convenience. Backpackers often plan start-to-finish trips before leaving home, while digital nomads plan fluidly mid-trip. Our goal was to cut planning overhead for flexible travellers. We filled out the customer canvas with the traveller first and left the value proposition deliberately blank. We wanted to know the traveller before we knew the offer.",
           },
           {
-            text: "What emerged: affordability beat convenience. A stable connection mattered when you're planning on the road. Budget, safety worries, self-transfer doubt, the stress of changing plans, environmental impact — those were the pains. Culture, status from having travelled the world, money saved to spend elsewhere, looking good by having saved money — those were the gains.",
+            text: "A stable connection mattered when you're planning on the road. Budget, safety worries, self-transfer doubt, the stress of changing plans, environmental impact — those were the pains. Culture, status from having travelled the world, money saved to spend elsewhere, looking good by having saved money — those were the gains.",
             variant: "detailed",
           },
         ],
@@ -136,25 +136,14 @@ export const caseStudies: CaseStudy[] = [
         variant: "detailed",
         paragraphs: [
           {
-            text: "Dark mint with a \"hack the system\" vibe read clever to us and cold to travellers. It was the wrong fantasy: beating the algorithm, not going somewhere.",
+            text: "Dark mint with a \"hack the system\" vibe read clever to us and cold to travellers. It was the wrong fantasy: beating the algorithm, not going somewhere. We shifted to warm orange and teal, paper texture, a modern-analog feel. The bird with a leaf-wing became our mark: flight without losing trust. That component system became version 1.0, which we built in React/Vite.",
           },
         ],
         figure: {
-          src: "/case-studies/cheapvoyage/beat2-components-1.0.jpg",
-          caption: "Wrong fantasy: beating the system, not going somewhere.",
-          label: "1.0",
-        },
-      },
-      {
-        heading: "Warmth without losing trust",
-        variant: "detailed",
-        paragraphs: [
-          {
-            text: "We shifted to warm orange and teal, paper texture, a modern-analog feel. The bird with a leaf-wing became our mark: flight without losing trust. That component system became version 1.0, which we built in React/Vite.",
-          },
-        ],
-        figure: {
-          src: "/case-studies/cheapvoyage/beat3-moodboard.jpg",
+          images: [
+            { src: "/case-studies/cheapvoyage/beat3-moodboard.jpg", alt: "CheapVoyage 1.0 moodboard with warm materials" },
+            { src: "/case-studies/cheapvoyage/beat2-components-1.0.jpg", alt: "CheapVoyage 1.0 shipped component system" },
+          ],
           caption: "Adventure with trust — then a shipped component system.",
           label: "1.0",
         },
