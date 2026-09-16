@@ -479,7 +479,7 @@
   font-size: var(--text-h1-size);
   line-height: var(--text-h1-leading);
   letter-spacing: var(--text-h1-tracking);
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .text-h2 {

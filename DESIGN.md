@@ -64,7 +64,7 @@ This file is the contract for future design and implementation. Prefer these tok
 - **Fallback:** system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif
 
 ### Role → weight lock
-Display/name/case hero 900; H1 700; H2/tile titles 700; H3 500; body/body-lg 400; labels/captions/nav 500; Duolingo streak 900.
+Display/name/case hero 900; H1 600; H2/tile titles 700; H3 500; body/body-lg 400; labels/captions/nav 500; Duolingo streak 900.
 
 Keep existing size/leading/tracking scale; family becomes Satoshi everywhere.
 
@@ -292,7 +292,7 @@ Call these out when found; fix in CSS + this file together:
 
 - Canvas light: `#f0eee6` · dark: `#0d0c14`  
 - Text primary / secondary / tertiary as tokens above  
-- Satoshi for all type: 900 display/hero, 700 H1-H2, 500 H3/labels, 400 body
+- Satoshi for all type: 900 display/hero, 600 H1, 700 H2, 500 H3/labels, 400 body
 - Tiles: soft shadow + `--tile-radius` · Filters: pill `9999px`  
 - Case figures: 24px radius · caption centered secondary · mt 12px  
 - Mobile: 44×44 targets · two-row header · music = round note FAB  
