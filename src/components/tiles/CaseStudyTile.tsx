@@ -23,6 +23,8 @@ interface CaseStudyTileProps {
   slug: string;
   accent?: string;
   coverSrc?: string;
+  coverVideoSrc?: string;
+  coverPosterSrc?: string;
   comingSoon?: boolean;
 }
 
@@ -41,6 +43,8 @@ export function CaseStudyTile({
   slug,
   accent,
   coverSrc,
+  coverVideoSrc,
+  coverPosterSrc,
   comingSoon,
 }: CaseStudyTileProps) {
   const tileRef = useRef<HTMLAnchorElement>(null);
@@ -67,14 +71,14 @@ export function CaseStudyTile({
         title,
         subtitle,
         accent,
-        coverSrc,
+        coverSrc: coverPosterSrc || coverSrc,
         sourceRect: rectFromElement(shell),
         pointer: event
           ? { clientX: event.clientX, clientY: event.clientY }
           : undefined,
       });
     },
-    [accent, coverSrc, openFromTile, slug, subtitle, title],
+    [accent, coverPosterSrc, coverSrc, openFromTile, slug, subtitle, title],
   );
 
   const { pointerHandlers } = usePointerGesture({
@@ -111,6 +115,8 @@ export function CaseStudyTile({
     <CaseStudyFace
       accent={accent}
       coverSrc={coverSrc}
+      coverVideoSrc={coverVideoSrc}
+      coverPosterSrc={coverPosterSrc}
       comingSoon={comingSoon}
     />
   );
