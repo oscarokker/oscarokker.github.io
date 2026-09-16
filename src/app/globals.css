@@ -2693,7 +2693,7 @@ html[data-device="mobile"] .cv-tile-logo {
 }
 
 .duolingo-streak-value {
-  font-family: var(--font-sans), system-ui, sans-serif;
+  font-family: var(--font-nunito), system-ui, sans-serif;
   font-size: 3rem;
   font-weight: 900;
   line-height: 1;
