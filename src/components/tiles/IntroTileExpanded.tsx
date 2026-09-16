@@ -484,7 +484,7 @@ export function IntroTileExpanded({
               <p className="text-display text-[var(--color-text-primary)] m-0 mb-2">
                 {name}
               </p>
-              <p className="text-body text-[var(--color-text-secondary)] m-0">
+              <p className="text-body m-0">
                 {bio}
               </p>
             </div>
