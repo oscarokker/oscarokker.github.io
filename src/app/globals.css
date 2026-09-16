@@ -471,7 +471,7 @@
   font-size: var(--text-display-size);
   line-height: var(--text-display-leading);
   letter-spacing: var(--text-display-tracking);
-  font-weight: 900;
+  font-weight: 700;
 }
 
 .text-h1 {
@@ -1796,6 +1796,20 @@ html[data-device="mobile"] .site-nav-filters {
     text-overflow: ellipsis;
   }
 
+  .nav-pill.case-study-toggle {
+    width: max-content;
+    gap: 8px;
+  }
+
+  .nav-pill.case-study-toggle .nav-pill-button {
+    flex: 0 0 auto;
+    min-height: 0;
+    padding: 0 16px;
+    overflow: visible;
+    text-overflow: unset;
+    font-size: var(--text-body-sm-size);
+  }
+
   /* Entrance: no Y on bottom filters */
   .site-nav-filters:not([data-entrance="done"]),
   .site-nav-filters[data-entrance="visible"],
@@ -2225,7 +2239,6 @@ html[data-device="mobile"] .intro-tile-avatar {
 
 .intro-tile-content .text-display {
   font-size: clamp(1.5rem, 2.4vw, 2.125rem);
-  font-weight: 600;
 }
 
 .intro-tile-content .text-body {
@@ -3173,23 +3186,46 @@ html[data-theme="dark"][data-case-study-boot="cover"] body::before {
   outline-offset: 2px;
 }
 
-.case-study-toggle {
+.nav-pill.case-study-toggle {
   align-self: center;
   position: sticky;
   top: 60px;
   z-index: 40;
   flex-shrink: 0;
+  width: max-content;
+  max-width: 100%;
+  height: 40px;
+  box-sizing: border-box;
+  gap: 8px;
   margin-bottom: 1.5rem;
 }
 
-.case-study-toggle .nav-pill-button {
+.nav-pill.case-study-toggle .nav-pill-button {
   z-index: 1;
+  flex: 0 0 auto;
+  height: 100%;
+  min-height: 0;
+  padding: 0 16px;
+  overflow: visible;
+  text-overflow: unset;
   background: transparent;
   transition: color var(--transition-fast);
 }
 
-.case-study-toggle .nav-pill-button[data-active="true"] {
+.nav-pill.case-study-toggle .nav-pill-button[data-active="true"] {
   background: transparent;
+}
+
+html[data-device="mobile"] .nav-pill.case-study-toggle {
+  width: max-content;
+  gap: 8px;
+}
+
+html[data-device="mobile"] .nav-pill.case-study-toggle .nav-pill-button {
+  flex: 0 0 auto;
+  min-height: 0;
+  padding: 0 16px;
+  font-size: var(--text-body-sm-size);
 }
 
 .case-study-reading {
