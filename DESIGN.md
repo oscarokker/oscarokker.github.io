@@ -63,6 +63,12 @@ This file is the contract for future design and implementation. Prefer these tok
 - **Ship weights:** variable 300–900 (or static 400 · 500 · 700 · 900). Map old 600→700, 800→900.
 - **Fallback:** system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif
 
+### Rare exception: Nunito Sans for Duolingo streak counter · `--font-nunito`
+- **Source:** Google Fonts via next/font/google — weights 800, 900 only.
+- **Why:** Stand-in for proprietary Duolingo Sans (only served from Duolingo's CDN). Nunito Sans is a visually compatible free alternative.
+- **Scope:** Applied **only** to `.duolingo-streak-value` (the streak number). All other Duolingo tile text, the flame icon, and the rest of the site remain Satoshi.
+- **Fallback:** system-ui, sans-serif
+
 ### Role → weight lock
 Display/name/case hero 900; H1 600; H2/tile titles 700; H3 500; body/body-lg 400; labels/captions/nav 500; Duolingo streak 900.
 
