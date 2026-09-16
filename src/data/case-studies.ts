@@ -113,13 +113,20 @@ export const caseStudies: CaseStudy[] = [
       },
       {
         heading: "Know the traveller",
-        variant: "detailed",
         paragraphs: [
           {
-            text: "We fell in love with the problem. We mapped the entire flow — search, choose, order — then circled the choosing phase: how much time people spent comparing options, which factors won, what was nice to have. What emerged: affordability beat convenience. Backpackers often plan start-to-finish trips before leaving home, while digital nomads plan fluidly mid-trip. Our goal was to cut planning overhead for flexible travellers. We filled out the customer canvas with the traveller first and left the value proposition deliberately blank. We wanted to know the traveller before we knew the offer.",
+            text: "Backpackers often plan a trip start→finish; digital nomads plan fluidly mid-trip — long stays, then the next country by flight, train, ferry, or bus. We designed to cut that overhead for flexible travellers.",
           },
           {
-            text: "A stable connection mattered when you're planning on the road. Budget, safety worries, self-transfer doubt, the stress of changing plans, environmental impact — those were the pains. Culture, status from having travelled the world, money saved to spend elsewhere, looking good by having saved money — those were the gains.",
+            text: "We fell in love with the problem before the product. I mapped how people search for, choose, and order travel online — then dug into choosing: what they compare, what wins, what's merely nice to have.",
+            variant: "detailed",
+          },
+          {
+            text: "Affordability beat convenience. A stable connection along the route mattered for people working from the road. And the planning styles split: many backpackers map a trip start→finish; digital nomads often plan fluidly mid-trip — long stays, then decide the next country by flight, train, ferry, or bus. The goal became clear: cut that overhead for flexible travellers.",
+            variant: "detailed",
+          },
+          {
+            text: "The customer canvas filled the traveller first. The value-proposition side stayed empty on purpose — we knew who we were designing for before we locked the offer.",
             variant: "detailed",
           },
         ],
