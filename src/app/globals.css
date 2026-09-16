@@ -479,7 +479,7 @@
   font-size: var(--text-h1-size);
   line-height: var(--text-h1-leading);
   letter-spacing: var(--text-h1-tracking);
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .text-h2 {
@@ -2327,13 +2327,6 @@ html[data-device="mobile"] .music-player-mini-mode .music-morph-player iframe {
   height: 1px;
 }
 
-/* Registered so blur interpolates on enter/exit (unregistered custom props snap). */
-@property --overlay-blur {
-  syntax: "<length>";
-  inherits: false;
-  initial-value: 0px;
-}
-
 .intro-expanded-backdrop {
   position: absolute;
   inset: 0;
@@ -2344,25 +2337,25 @@ html[data-device="mobile"] .music-player-mini-mode .music-morph-player iframe {
   cursor: pointer;
   /* Do not animate opacity on this element — it isolates compositing and
      makes backdrop-filter sample an empty layer (darken without blur). */
-  --overlay-blur: 0px;
   background-color: color-mix(in srgb, var(--color-overlay-scrim) 0%, transparent);
-  backdrop-filter: blur(var(--overlay-blur));
-  -webkit-backdrop-filter: blur(var(--overlay-blur));
+  backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(0px);
   transition:
     background-color var(--transition-base),
     backdrop-filter var(--transition-base),
-    -webkit-backdrop-filter var(--transition-base),
-    --overlay-blur var(--transition-base);
+    -webkit-backdrop-filter var(--transition-base);
 }
 
 .intro-expanded-root[data-visible="true"] .intro-expanded-backdrop {
-  --overlay-blur: 20px;
   background-color: var(--color-overlay-scrim);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
 }
 
 .intro-expanded-root[data-visible="false"] .intro-expanded-backdrop {
-  --overlay-blur: 0px;
   background-color: color-mix(in srgb, var(--color-overlay-scrim) 0%, transparent);
+  backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(0px);
   pointer-events: none;
   /* Stay in sync with morph-card exit (480ms) so blur doesn't get unmounted mid-fade. */
   transition-duration: 480ms;
@@ -2371,7 +2364,8 @@ html[data-device="mobile"] .music-player-mini-mode .music-morph-player iframe {
 /* Ensure enter animates from unblurred even when mounted already visible */
 @starting-style {
   .intro-expanded-root[data-visible="true"] .intro-expanded-backdrop {
-    --overlay-blur: 0px;
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
     background-color: color-mix(in srgb, var(--color-overlay-scrim) 0%, transparent);
   }
 }

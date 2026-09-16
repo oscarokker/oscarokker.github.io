@@ -74,7 +74,9 @@ export const tiles: TileData[] = [
       subtitle: "Co-Founder & UX Designer",
       slug: "cheap-voyage",
       accent: "teal",
-      coverSrc: "/case-studies/cheapvoyage-picture-1.png",
+      coverSrc: "/case-studies/cheapvoyage/beat7-8-poster.jpg",
+      coverVideoSrc: "/case-studies/cheapvoyage/beat7-8-demo.mp4",
+      coverPosterSrc: "/case-studies/cheapvoyage/beat7-8-poster.jpg",
     },
   },
   {
