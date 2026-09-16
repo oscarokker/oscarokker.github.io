@@ -4,12 +4,12 @@ import Image from "next/image";
 import {
   useCallback,
   useEffect,
-  useId,
   useLayoutEffect,
   useRef,
   type CSSProperties,
   type KeyboardEvent as ReactKeyboardEvent,
   type MouseEvent as ReactMouseEvent,
+  type ReactNode,
   type TransitionEvent as ReactTransitionEvent,
 } from "react";
 import { createPortal } from "react-dom";
@@ -17,6 +17,7 @@ import { accentClass } from "@/lib/accent";
 import { withBasePath } from "@/lib/base-path";
 import { spawnClickRipple } from "@/lib/clickRipple";
 import { lockBodyScroll } from "@/lib/lockBodyScroll";
+import type { IntroParagraphMark } from "@/lib/types";
 import { MinimizeIcon } from "@/components/ChromeIcons";
 
 export interface IntroSourceRect {
@@ -30,6 +31,7 @@ interface IntroTileExpandedProps {
   name: string;
   bio: string;
   paragraphs: string[];
+  paragraphMarks?: IntroParagraphMark[];
   imageSrc?: string;
   visible: boolean;
   sourceRect: IntroSourceRect;
@@ -101,6 +103,61 @@ function lockFaceWidths(
   card.style.setProperty("--intro-expanded-width", `${expandedWidth}px`);
 }
 
+function renderMarkedParagraph(
+  text: string,
+  marks: IntroParagraphMark[],
+): ReactNode {
+  const hits = marks
+    .map((mark) => {
+      const start = text.indexOf(mark.phrase);
+      return start === -1
+        ? null
+        : { start, end: start + mark.phrase.length, mark };
+    })
+    .filter((hit): hit is NonNullable<typeof hit> => hit !== null)
+    .sort((a, b) => a.start - b.start);
+
+  if (hits.length === 0) return text;
+
+  const nodes: ReactNode[] = [];
+  let cursor = 0;
+
+  hits.forEach((hit, index) => {
+    if (hit.start < cursor) return;
+    if (hit.start > cursor) {
+      nodes.push(text.slice(cursor, hit.start));
+    }
+
+    const className = "intro-expanded-emphasis";
+    if (hit.mark.href) {
+      nodes.push(
+        <a
+          key={`${hit.mark.phrase}-${index}`}
+          href={hit.mark.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={className}
+          data-cursor-label={hit.mark.cursorLabel ?? hit.mark.phrase}
+          data-cursor-icon="external"
+        >
+          {hit.mark.phrase}
+        </a>,
+      );
+    } else {
+      nodes.push(
+        <span key={`${hit.mark.phrase}-${index}`} className={className}>
+          {hit.mark.phrase}
+        </span>,
+      );
+    }
+
+    cursor = hit.end;
+  });
+
+  if (cursor < text.length) nodes.push(text.slice(cursor));
+  return nodes;
+}
+
 function measureExpandedTarget(card: HTMLElement): MorphRect {
   const padding = Math.max(24, getPagePadding());
   const maxHeight = Math.min(window.innerHeight * 0.88, 760);
@@ -143,6 +200,7 @@ export function IntroTileExpanded({
   name,
   bio,
   paragraphs,
+  paragraphMarks = [],
   imageSrc,
   visible,
   sourceRect,
@@ -152,7 +210,6 @@ export function IntroTileExpanded({
   onExitComplete,
   onMorphReady,
 }: IntroTileExpandedProps) {
-  const titleId = useId();
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
   const previouslyFocused = useRef<HTMLElement | null>(null);
@@ -351,7 +408,10 @@ export function IntroTileExpanded({
   const handleCardClick = useCallback(
     (event: ReactMouseEvent<HTMLDivElement>) => {
       event.stopPropagation();
-      if (event.target instanceof Element && event.target.closest("button")) {
+      if (
+        event.target instanceof Element &&
+        event.target.closest("button, a")
+      ) {
         return;
       }
       spawnClickRipple(dialogRef.current, event);
@@ -386,7 +446,7 @@ export function IntroTileExpanded({
         className={`intro-morph-card ${accentClass()}`}
         role="dialog"
         aria-modal="true"
-        aria-labelledby={titleId}
+        aria-label={`About ${name}`}
         data-expanded="false"
         style={cardStyle}
         onKeyDown={handleCardKeyDown}
@@ -447,19 +507,13 @@ export function IntroTileExpanded({
             )}
           </div>
           <div className="intro-morph-expanded-copy">
-            <h2
-              id={titleId}
-              className="intro-morph-name text-display text-[var(--color-text-primary)] m-0"
-            >
-              {name}
-            </h2>
             <div className="intro-morph-paragraphs intro-expanded-paragraphs">
               {paragraphs.map((paragraph) => (
                 <p
                   key={paragraph.slice(0, 48)}
-                  className="text-body text-[var(--color-text-secondary)] m-0"
+                  className="text-body m-0"
                 >
-                  {paragraph}
+                  {renderMarkedParagraph(paragraph, paragraphMarks)}
                 </p>
               ))}
             </div>

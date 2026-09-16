@@ -8,6 +8,7 @@ import {
   type ReactNode,
 } from "react";
 import { IntroTileExpanded } from "@/components/tiles/IntroTileExpanded";
+import type { IntroParagraphMark } from "@/lib/types";
 import { PhotoStackPreview } from "@/components/tiles/PhotoMedia";
 import { PhotoStackTileExpanded } from "@/components/tiles/PhotoStackTileExpanded";
 import { useCursorLabelOptional } from "@/hooks/useCursorLabel";
@@ -26,6 +27,7 @@ interface IntroTileProps {
   name: string;
   bio: string;
   paragraphs: string[];
+  paragraphMarks?: IntroParagraphMark[];
   imageSrc?: string;
 }
 
@@ -44,6 +46,7 @@ export function IntroTile({
   name,
   bio,
   paragraphs,
+  paragraphMarks,
   imageSrc,
 }: IntroTileProps) {
   const {
@@ -116,6 +119,7 @@ export function IntroTile({
           name={name}
           bio={bio}
           paragraphs={paragraphs}
+          paragraphMarks={paragraphMarks}
           imageSrc={imageSrc}
           visible={visible}
           sourceRect={sourceRect}

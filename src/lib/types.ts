@@ -21,12 +21,19 @@ interface BaseTileData {
   size: TileSize;
 }
 
+export interface IntroParagraphMark {
+  phrase: string;
+  href?: string;
+  cursorLabel?: string;
+}
+
 export interface IntroTileData extends BaseTileData {
   variant: "intro";
   props: {
     name: string;
     bio: string;
     paragraphs: string[];
+    paragraphMarks?: IntroParagraphMark[];
     imageSrc?: string;
   };
 }

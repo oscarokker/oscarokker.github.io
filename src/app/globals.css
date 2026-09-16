@@ -2458,7 +2458,7 @@ html[data-device="mobile"] .music-player-mini-mode .music-morph-player iframe {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 20px;
+  gap: 32px;
   box-sizing: border-box;
   flex-shrink: 0;
   align-self: flex-start;
@@ -2482,7 +2482,6 @@ html[data-device="mobile"] .music-player-mini-mode .music-morph-player iframe {
   flex-shrink: 0;
   width: 8rem;
   height: 8rem;
-  margin-bottom: 8px;
   border-radius: 50%;
   overflow: hidden;
   background: transparent;
@@ -2497,10 +2496,6 @@ html[data-device="mobile"] .music-player-mini-mode .music-morph-player iframe {
   text-align: center;
 }
 
-.intro-morph-name {
-  font-size: 2rem;
-}
-
 .intro-morph-paragraphs {
   display: flex;
   flex-direction: column;
@@ -2510,8 +2505,35 @@ html[data-device="mobile"] .music-player-mini-mode .music-morph-player iframe {
 }
 
 .intro-expanded-paragraphs .text-body {
-  font-size: var(--text-body-size);
-  line-height: var(--text-body-leading);
+  font-size: 18px;
+  line-height: 1.6;
+  color: var(--color-text-primary);
+}
+
+.intro-expanded-emphasis {
+  font-weight: 600;
+  color: var(--color-highlight);
+}
+
+a.intro-expanded-emphasis {
+  text-decoration: none;
+  background-image: linear-gradient(currentColor, currentColor);
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  background-size: 0% 2px;
+  transition: background-size var(--transition-base);
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+a.intro-expanded-emphasis:hover,
+a.intro-expanded-emphasis:focus-visible {
+  background-size: 100% 2px;
+}
+
+a.intro-expanded-emphasis:focus-visible {
+  outline: 2px solid var(--color-highlight);
+  outline-offset: 2px;
 }
 
 .intro-expanded-minimize {
@@ -2557,6 +2579,7 @@ html[data-device="mobile"] .intro-morph-expanded {
   .intro-morph-expanded,
   .intro-expanded-minimize,
   .intro-tile-expand,
+  a.intro-expanded-emphasis,
   .photo-gallery-hover-chrome,
   .photo-gallery-download,
   .photo-stack-morph-card,
