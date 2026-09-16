@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
+import { Nunito_Sans } from "next/font/google";
 import { AppShell } from "@/components/AppShell";
 import { InlineScript } from "@/components/InlineScript";
 import { ThemeProvider } from "@/components/ThemeProvider";
@@ -17,6 +18,13 @@ const satoshi = localFont({
   variable: "--font-satoshi",
   display: "swap",
   weight: "300 900",
+});
+
+const nunitoSans = Nunito_Sans({
+  subsets: ["latin"],
+  variable: "--font-nunito",
+  display: "swap",
+  weight: ["800", "900"],
 });
 
 export const metadata: Metadata = {
@@ -67,7 +75,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${satoshi.variable} h-full antialiased`}
+      className={`${satoshi.variable} ${nunitoSans.variable} h-full antialiased`}
       suppressHydrationWarning
       data-theme="light"
       data-scroll-behavior="smooth"
