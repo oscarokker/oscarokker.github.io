@@ -3332,9 +3332,14 @@ html[data-device="mobile"] .nav-pill.case-study-toggle .nav-pill-button {
 .case-study-section p,
 .case-study-section li {
   margin: 0;
-  font-size: var(--text-body-size);
-  line-height: var(--text-body-leading);
-  color: var(--color-text-secondary);
+  font-size: 18px;
+  line-height: 1.5;
+  color: #292929;
+}
+
+[data-theme="dark"] .case-study-section p,
+[data-theme="dark"] .case-study-section li {
+  color: var(--color-text-primary);
 }
 
 .case-study-impact,

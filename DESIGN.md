@@ -182,6 +182,11 @@ Frosted pill, sliding thumb, labels **All / Work / About / Side Quests** (Music 
 ### Case-study article
 Centered column ~680px. Structure: Role → Impact → Problem → decision beats → Result. Detailed/Summary toggle sticky **below** header chrome (scroll-padding accounts for two-row mobile header).
 
+**Body paragraph typography:**
+- Color: `#292929` (light mode); `var(--color-text-primary)` (dark mode — preserves readability)
+- Font-size: `18px` (not `1rem`/16px — reading prose is larger than UI labels)
+- Line-height: `1.5`
+
 ### Case-study figure / video
 - Media: `border-radius: 24px`; overflow hidden on the frame.
 - Caption: **centered**, color `--color-text-secondary` (light gray, not near-black), `margin-top: 12px`.
