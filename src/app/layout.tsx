@@ -4,6 +4,7 @@ import { Nunito_Sans } from "next/font/google";
 import { AppShell } from "@/components/AppShell";
 import { InlineScript } from "@/components/InlineScript";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { ContinuousCorners } from "@/components/ContinuousCorners";
 import { THEME_INIT_SCRIPT } from "@/lib/theme";
 import { CASE_STUDY_BOOT_SCRIPT } from "@/lib/case-study-href";
 import { DEVICE_INIT_SCRIPT } from "@/lib/device";
@@ -87,6 +88,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       </head>
       <body className="min-h-full">
         <ThemeProvider>
+          <ContinuousCorners />
           <AppShell>{children}</AppShell>
         </ThemeProvider>
       </body>

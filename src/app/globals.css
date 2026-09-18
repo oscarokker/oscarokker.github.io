@@ -330,6 +330,10 @@
   --radius-md: 20px;
   --radius-full: 9999px;
 
+  /* Continuous corners — Figma / iOS 60% smoothing (Apple squircle).
+     Native: corner-shape: squircle. Fallback: ContinuousCorners + figma-squircle. */
+  --corner-smoothing: 0.6;
+
   /* Grid system — 4 cols desktop/tablet; 2 cols mobile
      Desktop/tablet: max 1020px (4×240 + 3×20), fluid shrink with 24px side margins
      Mobile: fluid 2-column grid
