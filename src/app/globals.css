@@ -3769,3 +3769,31 @@ html[data-device="mobile"] .case-study-cover-stage {
     transform: none;
   }
 }
+
+
+/* Continuous corners — native CSS when corner-shape is available.
+   Selectors must stay in sync with CONTINUOUS_CORNER_SELECTORS in
+   src/lib/continuous-corners.ts. Soft-radius only (no pills / 50% circles). */
+@supports (corner-shape: squircle) {
+  .tile-card,
+  .photo-stack-morph-card,
+  .music-morph-card,
+  .music-morph-player,
+  .intro-morph-card,
+  .case-study-morph-card,
+  .case-study-cover-stage,
+  .case-study-cover-photo,
+  .case-study-phone-img,
+  .case-study-gallery-img,
+  .case-study-figure-label,
+  .cover-podcast-tile,
+  .cover-thesis-ghost,
+  .cover-music-plugin,
+  .cover-music-track,
+  .cover-music-chat,
+  .cover-music-bubble--ai,
+  .custom-cursor-label[data-multiline="true"],
+  [data-continuous-corners] {
+    corner-shape: squircle;
+  }
+}

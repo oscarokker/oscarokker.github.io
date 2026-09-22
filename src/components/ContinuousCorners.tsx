@@ -10,14 +10,6 @@ import {
   shouldSkipContinuousCorners,
 } from "@/lib/continuous-corners";
 
-function supportsNativeSquircle(): boolean {
-  try {
-    return typeof CSS !== "undefined" && CSS.supports("corner-shape", "squircle") === true;
-  } catch {
-    return false;
-  }
-}
-
 function applyMask(el: HTMLElement) {
   const styles = getComputedStyle(el);
   if (shouldSkipContinuousCorners(styles)) {
@@ -58,14 +50,13 @@ function clearMask(el: HTMLElement) {
 }
 
 /**
- * Progressive enhancement for continuous corners at 60% smoothing.
- * Native CSS `corner-shape: squircle` is preferred; otherwise figma-squircle
- * SVG masks match Figma’s Corner smoothing geometry.
+ * Continuous corners at 60% Figma / iOS smoothing via figma-squircle SVG masks.
+ * Always applied (including when CSS `corner-shape: squircle` is supported), so
+ * Chrome and other engines get consistent Apple-style corners rather than circular
+ * radii when native corner-shape is advertised but unused.
  */
 export function ContinuousCorners() {
   useEffect(() => {
-    if (supportsNativeSquircle()) return;
-
     const elements = new Set<HTMLElement>();
 
     const track = (el: HTMLElement) => {
