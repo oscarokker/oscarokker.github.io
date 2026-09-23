@@ -4,7 +4,7 @@ import { ExpandIcon } from "@/components/ChromeIcons";
 import { BeatLabTileExpanded } from "@/components/tiles/BeatLabTileExpanded";
 import { useTileExpand } from "@/hooks/useTileExpand";
 import { accentClass } from "@/lib/accent";
-import { TEASER_STEPS } from "@/lib/beat-lab/patterns";
+import { TEASER_NOTATION } from "@/lib/beat-lab/compositions";
 
 interface BeatLabTileProps {
   title: string;
@@ -46,20 +46,11 @@ export function BeatLabTile({ title, description, accent }: BeatLabTileProps) {
           <ExpandIcon />
         </span>
 
-        <span className="text-label beat-lab-tile-kicker">Beat lab</span>
         <h2 className="text-h2 m-0 beat-lab-tile-title">{title}</h2>
         <p className="text-body-sm m-0 beat-lab-tile-desc">{description}</p>
 
-        <div
-          className="beat-lab-teaser"
-          aria-hidden="true"
-        >
-          {TEASER_STEPS.map((on, index) => (
-            <span
-              key={index}
-              className={`beat-lab-teaser-step${on ? " is-on" : ""}`}
-            />
-          ))}
+        <div className="beat-lab-teaser" aria-hidden="true">
+          <code className="beat-lab-teaser-code">{TEASER_NOTATION}</code>
         </div>
       </div>
 

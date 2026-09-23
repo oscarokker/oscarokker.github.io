@@ -15,18 +15,19 @@ import {
 import { createPortal } from "react-dom";
 import { MinimizeIcon } from "@/components/ChromeIcons";
 import { accentClass } from "@/lib/accent";
-import { BeatLabEngine } from "@/lib/beat-lab/engine";
 import {
-  BEAT_PATTERNS,
-  DEFAULT_BPM,
-  MAX_BPM,
-  MIN_BPM,
-  STEP_COUNT,
-  type BeatId,
-  type BeatPattern,
-  cloneSteps,
-  patternById,
-} from "@/lib/beat-lab/patterns";
+  COMPOSITIONS,
+  compositionById,
+  initialSourceMap,
+  type CompositionId,
+} from "@/lib/beat-lab/compositions";
+import {
+  ensureStrudel,
+  evaluateCode,
+  hush,
+  setMuted,
+  teardown,
+} from "@/lib/beat-lab/engine";
 import { lockBodyScroll } from "@/lib/lockBodyScroll";
 
 export interface BeatLabSourceRect {
@@ -106,13 +107,7 @@ function measureExpandedTarget(card: HTMLElement): MorphRect {
   return { top, left, width, height };
 }
 
-function initialStepMap(): Record<BeatId, boolean[]> {
-  const map = {} as Record<BeatId, boolean[]>;
-  for (const pattern of BEAT_PATTERNS) {
-    map[pattern.id] = cloneSteps(pattern.steps);
-  }
-  return map;
-}
+const ERROR_HINT = "Couldn't run this pattern — check the code and try Update.";
 
 export function BeatLabTileExpanded({
   title,
@@ -126,9 +121,11 @@ export function BeatLabTileExpanded({
   onMorphReady,
 }: BeatLabTileExpandedProps) {
   const titleId = useId();
+  const editorId = useId();
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
   const playRef = useRef<HTMLButtonElement>(null);
+  const editorRef = useRef<HTMLTextAreaElement>(null);
   const previouslyFocused = useRef<HTMLElement | null>(null);
   const exitDone = useRef(false);
   const hasOpened = useRef(false);
@@ -136,79 +133,67 @@ export function BeatLabTileExpanded({
   const expandedRef = useRef(false);
   const phaseRef = useRef<"enter" | "open" | "exit">("enter");
   const visibleRef = useRef(visible);
-  visibleRef.current = visible;
-  const engineRef = useRef<BeatLabEngine | null>(null);
+  const playingRef = useRef(false);
+  const editorValueRef = useRef("");
+  const activeIdRef = useRef<CompositionId>("house");
+  const sourceMapRef = useRef<Record<CompositionId, string>>(initialSourceMap());
 
-  const [activeBeat, setActiveBeat] = useState<BeatId>("kick");
-  const [stepMap, setStepMap] = useState<Record<BeatId, boolean[]>>(initialStepMap);
-  const [playing, setPlaying] = useState(false);
-  const [muted, setMuted] = useState(false);
-  const [bpm, setBpm] = useState(DEFAULT_BPM);
-  const [toneReady, setToneReady] = useState(false);
-  const [playBusy, setPlayBusy] = useState(false);
-  const [patternOpen, setPatternOpen] = useState(false);
-  const activePattern: BeatPattern = patternById(activeBeat);
-  const steps = stepMap[activeBeat] ?? activePattern.steps;
-
-  const ensureEngine = useCallback(() => {
-    if (!engineRef.current) {
-      engineRef.current = new BeatLabEngine();
-    }
-    return engineRef.current;
-  }, []);
-
-  const syncEnginePattern = useCallback(
-    (beat: BeatId, nextSteps: boolean[]) => {
-      const engine = engineRef.current;
-      if (!engine) return;
-      engine.setBeat(patternById(beat), nextSteps);
-    },
-    [],
+  const [activeId, setActiveId] = useState<CompositionId>("house");
+  const [sourceMap, setSourceMap] = useState(() => initialSourceMap());
+  const [editorValue, setEditorValue] = useState(
+    () => initialSourceMap().house,
   );
+  const [playing, setPlaying] = useState(false);
+  const [muted, setMutedState] = useState(false);
+  const [ready, setReady] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    visibleRef.current = visible;
+  }, [visible]);
+  useEffect(() => {
+    playingRef.current = playing;
+  }, [playing]);
+  useEffect(() => {
+    editorValueRef.current = editorValue;
+  }, [editorValue]);
+  useEffect(() => {
+    activeIdRef.current = activeId;
+  }, [activeId]);
+  useEffect(() => {
+    sourceMapRef.current = sourceMap;
+  }, [sourceMap]);
 
   const teardownAudio = useCallback(async () => {
     setPlaying(false);
-    const engine = engineRef.current;
-    if (!engine) return;
-    engine.stop();
-    await engine.teardown();
+    setError(null);
+    await teardown();
   }, []);
 
-  // Preload Tone on first expand (not homepage critical path). No sound.
+  // Preload Strudel on first expand (not homepage critical path). No sound.
   useEffect(() => {
     let cancelled = false;
-    const engine = ensureEngine();
-    engine
-      .preload()
+    ensureStrudel()
       .then(() => {
-        if (!cancelled) setToneReady(true);
+        if (!cancelled) setReady(true);
       })
       .catch(() => {
-        /* Tone failed to load — Play will surface busy/disabled state */
+        /* Play surfaces failure */
       });
-    syncEnginePattern(activeBeat, stepMap[activeBeat] ?? patternById(activeBeat).steps);
-    engine.setTempo(bpm);
-    engine.setMuted(muted);
-
     return () => {
       cancelled = true;
     };
-    // Only on mount of expanded portal.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Hard teardown on close / unmount.
+  // Hard teardown on unmount.
   useEffect(() => {
     return () => {
-      const engine = engineRef.current;
-      if (!engine) return;
-      engine.markDisposed();
-      void engine.teardown();
-      engineRef.current = null;
+      void teardown();
     };
   }, []);
 
-  // Visibility / tab hidden → stop + suspend (no ghost audio).
+  // Visibility / tab hidden → hush (no ghost audio).
   useEffect(() => {
     const onVisibility = () => {
       if (document.visibilityState === "hidden") {
@@ -222,6 +207,8 @@ export function BeatLabTileExpanded({
   // Stop audio as soon as close begins (before morph exit finishes).
   useEffect(() => {
     if (!visible) {
+      // Intentional lifecycle teardown (matches prior Tone island).
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- hush + clear playing on close
       void teardownAudio();
     }
   }, [visible, teardownAudio]);
@@ -407,74 +394,104 @@ export function BeatLabTileExpanded({
     [onClose],
   );
 
-  const handlePlay = useCallback(async () => {
-    if (playBusy) return;
-    setPlayBusy(true);
+
+  const runEvaluate = useCallback(async (code: string) => {
+    setBusy(true);
+    setError(null);
     try {
-      const engine = ensureEngine();
-      syncEnginePattern(activeBeat, steps);
-      engine.setTempo(bpm);
-      engine.setMuted(muted);
-      await engine.play();
+      await evaluateCode(code);
       setPlaying(true);
-      setToneReady(true);
+      setReady(true);
     } catch {
-      setPlaying(false);
+      setError(ERROR_HINT);
     } finally {
-      setPlayBusy(false);
+      setBusy(false);
     }
-  }, [
-    playBusy,
-    ensureEngine,
-    syncEnginePattern,
-    activeBeat,
-    steps,
-    bpm,
-    muted,
-  ]);
+  }, []);
+
+  const handlePlay = useCallback(async () => {
+    if (busy) return;
+    setSourceMap((prev) => ({ ...prev, [activeId]: editorValue }));
+    await runEvaluate(editorValue);
+  }, [busy, activeId, editorValue, runEvaluate]);
+
+  const handleUpdate = useCallback(async () => {
+    if (busy || !playing) return;
+    setSourceMap((prev) => ({ ...prev, [activeId]: editorValue }));
+    await runEvaluate(editorValue);
+  }, [busy, playing, activeId, editorValue, runEvaluate]);
 
   const handleStop = useCallback(() => {
-    const engine = engineRef.current;
-    engine?.stop();
+    hush();
     setPlaying(false);
+    setError(null);
   }, []);
 
   const handleMuteToggle = useCallback(() => {
-    setMuted((prev) => {
+    setMutedState((prev) => {
       const next = !prev;
-      engineRef.current?.setMuted(next);
+      void setMuted(next);
       return next;
     });
   }, []);
 
-  const handleBeatSelect = useCallback(
-    (id: BeatId) => {
-      setActiveBeat(id);
-      const nextSteps = stepMap[id] ?? cloneSteps(patternById(id).steps);
-      syncEnginePattern(id, nextSteps);
-      setPatternOpen(false);
-      },
-    [stepMap, syncEnginePattern],
-  );
+  const handleReset = useCallback(() => {
+    const authored = compositionById(activeId).source;
+    setEditorValue(authored);
+    setSourceMap((prev) => ({ ...prev, [activeId]: authored }));
+    setError(null);
+    if (playingRef.current) {
+      void runEvaluate(authored);
+    }
+  }, [activeId, runEvaluate]);
 
-  const handleStepToggle = useCallback(
-    (index: number) => {
-      setStepMap((prev) => {
-        const current = prev[activeBeat] ?? cloneSteps(patternById(activeBeat).steps);
-        const next = current.slice();
-        next[index] = !next[index];
-        syncEnginePattern(activeBeat, next);
-        return { ...prev, [activeBeat]: next };
-      });
+  const handleTabSelect = useCallback(
+    (id: CompositionId) => {
+      if (id === activeIdRef.current) return;
+      const leaving = activeIdRef.current;
+      const leavingCode = editorValueRef.current;
+      const nextMap = {
+        ...sourceMapRef.current,
+        [leaving]: leavingCode,
+      };
+      setSourceMap(nextMap);
+      const nextCode = nextMap[id] ?? compositionById(id).source;
+      setActiveId(id);
+      setEditorValue(nextCode);
+      setError(null);
+      if (playingRef.current) {
+        void runEvaluate(nextCode);
+      }
     },
-    [activeBeat, syncEnginePattern],
+    [runEvaluate],
   );
 
-  const handleBpmChange = useCallback((value: number) => {
-    const clamped = Math.min(MAX_BPM, Math.max(MIN_BPM, value));
-    setBpm(clamped);
-    engineRef.current?.setTempo(clamped);
-  }, []);
+  // Ctrl/Cmd+Enter = Play/Update, Ctrl/Cmd+. = Stop (Esc handled below).
+  useEffect(() => {
+    if (!visible) return;
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      const mod = event.metaKey || event.ctrlKey;
+
+      if (mod && event.key === "Enter") {
+        event.preventDefault();
+        if (playingRef.current) {
+          void handleUpdate();
+        } else {
+          void handlePlay();
+        }
+        return;
+      }
+
+      if (mod && event.key === ".") {
+        event.preventDefault();
+        handleStop();
+      }
+    };
+
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [visible, handlePlay, handleUpdate, handleStop]);
 
   const cardStyle: CSSProperties = {
     top: sourceRect.top,
@@ -517,22 +534,45 @@ export function BeatLabTileExpanded({
           <header className="beat-lab-toolbar">
             <div className="beat-lab-toolbar-copy">
               <h2 id={titleId} className="text-h2 m-0 beat-lab-expanded-title">
-                {title}
+                Beat lab · Strudel
               </h2>
-              <p className="text-body-sm m-0 beat-lab-expanded-desc">{description}</p>
+              <p className="text-body-sm m-0 beat-lab-expanded-desc">
+                {description}
+              </p>
             </div>
 
-            <div className="beat-lab-toolbar-actions" role="group" aria-label="Transport">
+            <div
+              className="beat-lab-toolbar-actions"
+              role="group"
+              aria-label="Transport"
+            >
               <button
                 ref={playRef}
                 type="button"
                 className="beat-lab-btn beat-lab-btn--primary"
                 onClick={handlePlay}
-                disabled={playBusy}
+                disabled={busy}
                 aria-pressed={playing}
-                aria-label={playing ? "Playing — restart beat" : "Play beat"}
+                aria-label={playing ? "Playing — restart pattern" : "Play"}
               >
-                {playBusy ? "…" : playing ? "Playing" : "Play"}
+                {busy ? "…" : playing ? "Playing" : "Play"}
+              </button>
+              <button
+                type="button"
+                className="beat-lab-btn"
+                onClick={handleUpdate}
+                disabled={busy || !playing}
+                aria-label="Update — re-evaluate editor while playing"
+              >
+                Update
+              </button>
+              <button
+                type="button"
+                className="beat-lab-btn"
+                onClick={handleStop}
+                aria-label="Stop"
+              >
+                Stop
               </button>
               <button
                 type="button"
@@ -542,14 +582,6 @@ export function BeatLabTileExpanded({
                 aria-label={muted ? "Unmute" : "Mute"}
               >
                 {muted ? "Unmute" : "Mute"}
-              </button>
-              <button
-                type="button"
-                className="beat-lab-btn"
-                onClick={handleStop}
-                aria-label="Stop"
-              >
-                Stop
               </button>
               <button
                 ref={closeRef}
@@ -567,97 +599,123 @@ export function BeatLabTileExpanded({
           <div
             className="beat-lab-tabs"
             role="tablist"
-            aria-label="Beats"
+            aria-label="Compositions"
           >
-            {BEAT_PATTERNS.map((pattern) => {
-              const selected = pattern.id === activeBeat;
+            {COMPOSITIONS.map((composition) => {
+              const selected = composition.id === activeId;
               return (
                 <button
-                  key={pattern.id}
+                  key={composition.id}
                   type="button"
                   role="tab"
-                  id={`beat-lab-tab-${pattern.id}`}
+                  id={`beat-lab-tab-${composition.id}`}
                   aria-selected={selected}
-                  aria-controls="beat-lab-sequencer-panel"
+                  aria-controls="beat-lab-editor-panel"
                   tabIndex={selected ? 0 : -1}
                   className={`beat-lab-tab${selected ? " is-active" : ""}`}
-                  onClick={() => handleBeatSelect(pattern.id)}
+                  onClick={() => handleTabSelect(composition.id)}
                 >
-                  {pattern.name}
+                  {composition.name}
                 </button>
               );
             })}
           </div>
 
           <div
-            id="beat-lab-sequencer-panel"
+            id="beat-lab-editor-panel"
             role="tabpanel"
-            aria-labelledby={`beat-lab-tab-${activeBeat}`}
+            aria-labelledby={`beat-lab-tab-${activeId}`}
             className="beat-lab-panel"
           >
-            <div
-              className="beat-lab-sequencer"
-              role="group"
-              aria-label={`${activePattern.name} step sequencer`}
-            >
-              {Array.from({ length: STEP_COUNT }, (_, index) => {
-                const on = Boolean(steps[index]);
-                return (
-                  <button
-                    key={index}
-                    type="button"
-                    className={["beat-lab-step", on ? "is-on" : ""]
-                      .filter(Boolean)
-                      .join(" ")}
-                    aria-pressed={on}
-                    aria-label={`Step ${index + 1}${on ? ", on" : ", off"}`}
-                    onClick={() => handleStepToggle(index)}
-                  />
-                );
-              })}
-            </div>
-
-            <div className="beat-lab-tempo">
-              <label className="beat-lab-tempo-label" htmlFor="beat-lab-tempo">
-                Tempo
-              </label>
-              <input
-                id="beat-lab-tempo"
-                className="beat-lab-tempo-range"
-                type="range"
-                min={MIN_BPM}
-                max={MAX_BPM}
-                step={1}
-                value={bpm}
-                onChange={(event) => handleBpmChange(Number(event.target.value))}
-                aria-valuemin={MIN_BPM}
-                aria-valuemax={MAX_BPM}
-                aria-valuenow={bpm}
-                aria-valuetext={`${bpm} beats per minute`}
-              />
-              <span className="beat-lab-tempo-value" aria-hidden>
-                {bpm}
-              </span>
-            </div>
-
-            <details
-              className="beat-lab-pattern"
-              open={patternOpen}
-              onToggle={(event) =>
-                setPatternOpen((event.target as HTMLDetailsElement).open)
+            <label className="beat-lab-editor-label" htmlFor={editorId}>
+              {compositionById(activeId).name} pattern
+            </label>
+            <textarea
+              ref={editorRef}
+              id={editorId}
+              className="beat-lab-editor"
+              spellCheck={false}
+              autoCapitalize="off"
+              autoCorrect="off"
+              autoComplete="off"
+              value={editorValue}
+              onChange={(event) => {
+                setEditorValue(event.target.value);
+                setError(null);
+              }}
+              aria-describedby={
+                error
+                  ? "beat-lab-error"
+                  : "beat-lab-shortcuts beat-lab-helpers"
               }
-            >
-              <summary className="beat-lab-pattern-summary">View pattern</summary>
-              <pre className="beat-lab-pattern-code" tabIndex={0}>
-                {activePattern.snippet}
-              </pre>
-            </details>
+            />
 
-            {!toneReady && (
-              <p className="text-body-sm m-0 beat-lab-status" aria-live="polite">
-                Loading audio engine…
+            <div
+              className={`beat-lab-cycle${playing && !muted ? " is-playing" : ""}`}
+              aria-hidden
+            />
+
+            {error ? (
+              <p
+                id="beat-lab-error"
+                className="text-body-sm m-0 beat-lab-error"
+                role="status"
+              >
+                {error}
               </p>
-            )}
+            ) : null}
+
+            <div className="beat-lab-editor-footer">
+              <p
+                id="beat-lab-shortcuts"
+                className="text-body-sm m-0 beat-lab-shortcuts"
+              >
+                Ctrl/⌘+Enter play or update · Ctrl/⌘+. stop
+              </p>
+              <button
+                type="button"
+                className="beat-lab-btn beat-lab-btn--ghost"
+                onClick={handleReset}
+              >
+                Reset composition
+              </button>
+            </div>
+
+            <div id="beat-lab-helpers" className="beat-lab-helpers">
+              <p className="text-body-sm m-0 beat-lab-helpers-lead">
+                Mini-notation cheat sheet
+              </p>
+              <ul className="beat-lab-chips">
+                <li className="beat-lab-chip">Space = sequence</li>
+                <li className="beat-lab-chip">
+                  <code>*</code> = faster
+                </li>
+                <li className="beat-lab-chip">
+                  <code>-</code> = rest
+                </li>
+                <li className="beat-lab-chip">
+                  <code>,</code> = parallel
+                </li>
+              </ul>
+              <a
+                className="beat-lab-workshop-link"
+                href="https://strudel.cc/workshop/first-sounds/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Learn more on strudel.cc
+              </a>
+            </div>
+
+            <p className="text-body-sm m-0 beat-lab-credit">
+              Built with Strudel (AGPL) · patterns by Oscar Rode
+            </p>
+
+            {!ready ? (
+              <p className="text-body-sm m-0 beat-lab-status" aria-live="polite">
+                Loading Strudel…
+              </p>
+            ) : null}
           </div>
         </div>
       </div>

@@ -7,6 +7,8 @@ import type { NextConfig } from "next";
 const basePath = (process.env.NEXT_PUBLIC_BASE_PATH ?? "").replace(/\/$/, "");
 
 const nextConfig: NextConfig = {
+  // Strudel ships ESM that Next needs to transpile for the client bundle.
+  transpilePackages: ["@strudel/web", "@strudel/core", "@strudel/webaudio", "@strudel/mini", "@strudel/tonal", "@strudel/transpiler", "superdough"],
   output: "export",
   trailingSlash: true,
   ...(basePath ? { basePath, assetPrefix: basePath } : {}),

@@ -193,7 +193,7 @@ export const tiles: TileData[] = [
     variant: "beat-lab",
     props: {
       title: "Beat lab",
-      description: "Programmable beats · edit a step, hear it change.",
+      description: "Live-coded loops · edit the pattern, hear it change.",
       accent: "violet",
     },
   },
