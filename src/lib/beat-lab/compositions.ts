@@ -3,7 +3,8 @@ export type CompositionId =
   | "rock"
   | "firecracker"
   | "sixteen"
-  | "weird";
+  | "weird"
+  | "trance";
 
 export interface Composition {
   id: CompositionId;
@@ -17,8 +18,8 @@ export interface Composition {
 export const TEASER_NOTATION = 's("bd sd hh")';
 
 /**
- * Five compositions — workshop placeholders from
- * https://strudel.cc/workshop/first-sounds/
+ * Six compositions — workshop placeholders from
+ * https://strudel.cc/workshop/first-sounds/ (plus Oscar’s Trance pattern).
  * Oscar owns final strings; Reset restores these.
  */
 export const COMPOSITIONS: Composition[] = [
@@ -64,6 +65,39 @@ s(\`jazz*2,
 insect [crow metal] - -,
 - space:4 - space:1,
 - wind\`)`,
+  },
+  {
+    id: "trance",
+    name: "Trance",
+    source: `setcpm(132/4)
+
+register('acidenv', (x, pat) => pat.lpf(100)
+  .lpenv(x * 9).lps(.2).lpd(.12)
+)
+
+$: n("<0 4 0 9 7>*16".add("<7 _ _ 6 5 _ _ 6>*2")).scale("g:minor").trans(-12)
+  .o(3).s("sawtooth").acidenv(slider(1))
+  .delay(.6).pan(rand)
+  ._pianoroll()
+
+$: n("<7 _ _ 6 5 _ <5 3> <6 4>>*2").scale("g:minor").trans(-24)
+  .detune(rand)
+  .o(4).s("sawtooth").acidenv(slider(1))
+  ._pianoroll()
+
+$: s("white!4").att(.4).o(6).acidenv(slider(0.8))
+
+$: sound("rd rd <rd hh> rd").acidenv(slider(0.96))
+  .delay(0.32)
+  ._scope()
+
+$_: s("hh:9!2").fit().o(8)
+
+$: s("bd:2!4")
+  .duck("3:4:5:6")
+  .duckdepth(.8)
+  .duckattack(.16)
+  ._scope()`,
   },
 ];
 
