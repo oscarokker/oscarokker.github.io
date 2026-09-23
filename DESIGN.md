@@ -212,6 +212,7 @@ Visible but not fake-tappable: `aria-disabled`, no press scale, default cursor.
 - Design for mobile thumbs: 44×44 minimum, two-row header, hide filtered tiles, no hover-only labels
 - Write case studies as decision beats with figures that prove the beat
 - Prefer existing `--color-tile-*` accents over inventing one-off hexes
+- Keep Beat lab audio off until Play; tear down Tone on close (no ghost transport / mini-dock)
 
 ### Don't
 - Don't set the light canvas to pure `#ffffff` — parchment is the signature
@@ -221,6 +222,8 @@ Visible but not fake-tappable: `aria-disabled`, no press scale, default cursor.
 - Don't let the music iframe intercept taps
 - Don't add SaaS marketing chrome (pricing tables, multi CTA pill pairs) that fights the personal bento
 - Don't introduce a second typeface or load from Google Fonts — Satoshi is self-hosted and covers all roles
+- Don't put Tone.js on the homepage critical path or leave Transport running after Beat lab closes
+- Don't wire Beat lab into the YouTube MusicPlayer mini-dock
 
 ---
 
@@ -266,7 +269,8 @@ Replaces `.aurora-bg` on the **dark homepage only**. Light parchment + paper gra
 
 - **Home:** photography and product UI live *inside* tiles (music covers, trek photos, case covers) — the grid is the composition.
 - **Case studies:** product shots, research artifacts, short looping demos. No stock lifestyle filler.
-- **Personality:** side quests (Himalaya, Duolingo, music) are allowed; Work filter must still surface real case studies first.
+- **Personality:** side quests (Himalaya, Duolingo, music, Beat lab) are allowed; Work filter must still surface real case studies first.
+- **Beat lab expandable:** Tone.js island (dynamic-import on first expand); hybrid step sequencer + “View pattern”; Play unlocks AudioContext; Transport stop + dispose + `AudioContext.suspend()` on close / tab hidden — separate from YouTube music tiles / MusicPlayer dock. Prefer violet/indigo `--color-tile-*`. No autoplay on expand; no “live coding” claim for sequencer UI.
 - **Dark mode:** distinctive — indigo field + ASCII wave texture. Preserve it; don't flatten to generic gray dark mode.
 
 ---
