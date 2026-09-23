@@ -271,7 +271,7 @@ Replaces `.aurora-bg` on the **dark homepage only**. Light parchment + paper gra
 - **Home:** photography and product UI live *inside* tiles (music covers, trek photos, case covers) — the grid is the composition.
 - **Case studies:** product shots, research artifacts, short looping demos. No stock lifestyle filler.
 - **Personality:** side quests (Himalaya, Duolingo, music, Beat lab) are allowed — Beat lab is playful + nerdy (creative + technical in one surface); Work filter must still surface real case studies first.
-- **Beat lab expandable:** `@strudel/web` MiniREPL island (dynamic-import on first expand only); editable mini-notation + five compositions (House / Rock / Firecracker / Sixteen / Texture); Play / Update / Stop / Mute; `hush` + audio teardown on close / Escape / tab hidden — separate from YouTube music tiles / MusicPlayer dock. Prefer violet/indigo `--color-tile-*`. No autoplay on expand. Credit Strudel (AGPL). Personality: playful + nerdy — real code as hero, warm violet chrome, cheat-sheet chips (not SaaS/DAW gloss or terminal void).
+- **Beat lab expandable:** `@strudel/web` MiniREPL island (dynamic-import on first expand only); editable mini-notation + six compositions (House / Rock / Firecracker / Sixteen / Texture / Trance); Play / Update / Stop / Mute; `hush` + audio teardown on close / Escape / tab hidden — separate from YouTube music tiles / MusicPlayer dock. Prefer violet/indigo `--color-tile-*`. No autoplay on expand. Credit Strudel (AGPL). Personality: playful + nerdy — real code as hero, warm violet chrome, cheat-sheet chips (not SaaS/DAW gloss or terminal void).
 - **Dark mode:** distinctive — indigo field + ASCII wave texture. Preserve it; don't flatten to generic gray dark mode.
 
 ---
