@@ -253,9 +253,10 @@ Replaces `.aurora-bg` on the **dark homepage only**. Light parchment + paper gra
 | Glyph color | Cool near-white troughs → tip mix with highlight `#8573ff` (≤~40% at peaks). No glow/`shadowBlur` |
 | Canvas opacity | **0.15** start (range 0.12–0.20) |
 | Charset | Soft short ramp `" .·:-=+*#"` (or classic `" .:-=+*#%"`). **Reject** katakana / `01` rain / block-heavy carpets |
-| Cell size | Desktop **14px**; mobile **16px** (fewer cells) |
+| Cell size | Desktop **16px**; mobile **18px** (fewer cells; ambient layer) |
 | Speed | Leisurely — ~0.35× typical demo speed (aurora was a 30s drift) |
-| FPS | Cap **20–24** desktop; **12–20** mobile; pause when `document.hidden` |
+| FPS | Cap **15** desktop; **12** mobile; cancel RAF when `document.hidden` (restart on visible) |
+| Perf | Glyph atlas + `drawImage` (no per-cell `fillText`); DPR capped at **1**; color buckets for tint |
 | Pointer | **Off** by default (or ≤0.25 influence, fine pointer only) |
 | Reduced motion | Static single frame (or still soft field) — no continuous animation |
 | Grain | Drop stacked aurora grain, or keep ≤ half prior strength — ASCII already textures |
