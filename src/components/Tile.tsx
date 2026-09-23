@@ -13,6 +13,7 @@ import {
   PhotoStackTile,
 } from "@/components/tiles/TileContent";
 import { DuolingoTile } from "@/components/tiles/DuolingoTile";
+import { BeatLabTile } from "@/components/tiles/BeatLabTile";
 import { accentClass } from "@/lib/accent";
 import { spawnTileClickRipple, removeRipple } from "@/lib/clickRipple";
 import { usePointerGesture } from "@/hooks/usePointerGesture";
@@ -88,6 +89,11 @@ function getCursorMeta(tile: TileData): CursorMeta | null {
         label: "See my Himalayan trekking photos 🏔️",
         accent: tile.props.accent,
       };
+    case "beat-lab":
+      return {
+        label: "Programmable beats — edit a step, hear it change",
+        accent: tile.props.accent,
+      };
   }
 }
 
@@ -111,6 +117,8 @@ function TileContent({ tile }: { tile: TileData }) {
       return <LogoTile {...tile.props} />;
     case "photo-stack":
       return <PhotoStackTile {...tile.props} />;
+    case "beat-lab":
+      return <BeatLabTile {...tile.props} />;
   }
 }
 

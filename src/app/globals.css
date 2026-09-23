@@ -2601,7 +2601,10 @@ html[data-device="mobile"] .intro-morph-expanded {
   .photo-stack-morph-scrollbar,
   .music-morph-card,
   .music-morph-collapsed,
-  .music-morph-body {
+  .music-morph-body,
+  .beat-lab-morph-card,
+  .beat-lab-morph-collapsed,
+  .beat-lab-morph-body {
     transition-duration: 1ms !important;
     transition-delay: 0ms !important;
   }
@@ -3771,6 +3774,401 @@ html[data-device="mobile"] .case-study-cover-stage {
 }
 
 
+
+/* ─── Beat lab (Tone.js programmable beats) ──────────────────────── */
+
+.beat-lab-tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 6px;
+  width: 100%;
+  min-height: 100%;
+  padding: 18px 18px 16px;
+  overflow: hidden;
+}
+
+.beat-lab-tile--expandable {
+  cursor: pointer;
+  outline: none;
+}
+
+.beat-lab-tile--expandable:focus-visible {
+  box-shadow: inset 0 0 0 2px var(--color-accent);
+}
+
+.beat-lab-tile--expandable:hover .intro-tile-expand {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.beat-lab-tile--expandable[aria-expanded="true"] .intro-tile-expand {
+  opacity: 0;
+  transform: scale(0.92);
+}
+
+.beat-lab-tile-kicker {
+  color: var(--tile-accent);
+  position: relative;
+  z-index: 1;
+}
+
+.beat-lab-tile-title {
+  color: var(--color-text-primary);
+  position: relative;
+  z-index: 1;
+}
+
+.beat-lab-tile-desc {
+  color: var(--color-text-secondary);
+  position: relative;
+  z-index: 1;
+  max-width: 22ch;
+}
+
+.beat-lab-teaser {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  gap: 4px;
+  margin-top: 10px;
+  position: relative;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.beat-lab-teaser-step {
+  display: block;
+  height: 10px;
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--tile-accent) 18%, transparent);
+  border: 1px solid color-mix(in srgb, var(--tile-accent) 28%, transparent);
+}
+
+.beat-lab-teaser-step.is-on {
+  background: color-mix(in srgb, var(--tile-accent) 72%, transparent);
+  border-color: color-mix(in srgb, var(--tile-accent) 85%, transparent);
+}
+
+.beat-lab-expanded-root .intro-expanded-backdrop {
+  transition-duration: 480ms;
+}
+
+.beat-lab-expanded-root[data-visible="false"] .intro-expanded-backdrop {
+  transition-duration: 480ms;
+}
+
+.beat-lab-expanded-root[data-visible="true"] .intro-expanded-backdrop {
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+.beat-lab-morph-card {
+  position: fixed;
+  z-index: 1;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  padding: 18px 18px 16px;
+  overflow: hidden;
+  border-radius: var(--tile-radius);
+  background: var(--color-bg-elevated);
+  box-shadow: var(--shadow-tile);
+  will-change: top, left, width, height;
+  transition:
+    top var(--transition-base),
+    left var(--transition-base),
+    width var(--transition-base),
+    height var(--transition-base),
+    padding var(--transition-base),
+    box-shadow var(--transition-slow);
+}
+
+.beat-lab-morph-card[data-expanded="true"] {
+  padding: 20px 22px 22px;
+  box-shadow: var(--shadow-tile-elevated);
+}
+
+.intro-expanded-root[data-visible="false"] .beat-lab-morph-card {
+  transition-duration: 480ms;
+}
+
+.beat-lab-morph-collapsed {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 6px;
+  width: 100%;
+  height: 100%;
+  opacity: 1;
+  transition: opacity var(--transition-fast);
+}
+
+.beat-lab-morph-card[data-expanded="true"] .beat-lab-morph-collapsed {
+  position: absolute;
+  inset: 0;
+  padding: 18px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.beat-lab-morph-body {
+  display: none;
+  width: 100%;
+  min-height: 0;
+  flex-direction: column;
+  gap: 16px;
+  opacity: 0;
+}
+
+.beat-lab-morph-card[data-expanded="true"] .beat-lab-morph-body {
+  display: flex;
+  flex: 1 1 auto;
+  opacity: 1;
+  transition: opacity var(--transition-base) 90ms;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+.beat-lab-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px 16px;
+}
+
+.beat-lab-toolbar-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: min(100%, 220px);
+  flex: 1 1 220px;
+  padding-right: 8px;
+}
+
+.beat-lab-expanded-title {
+  color: var(--color-text-primary);
+}
+
+.beat-lab-expanded-desc {
+  color: var(--color-text-secondary);
+}
+
+.beat-lab-toolbar-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.beat-lab-btn {
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0 14px;
+  border-radius: 9999px;
+  border: 1px solid var(--color-border-strong);
+  background: var(--color-bg-muted);
+  color: var(--color-text-primary);
+  font: inherit;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  outline: none;
+}
+
+.beat-lab-btn:focus-visible {
+  box-shadow: 0 0 0 2px var(--color-bg-elevated), 0 0 0 4px var(--tile-accent);
+}
+
+.beat-lab-btn--primary {
+  background: var(--tile-accent);
+  border-color: transparent;
+  color: var(--color-text-inverse);
+}
+
+.beat-lab-btn[aria-pressed="true"]:not(.beat-lab-btn--primary) {
+  border-color: var(--tile-accent);
+  color: var(--tile-accent);
+}
+
+.beat-lab-btn:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.beat-lab-close.intro-expanded-minimize {
+  position: static;
+  opacity: 1;
+  pointer-events: auto;
+  transform: none;
+  flex: 0 0 auto;
+}
+
+.beat-lab-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.beat-lab-tab {
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0 14px;
+  border-radius: 9999px;
+  border: 1px solid var(--color-border);
+  background: transparent;
+  color: var(--color-text-secondary);
+  font: inherit;
+  font-weight: 600;
+  font-size: 0.8125rem;
+  cursor: pointer;
+  outline: none;
+}
+
+.beat-lab-tab.is-active,
+.beat-lab-tab[aria-selected="true"] {
+  background: color-mix(in srgb, var(--tile-accent) 18%, transparent);
+  border-color: color-mix(in srgb, var(--tile-accent) 55%, transparent);
+  color: var(--color-text-primary);
+}
+
+.beat-lab-tab:focus-visible {
+  box-shadow: 0 0 0 2px var(--color-bg-elevated), 0 0 0 4px var(--tile-accent);
+}
+
+.beat-lab-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.beat-lab-sequencer {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.beat-lab-step {
+  aspect-ratio: 1;
+  min-width: 44px;
+  min-height: 44px;
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid color-mix(in srgb, var(--tile-accent) 28%, var(--color-border));
+  background: color-mix(in srgb, var(--tile-accent) 8%, var(--color-bg-muted));
+  cursor: pointer;
+  outline: none;
+  padding: 0;
+}
+
+.beat-lab-step.is-on {
+  background: color-mix(in srgb, var(--tile-accent) 78%, transparent);
+  border-color: color-mix(in srgb, var(--tile-accent) 90%, transparent);
+}
+
+.beat-lab-step:focus-visible {
+  box-shadow: 0 0 0 2px var(--color-bg-elevated), 0 0 0 4px var(--tile-accent);
+}
+
+.beat-lab-tempo {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 10px;
+}
+
+.beat-lab-tempo-label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.beat-lab-tempo-range {
+  width: 100%;
+  accent-color: var(--tile-accent);
+  min-height: 44px;
+}
+
+.beat-lab-tempo-value {
+  min-width: 2.5ch;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.beat-lab-pattern {
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 0;
+  background: var(--color-bg-muted);
+}
+
+.beat-lab-pattern-summary {
+  list-style: none;
+  cursor: pointer;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--color-text-primary);
+  outline: none;
+}
+
+.beat-lab-pattern-summary::-webkit-details-marker {
+  display: none;
+}
+
+.beat-lab-pattern-summary:focus-visible {
+  box-shadow: inset 0 0 0 2px var(--tile-accent);
+  border-radius: 12px;
+}
+
+.beat-lab-pattern-code {
+  margin: 0;
+  padding: 0 14px 14px;
+  overflow: auto;
+  max-height: 160px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.75rem;
+  line-height: 1.45;
+  color: var(--color-text-secondary);
+  white-space: pre-wrap;
+}
+
+.beat-lab-status {
+  color: var(--color-text-tertiary);
+}
+
+@media (min-width: 720px) {
+  .beat-lab-sequencer {
+    grid-template-columns: repeat(16, minmax(0, 1fr));
+    gap: 6px;
+  }
+
+  .beat-lab-step {
+    min-width: 0;
+    min-height: 44px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .beat-lab-morph-card,
+  .beat-lab-morph-collapsed,
+  .beat-lab-morph-body {
+    transition: none !important;
+  }
+}
+
+html[data-device="mobile"] .beat-lab-sequencer {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+
 /* Continuous corners — native CSS when corner-shape is available.
    Selectors must stay in sync with CONTINUOUS_CORNER_SELECTORS in
    src/lib/continuous-corners.ts. Soft-radius only (no pills / 50% circles). */
@@ -3779,6 +4177,7 @@ html[data-device="mobile"] .case-study-cover-stage {
   .photo-stack-morph-card,
   .music-morph-card,
   .music-morph-player,
+  .beat-lab-morph-card,
   .intro-morph-card,
   .case-study-morph-card,
   .case-study-cover-stage,

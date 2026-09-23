@@ -13,7 +13,8 @@ export type TileVariant =
   | "cv"
   | "duolingo"
   | "logo"
-  | "photo-stack";
+  | "photo-stack"
+  | "beat-lab";
 
 interface BaseTileData {
   id: string;
@@ -131,6 +132,16 @@ export interface PhotoStackTileData extends BaseTileData {
   };
 }
 
+
+export interface BeatLabTileData extends BaseTileData {
+  variant: "beat-lab";
+  props: {
+    title: string;
+    description: string;
+    accent?: string;
+  };
+}
+
 export type TileData =
   | IntroTileData
   | CaseStudyTileData
@@ -140,4 +151,5 @@ export type TileData =
   | CvTileData
   | DuolingoTileData
   | LogoTileData
-  | PhotoStackTileData;
+  | PhotoStackTileData
+  | BeatLabTileData;

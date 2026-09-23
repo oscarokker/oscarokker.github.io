@@ -187,6 +187,17 @@ export const tiles: TileData[] = [
     },
   },
   {
+    id: "beat-lab",
+    categories: ["side-quests"],
+    size: "1x1",
+    variant: "beat-lab",
+    props: {
+      title: "Beat lab",
+      description: "Programmable beats · edit a step, hear it change.",
+      accent: "violet",
+    },
+  },
+  {
     id: "duolingo",
     categories: ["side-quests"],
     size: "1x1",
