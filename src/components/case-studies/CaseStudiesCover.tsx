@@ -45,8 +45,6 @@ export function CaseStudyCover({ id, label }: CaseStudyCoverProps) {
         ) : (
           <>
             {id === "podcasts" ? <PodcastArt /> : null}
-            {id === "thesis" ? <ThesisArt /> : null}
-            {id === "music" ? <MusicArt /> : null}
           </>
         )}
       </div>
@@ -82,49 +80,3 @@ function PodcastArt() {
   );
 }
 
-function ThesisArt() {
-  return (
-    <div className="cover-thesis">
-      <div className="cover-thesis-grid">
-        {Array.from({ length: 48 }, (_, index) => (
-          <span
-            key={index}
-            className="cover-thesis-cell"
-            data-author={
-              index % 7 === 0 ? "model" : index % 5 === 0 ? "blend" : "human"
-            }
-          />
-        ))}
-      </div>
-      <div className="cover-thesis-ghost" aria-hidden />
-    </div>
-  );
-}
-
-function MusicArt() {
-  return (
-    <div className="cover-music">
-      <div className="cover-music-plugin">
-        <div className="cover-music-chrome" aria-hidden>
-          <span />
-          <span />
-          <span />
-        </div>
-        <div className="cover-music-body">
-          <div className="cover-music-tracks">
-            {Array.from({ length: 4 }, (_, index) => (
-              <div key={index} className="cover-music-track">
-                <span className="cover-music-wave" data-lane={index} />
-              </div>
-            ))}
-          </div>
-          <div className="cover-music-chat">
-            <span className="cover-music-bubble cover-music-bubble--user" />
-            <span className="cover-music-bubble cover-music-bubble--ai" />
-            <span className="cover-music-bubble cover-music-bubble--user cover-music-bubble--short" />
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
