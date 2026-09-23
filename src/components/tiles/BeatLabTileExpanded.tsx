@@ -123,6 +123,7 @@ export function BeatLabTileExpanded({
   const titleId = useId();
   const editorId = useId();
   const dialogRef = useRef<HTMLDivElement>(null);
+  const morphBodyRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
   const playRef = useRef<HTMLButtonElement>(null);
   const editorRef = useRef<HTMLTextAreaElement>(null);
@@ -213,6 +214,10 @@ export function BeatLabTileExpanded({
     }
   }, [visible, teardownAudio]);
 
+  const scrollExpandedPanelToTop = useCallback(() => {
+    morphBodyRef.current?.scrollTo(0, 0);
+  }, []);
+
   const applyRect = useCallback((rect: MorphRect, expanded: boolean) => {
     const card = dialogRef.current;
     if (!card) return;
@@ -249,7 +254,10 @@ export function BeatLabTileExpanded({
       applyRect(target, true);
       phaseRef.current = "open";
       hasOpened.current = true;
-      window.requestAnimationFrame(() => { (playRef.current ?? closeRef.current)?.focus(); });
+      window.requestAnimationFrame(() => {
+        scrollExpandedPanelToTop();
+        (playRef.current ?? closeRef.current)?.focus({ preventScroll: true });
+      });
       return;
     }
 
@@ -264,7 +272,8 @@ export function BeatLabTileExpanded({
         applyRect(target, true);
         phaseRef.current = "open";
         hasOpened.current = true;
-        playRef.current?.focus();
+        scrollExpandedPanelToTop();
+        playRef.current?.focus({ preventScroll: true });
       });
     });
 
@@ -272,7 +281,7 @@ export function BeatLabTileExpanded({
       window.cancelAnimationFrame(raf1);
       window.cancelAnimationFrame(raf2);
     };
-  }, [applyRect, onMorphReady, sourceRect]);
+  }, [applyRect, onMorphReady, scrollExpandedPanelToTop, sourceRect]);
 
   useEffect(() => {
     const onResize = () => {
@@ -362,7 +371,6 @@ export function BeatLabTileExpanded({
   const handleTransitionEnd = useCallback(
     (event: ReactTransitionEvent<HTMLDivElement>) => {
       if (event.target !== event.currentTarget) return;
-      if (phaseRef.current !== "exit") return;
       if (
         event.propertyName !== "top" &&
         event.propertyName !== "width" &&
@@ -371,9 +379,14 @@ export function BeatLabTileExpanded({
       ) {
         return;
       }
+      if (phaseRef.current === "open" && expandedRef.current) {
+        scrollExpandedPanelToTop();
+        return;
+      }
+      if (phaseRef.current !== "exit") return;
       finishExit();
     },
-    [finishExit],
+    [finishExit, scrollExpandedPanelToTop],
   );
 
   const handleBackdropClick = useCallback(
@@ -530,7 +543,7 @@ export function BeatLabTileExpanded({
           <h2 className="text-h2 m-0 beat-lab-tile-title">{title}</h2>
         </div>
 
-        <div className="beat-lab-morph-body">
+        <div ref={morphBodyRef} className="beat-lab-morph-body">
           <header className="beat-lab-toolbar">
             <div className="beat-lab-toolbar-copy">
               <h2 id={titleId} className="text-h2 m-0 beat-lab-expanded-title">
@@ -685,16 +698,26 @@ export function BeatLabTileExpanded({
               <p className="text-body-sm m-0 beat-lab-helpers-lead">
                 Mini-notation cheat sheet
               </p>
-              <ul className="beat-lab-chips">
-                <li className="beat-lab-chip">Space = sequence</li>
-                <li className="beat-lab-chip">
-                  <code>*</code> = faster
+              <ul className="beat-lab-chips" aria-label="Mini-notation symbols">
+                <li>
+                  <span className="beat-lab-chip">
+                    <code>Space</code> = sequence
+                  </span>
                 </li>
-                <li className="beat-lab-chip">
-                  <code>-</code> = rest
+                <li>
+                  <span className="beat-lab-chip">
+                    <code>*</code> = faster
+                  </span>
                 </li>
-                <li className="beat-lab-chip">
-                  <code>,</code> = parallel
+                <li>
+                  <span className="beat-lab-chip">
+                    <code>~/−</code> = rest
+                  </span>
+                </li>
+                <li>
+                  <span className="beat-lab-chip">
+                    <code>,</code> = parallel
+                  </span>
                 </li>
               </ul>
               <a

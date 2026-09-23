@@ -3855,8 +3855,17 @@ html[data-device="mobile"] .case-study-cover-stage {
 }
 
 .beat-lab-expanded-root[data-visible="true"] .intro-expanded-backdrop {
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
+  background-color: color-mix(
+    in srgb,
+    var(--color-overlay-scrim) 82%,
+    rgba(26, 26, 24, 0.28)
+  );
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+}
+
+html[data-theme="dark"] .beat-lab-expanded-root[data-visible="true"] .intro-expanded-backdrop {
+  background-color: rgba(0, 0, 0, 0.72);
 }
 
 .beat-lab-morph-card {
@@ -4137,31 +4146,49 @@ html[data-device="mobile"] .case-study-cover-stage {
 }
 
 .beat-lab-helpers-lead {
-  margin-bottom: 8px;
-  color: var(--color-text-secondary);
+  margin-bottom: 10px;
+  color: var(--color-text-tertiary);
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
 }
 
 .beat-lab-chips {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
-  margin: 0 0 10px;
+  gap: 8px;
+  margin: 0 0 12px;
   padding: 0;
   list-style: none;
 }
 
+.beat-lab-chips > li {
+  display: flex;
+  max-width: 100%;
+}
+
 .beat-lab-chip {
-  padding: 4px 10px;
-  border-radius: 999px;
-  background: color-mix(in srgb, #8573ff 12%, var(--color-surface-elevated));
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.2em;
+  padding: 6px 13px;
+  border-radius: 9999px;
+  border: 1px solid color-mix(in srgb, var(--tile-accent) 38%, var(--color-border));
+  background: color-mix(in srgb, var(--tile-accent) 14%, var(--color-bg-elevated));
   color: var(--color-text-secondary);
-  font-size: 0.75rem;
-  line-height: 1.3;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1.35;
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--color-text-primary) 6%, transparent);
 }
 
 .beat-lab-chip code {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  letter-spacing: -0.01em;
 }
 
 .beat-lab-workshop-link {
@@ -4184,6 +4211,35 @@ html[data-device="mobile"] .case-study-cover-stage {
 
 .beat-lab-status {
   color: var(--color-text-tertiary);
+}
+
+html[data-device="mobile"] .beat-lab-morph-card[data-expanded="true"] {
+  padding: 16px 16px 18px;
+}
+
+html[data-device="mobile"] .beat-lab-morph-card[data-expanded="true"] .beat-lab-morph-body {
+  gap: 12px;
+}
+
+html[data-device="mobile"] .beat-lab-toolbar {
+  gap: 8px 10px;
+}
+
+html[data-device="mobile"] .beat-lab-expanded-desc {
+  line-height: 1.35;
+}
+
+html[data-device="mobile"] .beat-lab-panel {
+  gap: 10px;
+}
+
+html[data-device="mobile"] .beat-lab-editor {
+  min-height: 7.5rem;
+}
+
+html[data-device="mobile"] .beat-lab-helpers {
+  margin-top: 10px;
+  padding-top: 10px;
 }
 
 @media (prefers-reduced-motion: reduce) {
