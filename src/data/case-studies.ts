@@ -1,4 +1,4 @@
-export type CaseStudyCoverId = "voyage" | "podcasts" | "thesis" | "music";
+export type CaseStudyCoverId = "voyage" | "podcasts";
 
 export type CaseStudyBlockVariant = "detailed";
 
@@ -8,12 +8,7 @@ export type CaseStudyImpactIconId =
   | "scales"
   | "sparkle"
   | "headphones"
-  | "game-controller"
-  | "map"
-  | "arrows-clockwise"
-  | "chat-circle"
-  | "sliders"
-  | "waveform";
+  | "chat-circle";
 
 export interface CaseStudyImpact {
   icon: CaseStudyImpactIconId;
@@ -327,161 +322,7 @@ export const caseStudies: CaseStudy[] = [
         "Source Insights shipped as a high-fidelity Spotify markup: claim-level context after listening, sources you can inspect, summaries that make a paper skimmable. What remains is not another UI layer. It is discoverability (testers missed the module on a familiar episode page), clearer language for the source categories, and better criteria for which papers an evidence-oriented listener actually wants.",
       ],
     },
-  },
-  {
-    slug: "co-creative-level-design",
-    tileId: "masters-thesis-co-creative-level-design",
-    title: "Master's Thesis on Co-Creative Level Design",
-    accent: "indigo",
-    headline: "Prototyping mixed-initiative co-creation for game levels",
-    intro:
-      "My master's work explores how level designers and generative models can share a canvas without either side taking over. The prototypes test mixed-initiative workflows: the designer steers, the model proposes, and authorship stays visible in the map.",
-    role: "Research, interaction design, and prototyping.",
-    cover: "thesis",
-    coverLabel: "Co-creative level canvas",
-    impact: [
-      {
-        icon: "game-controller",
-        title: "Initiative stays with the designer",
-        body: "Generation is a proposal, not a commit. Designers can accept, reject, or partial-blend a suggestion without resetting the level.",
-      },
-      {
-        icon: "map",
-        title: "Authorship on the map",
-        body: "Tiles remember who placed them — human, model, or hybrid — so credit and control remain readable during playtest.",
-      },
-      {
-        icon: "arrows-clockwise",
-        title: "Tight iteration loops",
-        body: "Local regenerations replace full-level rolls, which kept designers in flow instead of waiting on a new world.",
-      },
-    ],
-    sections: [
-      {
-        heading: "The problem",
-        variant: "detailed",
-        paragraphs: [
-          {
-            text: "Most GenAI level tools still behave like slot machines: prompt, wait, receive a whole map. That is a poor match for how designers actually work — locally, iteratively, and with a strong sense of authorship.",
-          },
-          {
-            text: "If the model overwrites too much, designers disengage. If it does too little, it is a clipart drawer. The interesting space is mixed initiative.",
-          },
-        ],
-      },
-      {
-        heading: "The approach",
-        paragraphs: [
-          {
-            text: "I prototyped a canvas where selection defines the model's jurisdiction. Generate into a region, not the whole level. Suggestions render as ghosts until the designer stamps them in.",
-          },
-          {
-            text: "A quiet authorship overlay — human, model, blended — made it possible to talk about control in critiques without opening a hidden history panel.",
-            variant: "detailed",
-          },
-        ],
-        figure: {
-          cover: "thesis",
-          caption:
-            "Ghosted proposals sit on the live map. Nothing commits until the designer stamps a region in.",
-        },
-      },
-      {
-        heading: "What I learned",
-        variant: "detailed",
-        paragraphs: [
-          {
-            text: "Designers wanted the model to be opinionated inside the selection and silent outside it. Leaky generations destroyed trust faster than bland ones.",
-          },
-          {
-            text: "Visible authorship changed the conversation: people argued about the blend, not about whether AI was 'allowed' in the pipeline.",
-          },
-        ],
-      },
-    ],
-    result: {
-      paragraphs: [
-        "Designers stayed in control when generation was scoped to a selection and stayed ghosted until stamped. Visible authorship shifted critique from whether AI belonged in the pipeline to how the blend should read on the map.",
-      ],
-    },
-  },
-  {
-    slug: "co-creative-music-production",
-    tileId: "music-production",
-    title: "Co-Creative AI in Music Production",
-    accent: "teal",
-    headline: "Keeping conversational co-creation inside the DAW",
-    intro:
-      "This bachelor's project explores plugin interfaces inside DAWs so hobbyist producers can co-create with a conversational AI — without leaving the session for a chatbot in a browser tab.",
-    role: "Bachelor's project — interaction design and prototyping.",
-    cover: "music",
-    coverLabel: "DAW plugin with a conversational co-creator",
-    impact: [
-      {
-        icon: "sliders",
-        title: "The plugin stays in the session",
-        body: "Co-creation lives as a DAW plugin, so producers keep their timeline, meters, and muscle memory. The AI does not pull them into a separate app.",
-      },
-      {
-        icon: "chat-circle",
-        title: "Talk instead of hunt parameters",
-        body: "A conversational thread sits beside the controls: ask for a warmer pad, a simpler drum pattern, a quieter sidechain — then hear the change on the same track.",
-      },
-      {
-        icon: "waveform",
-        title: "Hobbyist-scale, not a studio suite",
-        body: "The interface assumes a bedroom producer, not a scoring stage. Fewer knobs, more intelligible suggestions, and an undo that feels like a take, not a crash.",
-      },
-    ],
-    sections: [
-      {
-        heading: "The problem",
-        variant: "detailed",
-        paragraphs: [
-          {
-            text: "Most generative music tools still live outside the DAW: a website, a prompt box, a download, then import. Hobbyist producers lose the loop they already have — play, listen, tweak — and authorship becomes a file drop.",
-          },
-          {
-            text: "Inside plugins, the opposite problem appears: walls of parameters that assume you already know what a filter envelope is. Conversational AI could help, but only if it does not replace the mixer with a chat window.",
-          },
-        ],
-      },
-      {
-        heading: "The approach",
-        paragraphs: [
-          {
-            text: "I designed plugin surfaces where the conversation is a lane in the instrument, not a modal over it. Requests land as automation and clip changes the producer can still grab, mute, or rewrite by hand.",
-          },
-          {
-            text: "The AI is mixed-initiative: it proposes, the producer commits. A suggestion that cannot be inspected is not a suggestion — it is a take-over.",
-            variant: "detailed",
-          },
-        ],
-        figure: {
-          cover: "music",
-          caption:
-            "Chat sits beside the plugin controls. The timeline stays the source of truth.",
-        },
-      },
-      {
-        heading: "What I learned",
-        variant: "detailed",
-        paragraphs: [
-          {
-            text: "Hobbyists did not want the model to finish the song. They wanted it to get them unstuck on a bar, a sound, a mix decision — then get out of the way.",
-          },
-          {
-            text: "If the plugin wrote clips they could not edit, trust collapsed. If it only talked, it was a tutorial. The useful middle was a proposal that already looked like their project: a region, a preset, a handful of automations.",
-          },
-        ],
-      },
-    ],
-    result: {
-      paragraphs: [
-        "The work argued for co-creation as a plugin grammar, not a destination website: conversation beside controls, suggestions as editable regions, and the DAW remaining the place where the track actually lives.",
-      ],
-    },
-  },
+  }
 ];
 
 import { tiles } from "@/data/tiles";

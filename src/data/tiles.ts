@@ -93,32 +93,6 @@ export const tiles: TileData[] = [
     },
   },
   {
-    id: "masters-thesis-co-creative-level-design",
-    categories: ["work"],
-    size: "1x1",
-    variant: "case-study",
-    props: {
-      title: "Master's Thesis on Co-Creative Level Design",
-      subtitle: "Research",
-      slug: "co-creative-level-design",
-      accent: "indigo",
-      comingSoon: true,
-    },
-  },
-  {
-    id: "music-production",
-    categories: ["work"],
-    size: "1x1",
-    variant: "case-study",
-    props: {
-      title: "Co-Creative AI in Music Production",
-      subtitle: "Bachelor's Project",
-      slug: "co-creative-music-production",
-      accent: "teal",
-      comingSoon: true,
-    },
-  },
-  {
     id: "quote",
     categories: ["about"],
     size: "2x1",
