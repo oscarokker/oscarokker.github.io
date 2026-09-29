@@ -45,6 +45,30 @@ function installSliderPolyfill(): void {
   scope.slider = (value: number) => value;
 }
 
+/**
+ * `._pianoroll()` / `._scope()` are CodeMirror inline-viz widgets.
+ * The full REPL registers them on `Pattern.prototype` and returns the
+ * pattern so the chain keeps playing. `@strudel/web` (this MiniREPL)
+ * does not load that package, and the transpiler leaves the calls as
+ * methods — so chorus eval throws `…_pianoroll is not a function`.
+ * Pass the pattern through. Do not `registerWidgetType`: that expects
+ * a canvas DOM widget, which this embed does not render.
+ */
+function installVizWidgetPolyfills(Pattern: {
+  prototype: Record<string, unknown>;
+} | null | undefined): void {
+  const proto = Pattern?.prototype;
+  if (!proto) return;
+  const passthrough = function (this: unknown) {
+    return this;
+  };
+  for (const name of ["_pianoroll", "_scope"] as const) {
+    if (typeof proto[name] !== "function") {
+      proto[name] = passthrough;
+    }
+  }
+}
+
 const DIRT_SAMPLES = "github:tidalcycles/dirt-samples";
 const DRUM_MACHINES_JSON = "https://strudel.cc/tidal-drum-machines.json";
 const DRUM_MACHINES_BASE =
@@ -53,6 +77,7 @@ const DRUM_MACHINES_BASE =
 async function loadAndInit(): Promise<StrudelModule> {
   const mod = await import("@strudel/web");
   installSliderPolyfill();
+  installVizWidgetPolyfills(mod.Pattern);
   strudelRepl = (await mod.initStrudel({
     prebake: async () => {
       // Default drum/texture samples (bd, sd, hh, jazz, insect, …).
