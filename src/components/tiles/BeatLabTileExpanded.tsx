@@ -18,16 +18,31 @@ import { accentClass } from "@/lib/accent";
 import {
   COMPOSITIONS,
   compositionById,
-  initialSourceMap,
   type CompositionId,
 } from "@/lib/beat-lab/compositions";
 import {
   ensureStrudel,
   evaluateCode,
+  getTransportCycle,
   hush,
   setMuted,
   teardown,
 } from "@/lib/beat-lab/engine";
+import { applyGhostRewrite, shouldAdvanceSection } from "@/lib/beat-lab/ghost-writer";
+import {
+  clearSectionEdit,
+  clearTrackEdits,
+  commitSectionEdit,
+  effectiveSectionSource,
+  loadPersistedSectionEdits,
+  type SectionEditMap,
+} from "@/lib/beat-lab/session-edits";
+import {
+  defaultSectionSource,
+  sectionsFor,
+  type SectionId,
+  type SongSection,
+} from "@/lib/beat-lab/sections";
 import { lockBodyScroll } from "@/lib/lockBodyScroll";
 
 export interface BeatLabSourceRect {
@@ -137,18 +152,37 @@ export function BeatLabTileExpanded({
   const playingRef = useRef(false);
   const editorValueRef = useRef("");
   const activeIdRef = useRef<CompositionId>("house");
-  const sourceMapRef = useRef<Record<CompositionId, string>>(initialSourceMap());
+  const sectionIndexRef = useRef(0);
+  const sectionStartCycleRef = useRef(0);
+  const committedSourceRef = useRef("");
+  const ghostApplyRef = useRef(false);
+  const transportTimerRef = useRef(0);
 
   const [activeId, setActiveId] = useState<CompositionId>("house");
-  const [sourceMap, setSourceMap] = useState(() => initialSourceMap());
-  const [editorValue, setEditorValue] = useState(
-    () => initialSourceMap().house,
+  const [sectionIndex, setSectionIndex] = useState(0);
+  const [sectionEdits, setSectionEdits] = useState<SectionEditMap>(() =>
+    loadPersistedSectionEdits(),
+  );
+  const [editorValue, setEditorValue] = useState(() =>
+    effectiveSectionSource(
+      "house",
+      "intro",
+      defaultSectionSource,
+      loadPersistedSectionEdits(),
+    ),
   );
   const [playing, setPlaying] = useState(false);
   const [muted, setMutedState] = useState(false);
   const [ready, setReady] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [loopInSection, setLoopInSection] = useState({ current: 0, total: 6 });
+  const [ghostCue, setGhostCue] = useState<string | null>(null);
+  const [pendingGhostSection, setPendingGhostSection] = useState<number | null>(
+    null,
+  );
+  const [sectionHasUserEdit, setSectionHasUserEdit] = useState(false);
+  const sectionEditsRef = useRef<SectionEditMap>(sectionEdits);
 
   useEffect(() => {
     visibleRef.current = visible;
@@ -163,8 +197,39 @@ export function BeatLabTileExpanded({
     activeIdRef.current = activeId;
   }, [activeId]);
   useEffect(() => {
-    sourceMapRef.current = sourceMap;
-  }, [sourceMap]);
+    sectionIndexRef.current = sectionIndex;
+  }, [sectionIndex]);
+  useEffect(() => {
+    sectionEditsRef.current = sectionEdits;
+  }, [sectionEdits]);
+  const currentSection = (): SongSection =>
+    sectionsFor(activeIdRef.current)[sectionIndexRef.current] ??
+    sectionsFor(activeIdRef.current)[0];
+
+  const resolveSectionSource = useCallback(
+    (compositionId: CompositionId, sectionId: SectionId) =>
+      effectiveSectionSource(
+        compositionId,
+        sectionId,
+        defaultSectionSource,
+        sectionEditsRef.current,
+      ),
+    [],
+  );
+
+  const syncUserEditFlag = useCallback(
+    (compositionId: CompositionId, sectionId: SectionId) => {
+      const key = `${compositionId}:${sectionId}`;
+      setSectionHasUserEdit(Boolean(sectionEditsRef.current[key]));
+    },
+    [],
+  );
+
+  useEffect(() => {
+    const section = currentSection();
+    syncUserEditFlag(activeId, section.id);
+    setLoopInSection({ current: 0, total: section.loops });
+  }, [activeId, sectionIndex, syncUserEditFlag]);
 
   const teardownAudio = useCallback(async () => {
     setPlaying(false);
@@ -408,36 +473,218 @@ export function BeatLabTileExpanded({
   );
 
 
-  const runEvaluate = useCallback(async (code: string) => {
-    setBusy(true);
-    setError(null);
-    try {
-      await evaluateCode(code);
-      setPlaying(true);
-      setReady(true);
-    } catch {
-      setError(ERROR_HINT);
-    } finally {
-      setBusy(false);
+  const isEditorDirty = useCallback(() => {
+    return editorValueRef.current !== committedSourceRef.current;
+  }, []);
+
+  const isEditorFocused = useCallback(() => {
+    return document.activeElement === editorRef.current;
+  }, []);
+
+  const runEvaluate = useCallback(
+    async (code: string, options?: { hushBeforeEval?: boolean }) => {
+      setBusy(true);
+      setError(null);
+      try {
+        await evaluateCode(code, {
+          hushBeforeEval: options?.hushBeforeEval ?? true,
+        });
+        setPlaying(true);
+        setReady(true);
+      } catch {
+        setError(ERROR_HINT);
+      } finally {
+        setBusy(false);
+      }
+    },
+    [],
+  );
+
+  const writeEditorFromGhost = useCallback(
+    async (source: string, sectionLabel: string) => {
+      if (ghostApplyRef.current) return;
+      ghostApplyRef.current = true;
+      setGhostCue(`Ghost · ${sectionLabel}`);
+      try {
+        await applyGhostRewrite(
+          source,
+          (value) => {
+            setEditorValue(value);
+            editorValueRef.current = value;
+          },
+          { reducedMotion: prefersReducedMotion() },
+        );
+        committedSourceRef.current = source;
+      } finally {
+        ghostApplyRef.current = false;
+        window.setTimeout(() => setGhostCue(null), 2400);
+      }
+    },
+    [],
+  );
+
+  const applyPendingGhostIfAny = useCallback(async () => {
+    if (pendingGhostSection === null) return;
+    const sections = sectionsFor(activeIdRef.current);
+    const section = sections[pendingGhostSection];
+    if (!section) {
+      setPendingGhostSection(null);
+      return;
     }
+    const source = resolveSectionSource(activeIdRef.current, section.id);
+    setPendingGhostSection(null);
+    setGhostCue(null);
+    await writeEditorFromGhost(source, section.label);
+  }, [pendingGhostSection, resolveSectionSource, writeEditorFromGhost]);
+
+  const advanceToSection = useCallback(
+    async (nextIndex: number, options?: { skipEditor?: boolean }) => {
+      const compositionId = activeIdRef.current;
+      const sections = sectionsFor(compositionId);
+      const section = sections[nextIndex];
+      if (!section) return;
+
+      const source = resolveSectionSource(compositionId, section.id);
+      sectionStartCycleRef.current = await getTransportCycle();
+      setSectionIndex(nextIndex);
+      setLoopInSection({ current: 0, total: section.loops });
+      syncUserEditFlag(compositionId, section.id);
+
+      await runEvaluate(source, { hushBeforeEval: false });
+
+      if (options?.skipEditor) return;
+
+      const blocked = isEditorFocused() && isEditorDirty();
+      if (blocked) {
+        setPendingGhostSection(nextIndex);
+        setGhostCue(`Ghost waiting · ${section.label}`);
+        return;
+      }
+      await writeEditorFromGhost(source, section.label);
+    },
+    [
+      isEditorDirty,
+      isEditorFocused,
+      resolveSectionSource,
+      runEvaluate,
+      syncUserEditFlag,
+      writeEditorFromGhost,
+    ],
+  );
+
+  useEffect(() => {
+    if (!playing) {
+      if (transportTimerRef.current) {
+        window.clearTimeout(transportTimerRef.current);
+        transportTimerRef.current = 0;
+      }
+      return;
+    }
+
+    let cancelled = false;
+
+    const tick = async () => {
+      if (cancelled || !playingRef.current) return;
+      const sections = sectionsFor(activeIdRef.current);
+      const idx = sectionIndexRef.current;
+      const section = sections[idx];
+      if (!section) return;
+
+      const now = await getTransportCycle();
+      const completed = Math.max(
+        0,
+        Math.floor(now - sectionStartCycleRef.current),
+      );
+      setLoopInSection({
+        current: Math.min(completed, section.loops),
+        total: section.loops,
+      });
+
+      if (
+        shouldAdvanceSection(
+          now,
+          sectionStartCycleRef.current,
+          section.loops,
+        )
+      ) {
+        const nextIdx = (idx + 1) % sections.length;
+        await advanceToSection(nextIdx);
+      }
+
+      if (!cancelled && playingRef.current) {
+        transportTimerRef.current = window.setTimeout(tick, 140);
+      }
+    };
+
+    transportTimerRef.current = window.setTimeout(tick, 140);
+    return () => {
+      cancelled = true;
+      if (transportTimerRef.current) {
+        window.clearTimeout(transportTimerRef.current);
+        transportTimerRef.current = 0;
+      }
+    };
+  }, [playing, advanceToSection]);
+
+  const commitCurrentSection = useCallback((source: string) => {
+    const section = currentSection();
+    const next = commitSectionEdit(
+      sectionEditsRef.current,
+      activeIdRef.current,
+      section.id,
+      source,
+    );
+    setSectionEdits(next);
+    committedSourceRef.current = source;
+    setSectionHasUserEdit(true);
+    setGhostCue("Your edit saved for this section");
+    window.setTimeout(() => setGhostCue(null), 2800);
   }, []);
 
   const handlePlay = useCallback(async () => {
     if (busy) return;
-    setSourceMap((prev) => ({ ...prev, [activeId]: editorValue }));
-    await runEvaluate(editorValue);
-  }, [busy, activeId, editorValue, runEvaluate]);
+    if (isEditorDirty()) {
+      commitCurrentSection(editorValueRef.current);
+    }
+    const compositionId = activeIdRef.current;
+    setSectionIndex(0);
+    sectionIndexRef.current = 0;
+    const section = sectionsFor(compositionId)[0];
+    const code = resolveSectionSource(compositionId, section.id);
+    await runEvaluate(code, { hushBeforeEval: true });
+    sectionStartCycleRef.current = await getTransportCycle();
+    setLoopInSection({ current: 0, total: section.loops });
+    await writeEditorFromGhost(code, section.label);
+  }, [
+    busy,
+    commitCurrentSection,
+    isEditorDirty,
+    resolveSectionSource,
+    runEvaluate,
+    writeEditorFromGhost,
+  ]);
 
   const handleUpdate = useCallback(async () => {
     if (busy || !playing) return;
-    setSourceMap((prev) => ({ ...prev, [activeId]: editorValue }));
-    await runEvaluate(editorValue);
-  }, [busy, playing, activeId, editorValue, runEvaluate]);
+    commitCurrentSection(editorValue);
+    setPendingGhostSection(null);
+    await runEvaluate(editorValue, { hushBeforeEval: false });
+    void applyPendingGhostIfAny();
+  }, [
+    busy,
+    playing,
+    editorValue,
+    commitCurrentSection,
+    runEvaluate,
+    applyPendingGhostIfAny,
+  ]);
 
   const handleStop = useCallback(() => {
     hush();
     setPlaying(false);
     setError(null);
+    setPendingGhostSection(null);
+    setGhostCue(null);
   }, []);
 
   const handleMuteToggle = useCallback(() => {
@@ -448,35 +695,96 @@ export function BeatLabTileExpanded({
     });
   }, []);
 
-  const handleReset = useCallback(() => {
-    const authored = compositionById(activeId).source;
+  const handleResetTrack = useCallback(() => {
+    const compositionId = activeIdRef.current;
+    const nextEdits = clearTrackEdits(sectionEditsRef.current, compositionId);
+    setSectionEdits(nextEdits);
+    setSectionIndex(0);
+    sectionIndexRef.current = 0;
+    const section = sectionsFor(compositionId)[0];
+    const authored = defaultSectionSource(compositionId, section.id);
     setEditorValue(authored);
-    setSourceMap((prev) => ({ ...prev, [activeId]: authored }));
+    editorValueRef.current = authored;
+    committedSourceRef.current = authored;
+    setSectionHasUserEdit(false);
+    setPendingGhostSection(null);
+    setGhostCue(null);
     setError(null);
     if (playingRef.current) {
-      void runEvaluate(authored);
+      void runEvaluate(authored, { hushBeforeEval: false });
+      void getTransportCycle().then((cycle) => {
+        sectionStartCycleRef.current = cycle;
+      });
     }
-  }, [activeId, runEvaluate]);
+  }, [runEvaluate]);
+
+  const handleResetSection = useCallback(() => {
+    const compositionId = activeIdRef.current;
+    const section = currentSection();
+    const nextEdits = clearSectionEdit(
+      sectionEditsRef.current,
+      compositionId,
+      section.id,
+    );
+    setSectionEdits(nextEdits);
+    const authored = defaultSectionSource(compositionId, section.id);
+    setEditorValue(authored);
+    editorValueRef.current = authored;
+    committedSourceRef.current = authored;
+    setSectionHasUserEdit(false);
+    setError(null);
+    if (playingRef.current) {
+      void runEvaluate(authored, { hushBeforeEval: false });
+    }
+  }, [runEvaluate]);
 
   const handleTabSelect = useCallback(
     (id: CompositionId) => {
       if (id === activeIdRef.current) return;
-      const leaving = activeIdRef.current;
-      const leavingCode = editorValueRef.current;
-      const nextMap = {
-        ...sourceMapRef.current,
-        [leaving]: leavingCode,
-      };
-      setSourceMap(nextMap);
-      const nextCode = nextMap[id] ?? compositionById(id).source;
+      const leavingSection = currentSection();
+      let edits = sectionEditsRef.current;
+      if (isEditorDirty()) {
+        edits = commitSectionEdit(
+          edits,
+          activeIdRef.current,
+          leavingSection.id,
+          editorValueRef.current,
+        );
+        setSectionEdits(edits);
+      }
       setActiveId(id);
+      setSectionIndex(0);
+      sectionIndexRef.current = 0;
+      const section = sectionsFor(id)[0];
+      const nextCode = effectiveSectionSource(
+        id,
+        section.id,
+        defaultSectionSource,
+        edits,
+      );
       setEditorValue(nextCode);
+      editorValueRef.current = nextCode;
+      committedSourceRef.current = nextCode;
+      syncUserEditFlag(id, section.id);
+      setLoopInSection({ current: 0, total: section.loops });
+      setPendingGhostSection(null);
+      setGhostCue(null);
       setError(null);
       if (playingRef.current) {
-        void runEvaluate(nextCode);
+        void runEvaluate(nextCode, { hushBeforeEval: false }).then(async () => {
+          sectionStartCycleRef.current = await getTransportCycle();
+        });
       }
     },
-    [runEvaluate],
+    [isEditorDirty, runEvaluate, syncUserEditFlag],
+  );
+
+  const handleSectionJump = useCallback(
+    (index: number) => {
+      if (index === sectionIndexRef.current) return;
+      void advanceToSection(index);
+    },
+    [advanceToSection],
   );
 
   // Ctrl/Cmd+Enter = Play/Update, Ctrl/Cmd+. = Stop (Esc handled below).
@@ -640,9 +948,56 @@ export function BeatLabTileExpanded({
             aria-labelledby={`beat-lab-tab-${activeId}`}
             className="beat-lab-panel"
           >
-            <label className="beat-lab-editor-label" htmlFor={editorId}>
-              {compositionById(activeId).name} pattern
-            </label>
+            <div className="beat-lab-section-meta">
+              <label className="beat-lab-editor-label" htmlFor={editorId}>
+                {compositionById(activeId).name} ·{" "}
+                {sectionsFor(activeId)[sectionIndex]?.label ?? "Section"}{" "}
+                <span className="beat-lab-section-index">
+                  ({sectionIndex + 1}/{sectionsFor(activeId).length})
+                </span>
+              </label>
+              {playing ? (
+                <p
+                  className="text-body-sm m-0 beat-lab-loop-progress"
+                  aria-live="polite"
+                >
+                  Loop {loopInSection.current}/{loopInSection.total} in section
+                </p>
+              ) : null}
+            </div>
+
+            <div
+              className="beat-lab-section-timeline"
+              role="tablist"
+              aria-label="Song sections"
+            >
+              {sectionsFor(activeId).map((section, index) => {
+                const active = index === sectionIndex;
+                return (
+                  <button
+                    key={section.id}
+                    type="button"
+                    role="tab"
+                    className={`beat-lab-section-pill${active ? " is-active" : ""}`}
+                    aria-selected={active}
+                    onClick={() => handleSectionJump(index)}
+                    disabled={busy}
+                  >
+                    {section.label}
+                  </button>
+                );
+              })}
+            </div>
+
+            {ghostCue || sectionHasUserEdit ? (
+              <p className="text-body-sm m-0 beat-lab-ghost-cue" role="status">
+                {ghostCue ??
+                  (sectionHasUserEdit
+                    ? "Your edit remembered for this section"
+                    : null)}
+              </p>
+            ) : null}
+
             <textarea
               ref={editorRef}
               id={editorId}
@@ -654,7 +1009,11 @@ export function BeatLabTileExpanded({
               value={editorValue}
               onChange={(event) => {
                 setEditorValue(event.target.value);
+                editorValueRef.current = event.target.value;
                 setError(null);
+              }}
+              onBlur={() => {
+                void applyPendingGhostIfAny();
               }}
               aria-describedby={
                 error
@@ -688,9 +1047,16 @@ export function BeatLabTileExpanded({
               <button
                 type="button"
                 className="beat-lab-btn beat-lab-btn--ghost"
-                onClick={handleReset}
+                onClick={handleResetSection}
               >
-                Reset composition
+                Reset section
+              </button>
+              <button
+                type="button"
+                className="beat-lab-btn beat-lab-btn--ghost"
+                onClick={handleResetTrack}
+              >
+                Reset track
               </button>
             </div>
 

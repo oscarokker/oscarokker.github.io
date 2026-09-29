@@ -8,7 +8,18 @@
 
 export type StrudelModule = typeof import("@strudel/web");
 
+/** Repl instance returned by `initStrudel` (scheduler + evaluate). */
+export type StrudelRepl = {
+  scheduler: { now: () => number };
+  evaluate: (
+    code: string,
+    autostart?: boolean,
+    hushBeforeEval?: boolean,
+  ) => Promise<unknown>;
+};
+
 let strudelMod: StrudelModule | null = null;
+let strudelRepl: StrudelRepl | null = null;
 let initPromise: Promise<StrudelModule> | null = null;
 let disposed = false;
 
@@ -19,14 +30,14 @@ const DRUM_MACHINES_BASE =
 
 async function loadAndInit(): Promise<StrudelModule> {
   const mod = await import("@strudel/web");
-  await mod.initStrudel({
+  strudelRepl = (await mod.initStrudel({
     prebake: async () => {
       // Default drum/texture samples (bd, sd, hh, jazz, insect, …).
       await mod.samples(DIRT_SAMPLES);
       // Banked machines for .bank("RolandTR909") etc.
       await mod.samples(DRUM_MACHINES_JSON, DRUM_MACHINES_BASE);
     },
-  });
+  })) as StrudelRepl;
   return mod;
 }
 
@@ -50,10 +61,30 @@ export async function ensureStrudel(): Promise<StrudelModule> {
   return initPromise;
 }
 
-export async function evaluateCode(code: string): Promise<void> {
-  const mod = await ensureStrudel();
+export async function evaluateCode(
+  code: string,
+  options?: { hushBeforeEval?: boolean },
+): Promise<void> {
+  await ensureStrudel();
   if (disposed) return;
+  const hushFirst = options?.hushBeforeEval ?? true;
+  if (strudelRepl) {
+    await strudelRepl.evaluate(code, true, hushFirst);
+    return;
+  }
+  const mod = strudelMod;
+  if (!mod) return;
   await mod.evaluate(code);
+}
+
+/** Current Strudel cycle (transport). Returns 0 when scheduler is idle. */
+export async function getTransportCycle(): Promise<number> {
+  await ensureStrudel();
+  try {
+    return strudelRepl?.scheduler.now() ?? 0;
+  } catch {
+    return 0;
+  }
 }
 
 export function hush(): void {
