@@ -1,5 +1,5 @@
 /**
- * Beat lab Strudel island.
+ * Ghostlink Strudel island.
  *
  * Dynamic-imported only from the expanded tile (never homepage critical path).
  * Samples: dirt-samples (github) + tidal-drum-machines (strudel.cc map +
@@ -22,6 +22,28 @@ let strudelMod: StrudelModule | null = null;
 let strudelRepl: StrudelRepl | null = null;
 let initPromise: Promise<StrudelModule> | null = null;
 let disposed = false;
+/** Audio mute only. Transport uses AudioContext.currentTime, so we never suspend to mute. */
+let audioMuted = true;
+
+/**
+ * Strudel's transpiler rewrites `slider(n)` → `sliderWithID(id, n)`.
+ * The REPL UI normally provides that helper; this embed does not.
+ * Return the authored value so patterns evaluate and the channel can live.
+ */
+function installSliderPolyfill(): void {
+  const sliderWithID = (
+    _id: unknown,
+    value: number,
+    _min?: number,
+    _max?: number,
+  ) => value;
+  const scope = globalThis as typeof globalThis & {
+    sliderWithID?: typeof sliderWithID;
+    slider?: (value: number, min?: number, max?: number) => number;
+  };
+  scope.sliderWithID = sliderWithID;
+  scope.slider = (value: number) => value;
+}
 
 const DIRT_SAMPLES = "github:tidalcycles/dirt-samples";
 const DRUM_MACHINES_JSON = "https://strudel.cc/tidal-drum-machines.json";
@@ -30,6 +52,7 @@ const DRUM_MACHINES_BASE =
 
 async function loadAndInit(): Promise<StrudelModule> {
   const mod = await import("@strudel/web");
+  installSliderPolyfill();
   strudelRepl = (await mod.initStrudel({
     prebake: async () => {
       // Default drum/texture samples (bd, sd, hh, jazz, insect, …).
@@ -38,6 +61,17 @@ async function loadAndInit(): Promise<StrudelModule> {
       await mod.samples(DRUM_MACHINES_JSON, DRUM_MACHINES_BASE);
     },
   })) as StrudelRepl;
+  if (typeof mod.evalScope === "function") {
+    await mod.evalScope({
+      sliderWithID: (
+        _id: unknown,
+        value: number,
+        _min?: number,
+        _max?: number,
+      ) => value,
+      slider: (value: number) => value,
+    });
+  }
   return mod;
 }
 
@@ -70,6 +104,8 @@ export async function evaluateCode(
   const hushFirst = options?.hushBeforeEval ?? true;
   if (strudelRepl) {
     await strudelRepl.evaluate(code, true, hushFirst);
+    // hush/eval can recreate the output graph; keep the mute gain applied.
+    if (strudelMod) applyMasterGain(strudelMod);
     return;
   }
   const mod = strudelMod;
@@ -95,15 +131,29 @@ export function hush(): void {
   }
 }
 
+function applyMasterGain(mod: StrudelModule): void {
+  const ctx = mod.getAudioContext();
+  const gain = mod.getSuperdoughAudioController?.()?.output?.destinationGain;
+  if (!gain) return;
+  const now = ctx.currentTime;
+  gain.gain.cancelScheduledValues(now);
+  gain.gain.setValueAtTime(audioMuted ? 0 : 1, now);
+}
+
+/**
+ * Mute is gain-only. Suspending the AudioContext freezes `currentTime`,
+ * which is the Strudel transport clock — that would pause sections while muted.
+ * Resume even when muted so the living channel keeps advancing in silence.
+ */
 export async function setMuted(muted: boolean): Promise<void> {
+  audioMuted = muted;
   try {
     const mod = strudelMod ?? (await ensureStrudel());
     const ctx = mod.getAudioContext();
-    if (muted) {
-      if (ctx.state === "running") await ctx.suspend();
-    } else if (ctx.state === "suspended") {
+    if (ctx.state === "suspended") {
       await ctx.resume();
     }
+    applyMasterGain(mod);
   } catch {
     /* ignore */
   }
