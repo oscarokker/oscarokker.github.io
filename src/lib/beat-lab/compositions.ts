@@ -37,7 +37,7 @@ $: n("<7 _ _ 6 5 _ <5 3> <6 4>>*2").scale("g:minor").trans(-24)
 
 $: s("white!4").att(.4).o(6).acidenv(slider(0.8))
 
-$: sound("rd rd <rd hh> rd").acidenv(slider(0.96))
+$: sound("rd rd <rd hh> rd").bank("RolandTR909").acidenv(slider(0.96))
   .delay(0.32)
   ._scope()
 
@@ -108,7 +108,7 @@ $: s("~ cp ~ cp")
   .gain(0.4)
   .room(0.18)
 
-$: s("~ ~ oh ~")
+$: s("~ ~ 808oh ~")
   .gain(0.2)
   .room(0.32)
 
@@ -130,7 +130,8 @@ setcpm(174/4)
 $: s("bd*4")
   .gain(1)
 
-$: s("amenc*8")
+$: s("amencutup*8")
+  .n("<0 2 5 9 13 17 21 25 29 6 11 16>")
   .gain(0.62)
   .speed("<1 2 1.5 [2 4] 0.5 1 2 1.25>")
   .crush(6)

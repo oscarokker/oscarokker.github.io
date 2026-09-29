@@ -68,7 +68,7 @@ $: n("<0 4 0 9 7>*16".add("<7 _ _ 6 5 _ _ 6>*2")).scale("g:minor").trans(-12)
   .o(3).s("sawtooth").acidenv(slider(0.65))
   .delay(.6).pan(rand)
 
-$: sound("rd rd <rd hh> rd").acidenv(slider(0.7))
+$: sound("rd rd <rd hh> rd").bank("RolandTR909").acidenv(slider(0.7))
   .delay(0.32)
 
 $: s("bd:2!4")
@@ -94,7 +94,7 @@ $: n("<7 _ _ 6 5 _ <5 3> <6 4>>*2").scale("g:minor").trans(-24)
   .o(4).s("sawtooth").acidenv(slider(0.75))
   ._pianoroll()
 
-$: sound("rd rd <rd hh> rd").acidenv(slider(0.88))
+$: sound("rd rd <rd hh> rd").bank("RolandTR909").acidenv(slider(0.88))
   .delay(0.32)
 
 $_: s("hh:9!2").fit().o(8)
@@ -118,7 +118,7 @@ $: n("<0 4>*8").scale("g:minor").trans(-12)
 
 $: s("white!4").att(.6).o(6).acidenv(slider(0.35))
 
-$: sound("rd - rd -").acidenv(slider(0.45))
+$: sound("rd - rd -").bank("RolandTR909").acidenv(slider(0.45))
   .delay(0.4)
 
 $: s("bd:2!4")
@@ -146,7 +146,7 @@ $: n("<7 _ _ 6 5 _ <5 3> <6 4>>*2").scale("g:minor").trans(-24)
   .o(4).s("sawtooth").acidenv(slider(0.82))
   ._pianoroll()
 
-$: sound("rd rd <rd hh> rd").acidenv(slider(0.9))
+$: sound("rd rd <rd hh> rd").bank("RolandTR909").acidenv(slider(0.9))
   .delay(0.32)
 
 $: s("bd:2!4")
@@ -167,7 +167,7 @@ $: n("<7 _ _ 6 5 _ <5 3> <6 4>>*2").scale("g:minor").trans(-24)
   .o(4).s("sawtooth").acidenv(slider(0.55))
   .delay(.5)
 
-$: sound("rd - <rd hh> -").acidenv(slider(0.6))
+$: sound("rd - <rd hh> -").bank("RolandTR909").acidenv(slider(0.6))
   .delay(0.45)
 
 $_: s("hh:9!2").fit().o(8)
@@ -199,7 +199,7 @@ $: n("<7 _ _ 6 5 _ <5 3> <6 4>>*2").scale("g:minor").trans(-24)
 
 $: s("white!4").att(.4).o(6).acidenv(slider(0.8))
 
-$: sound("rd rd <rd hh> rd").acidenv(slider(0.96))
+$: sound("rd rd <rd hh> rd").bank("RolandTR909").acidenv(slider(0.96))
   .delay(0.32)
   ._scope()
 
@@ -225,7 +225,7 @@ $: n("<0 4>*8").scale("g:minor").trans(-12)
 
 $: s("white!4").att(.6).o(6).acidenv(slider(0.3))
 
-$: sound("rd - rd -").acidenv(slider(0.5))
+$: sound("rd - rd -").bank("RolandTR909").acidenv(slider(0.5))
   .delay(0.4)
 
 $: s("bd:2!4")
@@ -481,7 +481,7 @@ $: s("~ cp ~ cp")
   .gain(0.4)
   .room(0.18)
 
-$: s("~ ~ oh ~")
+$: s("~ ~ 808oh ~")
   .gain(0.2)
   .room(0.32)
 
@@ -559,7 +559,8 @@ $: s("bd*4")
   .gain(0.7)
   .lpf(1600)
 
-$: s("amenc ~ amenc ~")
+$: s("amencutup ~ amencutup ~")
+  .n("<0 8 16 24>")
   .gain(0.4)
   .speed("<1 1.5 0.75 2>")
   .crush(3)
@@ -579,7 +580,8 @@ setcpm(174/4)
 $: s("bd*4")
   .gain(0.85)
 
-$: s("amenc*4")
+$: s("amencutup*4")
+  .n("<0 4 9 14 19 24 28 3>")
   .gain(0.5)
   .speed("<1 2 1 0.5 1.5 1 2 1>")
   .crush(5)
@@ -604,7 +606,8 @@ setcpm(174/4)
 $: s("bd*4")
   .gain(1)
 
-$: s("amenc*8")
+$: s("amencutup*8")
+  .n("<0 2 5 9 13 17 21 25 29 6 11 16>")
   .gain(0.62)
   .speed("<1 2 1.5 [2 4] 0.5 1 2 1.25>")
   .crush(6)
@@ -638,7 +641,8 @@ $: s("bd*4")
   .gain(0.48)
   .lpf(900)
 
-$: s("amenc*2")
+$: s("amencutup*2")
+  .n("<0 10 20 30>")
   .gain(0.35)
   .speed("<1 0.5 2 1>")
   .crush(4)
@@ -663,7 +667,8 @@ $: s("bd*4")
   .gain(0.55)
   .lpf(1100)
 
-$: s("amenc ~ ~ amenc")
+$: s("amencutup ~ ~ amencutup")
+  .n("<4 12 20 28>")
   .gain(0.3)
   .speed("<1 1.5 0.75 2>")
   .crush(5)

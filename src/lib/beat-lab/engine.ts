@@ -73,6 +73,9 @@ const DIRT_SAMPLES = "github:tidalcycles/dirt-samples";
 const DRUM_MACHINES_JSON = "https://strudel.cc/tidal-drum-machines.json";
 const DRUM_MACHINES_BASE =
   "github:geikha/tidal-drum-machines/main/machines/";
+/** Pitched `piano` map. Dirt-samples' strudel.json does not include `piano`. */
+const PIANO_SAMPLES =
+  "https://raw.githubusercontent.com/felixroos/dough-samples/main/piano.json";
 
 async function loadAndInit(): Promise<StrudelModule> {
   const mod = await import("@strudel/web");
@@ -80,10 +83,12 @@ async function loadAndInit(): Promise<StrudelModule> {
   installVizWidgetPolyfills(mod.Pattern);
   strudelRepl = (await mod.initStrudel({
     prebake: async () => {
-      // Default drum/texture samples (bd, sd, hh, jazz, insect, …).
+      // Default drum/texture samples (bd, sd, hh, jazz, insect, amencutup, 808oh, …).
       await mod.samples(DIRT_SAMPLES);
-      // Banked machines for .bank("RolandTR909") etc.
+      // Banked machines for .bank("RolandTR909") etc. (`rd` / `oh` live here).
       await mod.samples(DRUM_MACHINES_JSON, DRUM_MACHINES_BASE);
+      // Botanica lead. `gm_*` soundfonts stay unloaded.
+      await mod.samples(PIANO_SAMPLES);
     },
   })) as StrudelRepl;
   if (typeof mod.evalScope === "function") {
@@ -120,22 +125,58 @@ export async function ensureStrudel(): Promise<StrudelModule> {
   return initPromise;
 }
 
-export async function evaluateCode(
-  code: string,
-  options?: { hushBeforeEval?: boolean },
-): Promise<void> {
+type EvalRequest = {
+  code: string;
+  /** Clear `$:` patterns before eval so the previous world/section cannot keep running. */
+  hushFirst: boolean;
+};
+
+/**
+ * Latest requested pattern. `$:` lines register anonymous patterns that
+ * stack forever unless hush runs first. Overlapping evals (section advance
+ * vs world tab) must not interleave inside that registry — only the newest
+ * request is applied.
+ */
+let pendingEval: EvalRequest | null = null;
+let evalPump: Promise<void> = Promise.resolve();
+
+async function runEval(request: EvalRequest): Promise<void> {
   await ensureStrudel();
   if (disposed) return;
-  const hushFirst = options?.hushBeforeEval ?? true;
   if (strudelRepl) {
-    await strudelRepl.evaluate(code, true, hushFirst);
+    await strudelRepl.evaluate(request.code, true, request.hushFirst);
     // hush/eval can recreate the output graph; keep the mute gain applied.
     if (strudelMod) applyMasterGain(strudelMod);
     return;
   }
   const mod = strudelMod;
   if (!mod) return;
-  await mod.evaluate(code);
+  await mod.evaluate(request.code);
+}
+
+async function drainEvals(): Promise<void> {
+  while (pendingEval) {
+    const next = pendingEval;
+    pendingEval = null;
+    await runEval(next);
+  }
+}
+
+export async function evaluateCode(
+  code: string,
+  options?: { hushBeforeEval?: boolean },
+): Promise<void> {
+  pendingEval = {
+    code,
+    hushFirst: options?.hushBeforeEval ?? true,
+  };
+  const run = evalPump.then(() => drainEvals());
+  // Keep the chain alive if one eval throws, so a later world can still replace it.
+  evalPump = run.then(
+    () => undefined,
+    () => undefined,
+  );
+  return run;
 }
 
 /** Current Strudel cycle (transport). Returns 0 when scheduler is idle. */
@@ -211,4 +252,5 @@ export const SAMPLE_STRATEGY = {
   dirt: DIRT_SAMPLES,
   drumsJson: DRUM_MACHINES_JSON,
   drumsBase: DRUM_MACHINES_BASE,
+  piano: PIANO_SAMPLES,
 } as const;
