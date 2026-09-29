@@ -4047,26 +4047,6 @@ html[data-theme="dark"] .beat-lab-expanded-root[data-visible="true"] .intro-expa
   min-height: 0;
 }
 
-.beat-lab-editor-actions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 6px 10px;
-}
-
-.beat-lab-btn--subtle {
-  min-height: 36px;
-  padding: 0 12px;
-  border-radius: 4px;
-  border: 1px solid var(--bl-chrome-border, rgba(61, 224, 255, 0.35));
-  background: var(--bl-glass, rgba(5, 7, 15, 0.45));
-  color: var(--bl-chrome, #f4f7ff);
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
 .beat-lab-editor-stack {
   position: relative;
   flex: 1 1 auto;
@@ -4379,15 +4359,6 @@ html[data-theme="dark"] .beat-lab-expanded-root[data-visible="true"] .intro-expa
 .beat-lab-shell .beat-lab-status {
   color: var(--bl-code-dim);
   font-size: 0.75rem;
-}
-
-.beat-lab-shell .beat-lab-btn--ghost {
-  color: var(--bl-code-dim);
-  border-color: transparent;
-  background: transparent;
-  font-size: 0.75rem;
-  min-height: 32px;
-  padding: 0 8px;
 }
 
 .beat-lab-shell .beat-lab-editor-label {

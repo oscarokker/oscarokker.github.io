@@ -37,8 +37,6 @@ import {
 } from "@/lib/beat-lab/engine";
 import { applyGhostRewrite, shouldAdvanceSection } from "@/lib/beat-lab/ghost-writer";
 import {
-  clearSectionEdit,
-  clearTrackEdits,
   commitSectionEdit,
   effectiveSectionSource,
   loadPersistedSectionEdits,
@@ -129,7 +127,8 @@ function measureExpandedTarget(card: HTMLElement): MorphRect {
   return { top, left, width, height };
 }
 
-const ERROR_HINT = "Couldn't run this pattern — check the code and try Update.";
+const ERROR_HINT =
+  "Couldn't run this pattern — check the code and press Ctrl/⌘+Enter.";
 
 export function BeatLabTileExpanded({
   title,
@@ -694,57 +693,6 @@ export function BeatLabTileExpanded({
     });
   }, []);
 
-  const handleResetTrack = useCallback(() => {
-    const compositionId = activeIdRef.current;
-    const nextEdits = clearTrackEdits(sectionEditsRef.current, compositionId);
-    setSectionEdits(nextEdits);
-    setSectionIndex(0);
-    sectionIndexRef.current = 0;
-    const section = sectionsFor(compositionId)[0];
-    const authored = defaultSectionSource(compositionId, section.id);
-    setEditorValue(authored);
-    editorValueRef.current = authored;
-    committedSourceRef.current = authored;
-    setSectionHasUserEdit(false);
-    setPendingGhostSection(null);
-    setGhostCue(null);
-    setError(null);
-    if (playingRef.current) {
-      void runEvaluate(authored, { hushBeforeEval: false });
-      void getTransportCycle().then((cycle) => {
-        sectionStartCycleRef.current = cycle;
-      });
-    }
-  }, [runEvaluate]);
-
-  const handleResetSection = useCallback(() => {
-    const compositionId = activeIdRef.current;
-    const sectionIndexAtReset = sectionIndexRef.current;
-    const section =
-      sectionsFor(compositionId)[sectionIndexAtReset] ?? currentSection();
-    const nextEdits = clearSectionEdit(
-      sectionEditsRef.current,
-      compositionId,
-      section.id,
-    );
-    setSectionEdits(nextEdits);
-    const authored = defaultSectionSource(compositionId, section.id);
-    setEditorValue(authored);
-    editorValueRef.current = authored;
-    committedSourceRef.current = authored;
-    setSectionHasUserEdit(false);
-    setPendingGhostSection(null);
-    setGhostCue(null);
-    setError(null);
-    // Intentionally does not change sectionIndex — only Reset track returns to Intro.
-    if (playingRef.current) {
-      void runEvaluate(authored, { hushBeforeEval: false });
-      void getTransportCycle().then((cycle) => {
-        sectionStartCycleRef.current = cycle;
-      });
-    }
-  }, [runEvaluate]);
-
   const handleTabSelect = useCallback(
     (id: CompositionId) => {
       if (id === activeIdRef.current) return;
@@ -958,32 +906,6 @@ export function BeatLabTileExpanded({
                       error ? "beat-lab-error beat-lab-shortcuts" : "beat-lab-shortcuts"
                     }
                   />
-
-                  <div className="beat-lab-editor-actions">
-                    <button
-                      type="button"
-                      className="beat-lab-btn beat-lab-btn--subtle"
-                      onClick={() => void handleUpdate()}
-                      disabled={busy || !playing}
-                      aria-label="Update — commit your edit while the world plays"
-                    >
-                      {busy ? "…" : "Update"}
-                    </button>
-                    <button
-                      type="button"
-                      className="beat-lab-btn beat-lab-btn--ghost"
-                      onClick={handleResetSection}
-                    >
-                      Reset section
-                    </button>
-                    <button
-                      type="button"
-                      className="beat-lab-btn beat-lab-btn--ghost"
-                      onClick={handleResetTrack}
-                    >
-                      Reset track
-                    </button>
-                  </div>
 
                   {error ? (
                     <p
