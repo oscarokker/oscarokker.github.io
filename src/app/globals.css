@@ -3890,8 +3890,11 @@ html[data-theme="dark"] .beat-lab-expanded-root[data-visible="true"] .intro-expa
 }
 
 .beat-lab-morph-card[data-expanded="true"] {
-  padding: 20px 22px 22px;
+  padding: 0;
   box-shadow: var(--shadow-tile-elevated);
+  background: transparent;
+  border: 1px solid rgba(61, 224, 255, 0.22);
+  overflow: hidden;
 }
 
 .intro-expanded-root[data-visible="false"] .beat-lab-morph-card {
@@ -3932,8 +3935,487 @@ html[data-theme="dark"] .beat-lab-expanded-root[data-visible="true"] .intro-expa
   flex: 1 1 auto;
   opacity: 1;
   transition: opacity var(--transition-base) 90ms;
-  overflow: auto;
+  overflow: hidden;
   overscroll-behavior: contain;
+  min-height: 0;
+}
+
+.beat-lab-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* —— Beat lab expanded shell + world skins —— */
+.beat-lab-shell {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  height: 100%;
+  border-radius: inherit;
+  overflow: hidden;
+  color: var(--bl-chrome, #f4f7ff);
+  --bl-font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco,
+    Consolas, monospace;
+}
+
+.beat-lab-world-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.beat-lab-shell-hud {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  height: 100%;
+  padding: 14px 16px 12px;
+  background: var(--bl-hud-wash, rgba(5, 7, 15, 0.35));
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.beat-lab-top-bar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.beat-lab-top-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.beat-lab-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid var(--bl-chrome-border, rgba(61, 224, 255, 0.45));
+  border-radius: 4px;
+  background: var(--bl-glass, rgba(5, 7, 15, 0.35));
+  color: var(--bl-chrome, #f4f7ff);
+  cursor: pointer;
+  outline: none;
+}
+
+.beat-lab-icon-btn:focus-visible {
+  box-shadow: 0 0 0 2px var(--bl-focus, #3de0ff);
+}
+
+.beat-lab-shell[data-muted="false"] .beat-lab-icon-btn:first-child {
+  border-color: var(--bl-accent, #3de0ff);
+  color: var(--bl-accent, #3de0ff);
+}
+
+.beat-lab-main {
+  display: flex;
+  flex: 1 1 auto;
+  min-height: 0;
+  gap: 12px 20px;
+  margin-top: 10px;
+  align-items: stretch;
+}
+
+.beat-lab-editor-col {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1 1 58%;
+  min-width: 0;
+  min-height: 0;
+}
+
+.beat-lab-editor-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+}
+
+.beat-lab-btn--subtle {
+  min-height: 36px;
+  padding: 0 12px;
+  border-radius: 4px;
+  border: 1px solid var(--bl-chrome-border, rgba(61, 224, 255, 0.35));
+  background: var(--bl-glass, rgba(5, 7, 15, 0.45));
+  color: var(--bl-chrome, #f4f7ff);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.beat-lab-editor-stack {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 12rem;
+  max-height: min(42vh, 420px);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.beat-lab-editor-scrim {
+  position: absolute;
+  inset: 0;
+  background: var(--bl-scrim, rgba(5, 7, 15, 0.62));
+  border: 1px solid var(--bl-chrome-border, rgba(61, 224, 255, 0.2));
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.beat-lab-editor-row {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  height: 100%;
+  min-height: inherit;
+}
+
+.beat-lab-editor-gutter {
+  flex: 0 0 auto;
+  padding: 12px 8px 12px 12px;
+  overflow: hidden;
+  font-family: var(--bl-font-mono);
+  font-size: 0.75rem;
+  line-height: 1.55;
+  color: var(--bl-code-dim, #a8b4c8);
+  user-select: none;
+  text-align: right;
+}
+
+.beat-lab-editor-line-num {
+  display: block;
+}
+
+.beat-lab-editor--mono {
+  flex: 1 1 auto;
+  min-height: 100%;
+  max-height: inherit;
+  margin: 0;
+  padding: 12px 14px 12px 4px;
+  resize: none;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  color: var(--bl-code, #f4f7ff);
+  font-family: var(--bl-font-mono);
+  font-size: 0.75rem;
+  line-height: 1.55;
+  caret-color: var(--bl-accent, #3de0ff);
+  outline: none;
+}
+
+.beat-lab-editor-stack.is-live .beat-lab-editor-scrim {
+  box-shadow: inset 0 0 0 1px rgba(61, 224, 255, 0.12);
+}
+
+.beat-lab-editor-stack.is-live.is-audible .beat-lab-editor-scrim {
+  animation: beat-lab-editor-glow 2.4s ease-in-out infinite;
+}
+
+@keyframes beat-lab-editor-glow {
+  0%,
+  100% {
+    box-shadow: inset 0 0 0 1px rgba(61, 224, 255, 0.18);
+  }
+  50% {
+    box-shadow: inset 0 0 24px rgba(61, 224, 255, 0.12);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .beat-lab-editor-stack.is-live.is-audible .beat-lab-editor-scrim {
+    animation: none;
+  }
+}
+
+.beat-lab-world-mark {
+  flex: 0 1 38%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 8px 4px;
+  min-width: 0;
+  pointer-events: none;
+}
+
+.beat-lab-world-mark-line1,
+.beat-lab-world-mark-line2 {
+  display: block;
+  font-weight: 300;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  line-height: 1.15;
+  color: var(--bl-mark, rgba(244, 247, 255, 0.88));
+  text-shadow: 0 0 40px var(--bl-accent-glow, rgba(61, 224, 255, 0.35));
+}
+
+.beat-lab-world-mark-line1 {
+  font-size: clamp(1.1rem, 2.2vw, 1.65rem);
+}
+
+.beat-lab-world-mark-line2 {
+  font-size: clamp(0.95rem, 1.8vw, 1.35rem);
+  margin-top: 0.35em;
+  opacity: 0.92;
+}
+
+.beat-lab-timeline {
+  flex-shrink: 0;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--bl-timeline-border, rgba(244, 247, 255, 0.12));
+}
+
+.beat-lab-timeline-track {
+  position: relative;
+  min-height: 36px;
+}
+
+.beat-lab-timeline-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  max-width: 100%;
+  background: var(--bl-timeline-fill, rgba(61, 224, 255, 0.14));
+  border-radius: 2px;
+  pointer-events: none;
+  transition: width 140ms linear;
+}
+
+.beat-lab-timeline-segments {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  width: 100%;
+  min-height: 36px;
+}
+
+.beat-lab-timeline-segment {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 6px;
+  border-right: 1px solid var(--bl-timeline-border, rgba(244, 247, 255, 0.1));
+  min-width: 0;
+}
+
+.beat-lab-timeline-segment:last-child {
+  border-right: none;
+}
+
+.beat-lab-timeline-label {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: lowercase;
+  color: var(--bl-timeline-label, rgba(168, 180, 200, 0.85));
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.beat-lab-timeline-segment.is-active .beat-lab-timeline-label {
+  color: var(--bl-chrome, #f4f7ff);
+}
+
+.beat-lab-timeline-playhead {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  margin-left: -1px;
+  background: var(--bl-accent, #3de0ff);
+  box-shadow: 0 0 8px var(--bl-accent-glow, rgba(61, 224, 255, 0.65));
+  pointer-events: none;
+  z-index: 2;
+  transition: left 140ms linear;
+}
+
+/* neo.trance (canonical mock) */
+.beat-lab-shell[data-world="neo-trance"] {
+  --bl-bg-0: #05070f;
+  --bl-bg-1: #0a1224;
+  --bl-accent: #3de0ff;
+  --bl-accent-glow: rgba(61, 224, 255, 0.55);
+  --bl-chrome: #f4f7ff;
+  --bl-chrome-border: rgba(61, 224, 255, 0.45);
+  --bl-glass: rgba(5, 7, 15, 0.42);
+  --bl-scrim: rgba(5, 7, 15, 0.68);
+  --bl-code: #f4f7ff;
+  --bl-code-dim: #a8b4c8;
+  --bl-mark: rgba(244, 247, 255, 0.9);
+  --bl-hud-wash: rgba(5, 7, 15, 0.28);
+  --bl-timeline-border: rgba(168, 180, 200, 0.2);
+  --bl-timeline-fill: rgba(61, 224, 255, 0.12);
+  --bl-focus: #3de0ff;
+}
+
+.beat-lab-shell[data-world="neo-trance"] .beat-lab-tab {
+  border-radius: 2px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--bl-code-dim);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-transform: lowercase;
+}
+
+.beat-lab-shell[data-world="neo-trance"] .beat-lab-tab.is-active {
+  border-color: var(--bl-accent);
+  color: var(--bl-chrome);
+  background: rgba(61, 224, 255, 0.06);
+  box-shadow: none;
+}
+
+/* botanica */
+.beat-lab-shell[data-world="botanica"] {
+  --bl-accent: #3fa34d;
+  --bl-accent-glow: rgba(63, 163, 77, 0.35);
+  --bl-chrome: #1a1a18;
+  --bl-chrome-border: rgba(63, 163, 77, 0.35);
+  --bl-glass: rgba(255, 255, 255, 0.55);
+  --bl-scrim: rgba(255, 255, 255, 0.72);
+  --bl-code: #1a1a18;
+  --bl-code-dim: #6b7f6e;
+  --bl-mark: #1a1a18;
+  --bl-hud-wash: rgba(247, 249, 244, 0.55);
+  --bl-timeline-border: rgba(26, 26, 24, 0.12);
+  --bl-timeline-fill: rgba(63, 163, 77, 0.15);
+  --bl-focus: #3fa34d;
+}
+
+.beat-lab-shell[data-world="botanica"] .beat-lab-tab.is-active {
+  border-color: var(--bl-accent);
+  color: var(--bl-chrome);
+  background: rgba(63, 163, 77, 0.1);
+}
+
+/* utopia.os */
+.beat-lab-shell[data-world="utopia-os"] {
+  --bl-accent: #6ee7ff;
+  --bl-accent-glow: rgba(75, 163, 240, 0.35);
+  --bl-chrome: #0b0d12;
+  --bl-chrome-border: rgba(75, 163, 240, 0.4);
+  --bl-glass: rgba(255, 255, 255, 0.5);
+  --bl-scrim: rgba(255, 255, 255, 0.62);
+  --bl-code: #0b0d12;
+  --bl-code-dim: #5a6b7d;
+  --bl-mark: #0b0d12;
+  --bl-hud-wash: rgba(245, 248, 252, 0.5);
+  --bl-timeline-border: rgba(11, 13, 18, 0.1);
+  --bl-timeline-fill: rgba(75, 163, 240, 0.14);
+  --bl-focus: #4ba3f0;
+}
+
+.beat-lab-shell[data-world="utopia-os"] .beat-lab-tab.is-active {
+  border-color: var(--bl-accent);
+  background: rgba(110, 231, 255, 0.12);
+}
+
+/* break(core) */
+.beat-lab-shell[data-world="breakcore"] {
+  --bl-accent: #ff2bd6;
+  --bl-accent-glow: rgba(255, 43, 214, 0.45);
+  --bl-chrome: #f2f0f5;
+  --bl-chrome-border: rgba(255, 43, 214, 0.4);
+  --bl-glass: rgba(7, 4, 10, 0.55);
+  --bl-scrim: rgba(7, 4, 10, 0.78);
+  --bl-code: #f2f0f5;
+  --bl-code-dim: #9a8aa8;
+  --bl-mark: #f2f0f5;
+  --bl-hud-wash: rgba(7, 4, 10, 0.45);
+  --bl-timeline-border: rgba(242, 240, 245, 0.12);
+  --bl-timeline-fill: rgba(255, 43, 214, 0.12);
+  --bl-focus: #ff2bd6;
+}
+
+.beat-lab-shell[data-world="breakcore"] .beat-lab-tab.is-active {
+  border-color: var(--bl-accent);
+  color: var(--bl-chrome);
+}
+
+.beat-lab-shell .beat-lab-tab {
+  min-height: 40px;
+  padding: 0 12px;
+  border-radius: 2px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--bl-code-dim);
+  font-size: 0.8125rem;
+}
+
+.beat-lab-shell .beat-lab-tab:focus-visible {
+  box-shadow: 0 0 0 2px var(--bl-focus);
+}
+
+.beat-lab-shell .beat-lab-ghost-cue,
+.beat-lab-shell .beat-lab-shortcuts,
+.beat-lab-shell .beat-lab-credit,
+.beat-lab-shell .beat-lab-status {
+  color: var(--bl-code-dim);
+  font-size: 0.75rem;
+}
+
+.beat-lab-shell .beat-lab-btn--ghost {
+  color: var(--bl-code-dim);
+  border-color: transparent;
+  background: transparent;
+  font-size: 0.75rem;
+  min-height: 32px;
+  padding: 0 8px;
+}
+
+.beat-lab-shell .beat-lab-editor-label {
+  position: static;
+  width: auto;
+  height: auto;
+  margin: 0;
+  padding: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: lowercase;
+  color: var(--bl-code-dim);
+}
+
+html[data-device="mobile"] .beat-lab-world-mark {
+  display: none;
+}
+
+html[data-device="mobile"] .beat-lab-editor-col {
+  flex-basis: 100%;
+}
+
+html[data-device="mobile"] .beat-lab-morph-card[data-expanded="true"] {
+  width: calc(100vw - var(--page-padding, 24px) * 2) !important;
 }
 
 .beat-lab-toolbar {

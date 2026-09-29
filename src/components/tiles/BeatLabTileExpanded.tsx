@@ -13,13 +13,21 @@ import {
   type TransitionEvent as ReactTransitionEvent,
 } from "react";
 import { createPortal } from "react-dom";
-import { MinimizeIcon } from "@/components/ChromeIcons";
+import {
+  MinimizeIcon,
+  VolumeOffIcon,
+  VolumeOnIcon,
+} from "@/components/ChromeIcons";
+import { BeatLabCodeEditor } from "@/components/tiles/beat-lab/BeatLabCodeEditor";
+import { BeatLabSectionTimeline } from "@/components/tiles/beat-lab/BeatLabSectionTimeline";
+import { BeatLabWorldBackground } from "@/components/tiles/beat-lab/BeatLabWorldBackground";
 import { accentClass } from "@/lib/accent";
 import {
   COMPOSITIONS,
-  compositionById,
   type CompositionId,
 } from "@/lib/beat-lab/compositions";
+import { ensureJetBrainsMono } from "@/lib/beat-lab/load-jetbrains-mono";
+import { WORLDS, worldById } from "@/lib/beat-lab/worlds";
 import {
   ensureStrudel,
   evaluateCode,
@@ -83,7 +91,7 @@ function getPagePadding(): number {
 }
 
 function getExpandedTargetWidth(padding: number): number {
-  return Math.min(window.innerWidth * 0.8, window.innerWidth - padding * 2);
+  return Math.min(window.innerWidth * 0.92, 1120, window.innerWidth - padding * 2);
 }
 
 function measureExpandedTarget(card: HTMLElement): MorphRect {
@@ -105,7 +113,7 @@ function measureExpandedTarget(card: HTMLElement): MorphRect {
   card.style.height = "auto";
   card.style.maxHeight = `${maxHeight}px`;
   card.dataset.expanded = "true";
-  const height = Math.min(Math.max(card.scrollHeight, 320), maxHeight);
+  const height = Math.min(Math.max(card.scrollHeight, 520), maxHeight);
   const left = Math.max(padding, (window.innerWidth - width) / 2);
   const top = Math.max(padding, (window.innerHeight - height) / 2);
 
@@ -151,21 +159,21 @@ export function BeatLabTileExpanded({
   const visibleRef = useRef(visible);
   const playingRef = useRef(false);
   const editorValueRef = useRef("");
-  const activeIdRef = useRef<CompositionId>("house");
+  const activeIdRef = useRef<CompositionId>("neo-trance");
   const sectionIndexRef = useRef(0);
   const sectionStartCycleRef = useRef(0);
   const committedSourceRef = useRef("");
   const ghostApplyRef = useRef(false);
   const transportTimerRef = useRef(0);
 
-  const [activeId, setActiveId] = useState<CompositionId>("house");
+  const [activeId, setActiveId] = useState<CompositionId>("neo-trance");
   const [sectionIndex, setSectionIndex] = useState(0);
   const [sectionEdits, setSectionEdits] = useState<SectionEditMap>(() =>
     loadPersistedSectionEdits(),
   );
   const [editorValue, setEditorValue] = useState(() =>
     effectiveSectionSource(
-      "house",
+      "neo-trance",
       "intro",
       defaultSectionSource,
       loadPersistedSectionEdits(),
@@ -238,9 +246,10 @@ export function BeatLabTileExpanded({
     await teardown();
   }, []);
 
-  // Preload Strudel on first expand (not homepage critical path). No sound.
+  // Preload Strudel + JetBrains Mono on first expand (not homepage critical path).
   useEffect(() => {
     let cancelled = false;
+    void ensureJetBrainsMono();
     ensureStrudel()
       .then(() => {
         if (!cancelled) setReady(true);
@@ -832,244 +841,208 @@ export function BeatLabTileExpanded({
         </div>
 
         <div ref={morphBodyRef} className="beat-lab-morph-body">
-          <header className="beat-lab-toolbar">
-            <div className="beat-lab-toolbar-copy">
-              <h2 id={titleId} className="text-h2 m-0 beat-lab-expanded-title">
-                Beat lab · Strudel
-              </h2>
-              <p className="text-body-sm m-0 beat-lab-expanded-desc">
-                {description}
-              </p>
-            </div>
-
-            <div
-              className="beat-lab-toolbar-actions"
-              role="group"
-              aria-label="Channel audio"
-            >
-              <button
-                type="button"
-                className="beat-lab-btn beat-lab-btn--primary"
-                onClick={() => void handleUpdate()}
-                disabled={busy || !playing}
-                aria-label="Update — commit your edit while the channel plays"
-              >
-                {busy ? "…" : "Update"}
-              </button>
-              <button
-                ref={muteRef}
-                type="button"
-                className="beat-lab-btn"
-                onClick={handleMuteToggle}
-                aria-pressed={muted}
-                aria-label={
-                  muted
-                    ? "Unmute — hear the living channel"
-                    : "Mute — channel keeps playing"
-                }
-              >
-                {muted ? "Unmute" : "Mute"}
-              </button>
-              <button
-                ref={closeRef}
-                type="button"
-                className="intro-chrome-icon-btn intro-expanded-minimize beat-lab-close"
-                aria-label={`Close ${title}`}
-                onClick={onClose}
-                tabIndex={visible ? 0 : -1}
-              >
-                <MinimizeIcon />
-              </button>
-            </div>
-          </header>
+          <h2 id={titleId} className="beat-lab-sr-only">
+            Beat lab · {title}
+          </h2>
+          <p className="beat-lab-sr-only">{description}</p>
 
           <div
-            className="beat-lab-tabs"
-            role="tablist"
-            aria-label="Compositions"
+            className="beat-lab-shell"
+            data-world={activeId}
+            data-muted={muted ? "true" : "false"}
           >
-            {COMPOSITIONS.map((composition) => {
-              const selected = composition.id === activeId;
-              return (
-                <button
-                  key={composition.id}
-                  type="button"
-                  role="tab"
-                  id={`beat-lab-tab-${composition.id}`}
-                  aria-selected={selected}
-                  aria-controls="beat-lab-editor-panel"
-                  tabIndex={selected ? 0 : -1}
-                  className={`beat-lab-tab${selected ? " is-active" : ""}`}
-                  onClick={() => handleTabSelect(composition.id)}
-                >
-                  {composition.name}
-                </button>
-              );
-            })}
-          </div>
+            <BeatLabWorldBackground worldId={activeId} active={visible} />
 
-          <div
-            id="beat-lab-editor-panel"
-            role="tabpanel"
-            aria-labelledby={`beat-lab-tab-${activeId}`}
-            className="beat-lab-panel"
-          >
-            <div className="beat-lab-section-meta">
-              <label className="beat-lab-editor-label" htmlFor={editorId}>
-                {compositionById(activeId).name} ·{" "}
-                {sectionsFor(activeId)[sectionIndex]?.label ?? "Section"}{" "}
-                <span className="beat-lab-section-index">
-                  ({sectionIndex + 1}/{sectionsFor(activeId).length})
-                </span>
-              </label>
-              {playing ? (
-                <p
-                  className="text-body-sm m-0 beat-lab-loop-progress"
-                  aria-live="polite"
+            <div className="beat-lab-shell-hud">
+              <header className="beat-lab-top-bar">
+                <div
+                  className="beat-lab-tabs"
+                  role="tablist"
+                  aria-label="World channels"
                 >
-                  Loop {loopInSection.current}/{loopInSection.total} in section
-                </p>
-              ) : ready ? (
-                <p className="text-body-sm m-0 beat-lab-loop-progress">
-                  Tuning in…
-                </p>
-              ) : null}
-            </div>
+                  {WORLDS.map((world) => {
+                    const selected = world.id === activeId;
+                    const composition = COMPOSITIONS.find(
+                      (c) => c.id === world.id,
+                    );
+                    if (!composition) return null;
+                    return (
+                      <button
+                        key={world.id}
+                        type="button"
+                        role="tab"
+                        id={`beat-lab-tab-${world.id}`}
+                        aria-selected={selected}
+                        aria-controls="beat-lab-editor-panel"
+                        tabIndex={selected ? 0 : -1}
+                        className={`beat-lab-tab${selected ? " is-active" : ""}`}
+                        onClick={() => handleTabSelect(world.id)}
+                      >
+                        {world.label}
+                      </button>
+                    );
+                  })}
+                </div>
 
-            <div
-              className="beat-lab-section-timeline"
-              aria-label="Song sections (auto-advance only)"
-            >
-              {sectionsFor(activeId).map((section, index) => {
-                const active = index === sectionIndex;
-                return (
-                  <span
-                    key={section.id}
-                    className={`beat-lab-section-pill beat-lab-section-pill--readonly${active ? " is-active" : ""}`}
-                    aria-current={active ? "step" : undefined}
+                <div
+                  className="beat-lab-top-actions"
+                  role="group"
+                  aria-label="Channel controls"
+                >
+                  <button
+                    ref={muteRef}
+                    type="button"
+                    className="beat-lab-icon-btn"
+                    onClick={handleMuteToggle}
+                    aria-pressed={muted}
+                    aria-label={
+                      muted
+                        ? "Unmute — hear the living channel"
+                        : "Mute — channel keeps playing"
+                    }
                   >
-                    {section.label}
+                    {muted ? <VolumeOffIcon /> : <VolumeOnIcon />}
+                  </button>
+                  <button
+                    ref={closeRef}
+                    type="button"
+                    className="beat-lab-icon-btn beat-lab-close"
+                    aria-label={`Close ${title}`}
+                    onClick={onClose}
+                    tabIndex={visible ? 0 : -1}
+                  >
+                    <MinimizeIcon />
+                  </button>
+                </div>
+              </header>
+
+              <div
+                id="beat-lab-editor-panel"
+                role="tabpanel"
+                aria-labelledby={`beat-lab-tab-${activeId}`}
+                className="beat-lab-main"
+              >
+                <div className="beat-lab-editor-col">
+                  <label className="beat-lab-editor-label" htmlFor={editorId}>
+                    {worldById(activeId).label} ·{" "}
+                    {sectionsFor(activeId)[sectionIndex]?.label ?? "section"}
+                  </label>
+
+                  {ghostCue || sectionHasUserEdit ? (
+                    <p
+                      className="text-body-sm m-0 beat-lab-ghost-cue"
+                      role="status"
+                    >
+                      {ghostCue ??
+                        (sectionHasUserEdit
+                          ? "Your edit remembered for this section"
+                          : null)}
+                    </p>
+                  ) : null}
+
+                  <BeatLabCodeEditor
+                    id={editorId}
+                    value={editorValue}
+                    textareaRef={editorRef}
+                    playing={playing}
+                    muted={muted}
+                    onChange={(next) => {
+                      setEditorValue(next);
+                      editorValueRef.current = next;
+                      setError(null);
+                    }}
+                    onBlur={() => {
+                      void applyPendingGhostIfAny();
+                    }}
+                    describedBy={
+                      error ? "beat-lab-error beat-lab-shortcuts" : "beat-lab-shortcuts"
+                    }
+                  />
+
+                  <div className="beat-lab-editor-actions">
+                    <button
+                      type="button"
+                      className="beat-lab-btn beat-lab-btn--subtle"
+                      onClick={() => void handleUpdate()}
+                      disabled={busy || !playing}
+                      aria-label="Update — commit your edit while the channel plays"
+                    >
+                      {busy ? "…" : "Update"}
+                    </button>
+                    <button
+                      type="button"
+                      className="beat-lab-btn beat-lab-btn--ghost"
+                      onClick={handleResetSection}
+                    >
+                      Reset section
+                    </button>
+                    <button
+                      type="button"
+                      className="beat-lab-btn beat-lab-btn--ghost"
+                      onClick={handleResetTrack}
+                    >
+                      Reset track
+                    </button>
+                  </div>
+
+                  {error ? (
+                    <p
+                      id="beat-lab-error"
+                      className="text-body-sm m-0 beat-lab-error"
+                      role="status"
+                    >
+                      {error}
+                    </p>
+                  ) : null}
+
+                  <p
+                    id="beat-lab-shortcuts"
+                    className="text-body-sm m-0 beat-lab-shortcuts"
+                  >
+                    Ctrl/⌘+Enter update · living channel while open
+                    {playing ? (
+                      <span className="beat-lab-loop-progress">
+                        {" "}
+                        · loop {loopInSection.current}/{loopInSection.total}
+                      </span>
+                    ) : ready ? (
+                      <span className="beat-lab-loop-progress"> · tuning in…</span>
+                    ) : null}
+                  </p>
+
+                  {!ready ? (
+                    <p
+                      className="text-body-sm m-0 beat-lab-status"
+                      aria-live="polite"
+                    >
+                      Loading Strudel…
+                    </p>
+                  ) : null}
+
+                  <p className="text-body-sm m-0 beat-lab-credit">
+                    Strudel (AGPL) · patterns by Oscar Rode
+                  </p>
+                </div>
+
+                <div className="beat-lab-world-mark" aria-hidden>
+                  <span className="beat-lab-world-mark-line1">
+                    {worldById(activeId).mark.line1}
                   </span>
-                );
-              })}
+                  {worldById(activeId).mark.line2 ? (
+                    <span className="beat-lab-world-mark-line2">
+                      {worldById(activeId).mark.line2}
+                    </span>
+                  ) : null}
+                </div>
+              </div>
+
+              <BeatLabSectionTimeline
+                sections={sectionsFor(activeId)}
+                sectionIndex={sectionIndex}
+                loopCurrent={loopInSection.current}
+                loopTotal={loopInSection.total}
+              />
             </div>
-
-            {ghostCue || sectionHasUserEdit ? (
-              <p className="text-body-sm m-0 beat-lab-ghost-cue" role="status">
-                {ghostCue ??
-                  (sectionHasUserEdit
-                    ? "Your edit remembered for this section"
-                    : null)}
-              </p>
-            ) : null}
-
-            <textarea
-              ref={editorRef}
-              id={editorId}
-              className="beat-lab-editor"
-              spellCheck={false}
-              autoCapitalize="off"
-              autoCorrect="off"
-              autoComplete="off"
-              value={editorValue}
-              onChange={(event) => {
-                setEditorValue(event.target.value);
-                editorValueRef.current = event.target.value;
-                setError(null);
-              }}
-              onBlur={() => {
-                void applyPendingGhostIfAny();
-              }}
-              aria-describedby={
-                error
-                  ? "beat-lab-error"
-                  : "beat-lab-shortcuts beat-lab-helpers"
-              }
-            />
-
-            <div
-              className={`beat-lab-cycle${playing && !muted ? " is-playing" : ""}`}
-              aria-hidden
-            />
-
-            {error ? (
-              <p
-                id="beat-lab-error"
-                className="text-body-sm m-0 beat-lab-error"
-                role="status"
-              >
-                {error}
-              </p>
-            ) : null}
-
-            <div className="beat-lab-editor-footer">
-              <p
-                id="beat-lab-shortcuts"
-                className="text-body-sm m-0 beat-lab-shortcuts"
-              >
-                Ctrl/⌘+Enter update · channel auto-plays while open
-              </p>
-              <button
-                type="button"
-                className="beat-lab-btn beat-lab-btn--ghost"
-                onClick={handleResetSection}
-              >
-                Reset section
-              </button>
-              <button
-                type="button"
-                className="beat-lab-btn beat-lab-btn--ghost"
-                onClick={handleResetTrack}
-              >
-                Reset track
-              </button>
-            </div>
-
-            <div id="beat-lab-helpers" className="beat-lab-helpers">
-              <p className="text-body-sm m-0 beat-lab-helpers-lead">
-                Mini-notation cheat sheet
-              </p>
-              <ul className="beat-lab-chips" aria-label="Mini-notation symbols">
-                <li>
-                  <span className="beat-lab-chip">
-                    <code>Space</code> = sequence
-                  </span>
-                </li>
-                <li>
-                  <span className="beat-lab-chip">
-                    <code>*</code> = faster
-                  </span>
-                </li>
-                <li>
-                  <span className="beat-lab-chip">
-                    <code>~/−</code> = rest
-                  </span>
-                </li>
-                <li>
-                  <span className="beat-lab-chip">
-                    <code>,</code> = parallel
-                  </span>
-                </li>
-              </ul>
-              <a
-                className="beat-lab-workshop-link"
-                href="https://strudel.cc/workshop/first-sounds/"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Learn more on strudel.cc
-              </a>
-            </div>
-
-            <p className="text-body-sm m-0 beat-lab-credit">
-              Built with Strudel (AGPL) · patterns by Oscar Rode
-            </p>
-
-            {!ready ? (
-              <p className="text-body-sm m-0 beat-lab-status" aria-live="polite">
-                Loading Strudel…
-              </p>
-            ) : null}
           </div>
         </div>
       </div>

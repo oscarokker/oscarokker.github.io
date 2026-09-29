@@ -1,74 +1,24 @@
 export type CompositionId =
-  | "house"
-  | "rock"
-  | "firecracker"
-  | "sixteen"
-  | "weird"
-  | "trance";
+  | "neo-trance"
+  | "botanica"
+  | "utopia-os"
+  | "breakcore";
 
 export interface Composition {
   id: CompositionId;
-  /** Studio nickname shown on the tab. */
+  /** World tab label. */
   name: string;
-  /** Workshop-derived placeholder Strudel source (Oscar finals later). */
+  /** Default groove-level Strudel (Reset track / legacy). */
   source: string;
 }
 
 /** Static mini-notation teaser for the collapsed face — not live audio. */
 export const TEASER_NOTATION = 's("bd sd hh")';
 
-/**
- * Six compositions — workshop placeholders from
- * https://strudel.cc/workshop/first-sounds/ (plus Oscar’s Trance pattern).
- * Oscar owns final strings; Reset restores these.
- */
 export const COMPOSITIONS: Composition[] = [
   {
-    id: "house",
-    name: "House",
-    source: `// Classic house — workshop TR909
-sound("bd*4, [- cp]*2, [- hh]*4").bank("RolandTR909")`,
-  },
-  {
-    id: "rock",
-    name: "Rock",
-    source: `// Basic rock beat — workshop TR505
-setcpm(100/4)
-sound("[bd sd]*2, hh*8").bank("RolandTR505")`,
-  },
-  {
-    id: "firecracker",
-    name: "Firecracker",
-    source: `// YMO Firecracker spirit — workshop
-setcpm(120/2)
-sound("bd sd, - - - hh - hh - -, - perc - perc:1*2")
-.bank("RolandCompurhythm1000")`,
-  },
-  {
-    id: "sixteen",
-    name: "Sixteen",
-    source: `// 16-step sequencer imitation — workshop
-setcpm(90/4)
-sound(\`
-[-  -  oh - ] [-  -  -  - ] [-  -  -  - ] [-  -  -  - ],
-[hh hh -  - ] [hh -  hh - ] [hh -  hh - ] [hh -  hh - ],
-[-  -  -  - ] [cp -  -  - ] [-  -  -  - ] [cp -  -  - ],
-[bd -  -  - ] [-  -  -  bd] [-  -  bd - ] [-  -  -  bd]
-\`)`,
-  },
-  {
-    id: "weird",
-    name: "Texture",
-    source: `// Not your average drums — workshop
-setcpm(100/2)
-s(\`jazz*2,
-insect [crow metal] - -,
-- space:4 - space:1,
-- wind\`)`,
-  },
-  {
-    id: "trance",
-    name: "Trance",
+    id: "neo-trance",
+    name: "neo.trance",
     source: `setcpm(132/4)
 
 register('acidenv', (x, pat) => pat.lpf(100)
@@ -98,6 +48,35 @@ $: s("bd:2!4")
   .duckdepth(.8)
   .duckattack(.16)
   ._scope()`,
+  },
+  {
+    id: "botanica",
+    name: "botanica",
+    source: `// Nurture meadow — workshop textures
+setcpm(100/2)
+s(\`jazz*2,
+insect [crow metal] - -,
+- space:4 - space:1,
+- wind\`)`,
+  },
+  {
+    id: "utopia-os",
+    name: "utopiaOS",
+    source: `// Bright OS grid — workshop sixteen
+setcpm(90/4)
+sound(\`
+[-  -  oh - ] [-  -  -  - ] [-  -  -  - ] [-  -  -  - ],
+[hh hh -  - ] [hh -  hh - ] [hh -  hh - ] [hh -  hh - ],
+[-  -  -  - ] [cp -  -  - ] [-  -  -  - ] [cp -  -  - ],
+[bd -  -  - ] [-  -  -  bd] [-  -  bd - ] [-  -  -  bd]
+\`)`,
+  },
+  {
+    id: "breakcore",
+    name: "break(core)",
+    source: `// Grit break — workshop TR505 + noise
+setcpm(100/4)
+sound("[bd sd]*2, hh*8").bank("RolandTR505")`,
   },
 ];
 
