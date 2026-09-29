@@ -3775,7 +3775,7 @@ html[data-device="mobile"] .case-study-cover-stage {
 
 
 
-/* ─── Beat lab (@strudel/web MiniREPL) ───────────────────────────── */
+/* ─── Ghostlink (@strudel/web MiniREPL) ──────────────────────────── */
 
 .beat-lab-tile {
   position: relative;
@@ -3952,7 +3952,7 @@ html[data-theme="dark"] .beat-lab-expanded-root[data-visible="true"] .intro-expa
   border: 0;
 }
 
-/* —— Beat lab expanded shell + world skins —— */
+/* —— Ghostlink expanded shell + world skins —— */
 .beat-lab-shell {
   position: relative;
   display: flex;

@@ -660,7 +660,7 @@ export function BeatLabTileExpanded({
     return () => document.removeEventListener("visibilitychange", onVisibility);
   }, [teardownAudio]);
 
-  // Auto-start living channel on expand; teardown when leaving the channel.
+  // Auto-start the living world on expand; teardown when leaving it.
   useEffect(() => {
     if (!visible) {
       livingSessionRef.current = false;
@@ -836,13 +836,13 @@ export function BeatLabTileExpanded({
         onClick={(event) => event.stopPropagation()}
       >
         <div className="beat-lab-morph-collapsed" aria-hidden>
-          <span className="text-label beat-lab-tile-kicker">Beat lab</span>
+          <span className="text-label beat-lab-tile-kicker">Ghostlink</span>
           <h2 className="text-h2 m-0 beat-lab-tile-title">{title}</h2>
         </div>
 
         <div ref={morphBodyRef} className="beat-lab-morph-body">
           <h2 id={titleId} className="beat-lab-sr-only">
-            Beat lab · {title}
+            {title}
           </h2>
           <p className="beat-lab-sr-only">{description}</p>
 
@@ -858,7 +858,7 @@ export function BeatLabTileExpanded({
                 <div
                   className="beat-lab-tabs"
                   role="tablist"
-                  aria-label="World channels"
+                  aria-label="Worlds"
                 >
                   {WORLDS.map((world) => {
                     const selected = world.id === activeId;
@@ -887,7 +887,7 @@ export function BeatLabTileExpanded({
                 <div
                   className="beat-lab-top-actions"
                   role="group"
-                  aria-label="Channel controls"
+                  aria-label="Audio and minimize"
                 >
                   <button
                     ref={muteRef}
@@ -897,8 +897,8 @@ export function BeatLabTileExpanded({
                     aria-pressed={muted}
                     aria-label={
                       muted
-                        ? "Unmute — hear the living channel"
-                        : "Mute — channel keeps playing"
+                        ? "Unmute — hear the world"
+                        : "Mute — the world keeps playing"
                     }
                   >
                     {muted ? <VolumeOffIcon /> : <VolumeOnIcon />}
@@ -965,7 +965,7 @@ export function BeatLabTileExpanded({
                       className="beat-lab-btn beat-lab-btn--subtle"
                       onClick={() => void handleUpdate()}
                       disabled={busy || !playing}
-                      aria-label="Update — commit your edit while the channel plays"
+                      aria-label="Update — commit your edit while the world plays"
                     >
                       {busy ? "…" : "Update"}
                     </button>
@@ -999,7 +999,7 @@ export function BeatLabTileExpanded({
                     id="beat-lab-shortcuts"
                     className="text-body-sm m-0 beat-lab-shortcuts"
                   >
-                    Ctrl/⌘+Enter update · living channel while open
+                    Ctrl/⌘+Enter update · co-write with the ghost while the world plays
                     {playing ? (
                       <span className="beat-lab-loop-progress">
                         {" "}

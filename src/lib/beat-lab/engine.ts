@@ -1,5 +1,5 @@
 /**
- * Beat lab Strudel island.
+ * Ghostlink Strudel island.
  *
  * Dynamic-imported only from the expanded tile (never homepage critical path).
  * Samples: dirt-samples (github) + tidal-drum-machines (strudel.cc map +

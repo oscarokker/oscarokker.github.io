@@ -1,6 +1,6 @@
 let loadPromise: Promise<void> | null = null;
 
-/** Lazy-load JetBrains Mono on first Beat lab expand (not homepage critical path). */
+/** Lazy-load JetBrains Mono on first Ghostlink expand (not homepage critical path). */
 export function ensureJetBrainsMono(): Promise<void> {
   if (typeof document === "undefined") return Promise.resolve();
   if (loadPromise) return loadPromise;

@@ -212,7 +212,7 @@ Visible but not fake-tappable: `aria-disabled`, no press scale, default cursor.
 - Design for mobile thumbs: 44×44 minimum, two-row header, hide filtered tiles, no hover-only labels
 - Write case studies as decision beats with figures that prove the beat
 - Prefer existing `--color-tile-*` accents over inventing one-off hexes
-- Beat lab is a **living radio channel**: auto-start Strudel on expand (default **muted** until Unmute — autoplay-safe); **Mute/Unmute only** (stream + ghost keep running while muted); hush + tear down on close / tab hidden (no ghost audio / mini-dock)
+- Ghostlink is a **living musical world**: auto-start Strudel on expand (default **muted** until Unmute — autoplay-safe); **Mute/Unmute only** (playback + ghost keep running while muted); hush + tear down on close / tab hidden (no ghost audio / mini-dock)
 
 ### Don't
 - Don't set the light canvas to pure `#ffffff` — parchment is the signature
@@ -221,9 +221,9 @@ Visible but not fake-tappable: `aria-disabled`, no press scale, default cursor.
 - Don't put research stills into the Source Insights phone-row carousel
 - Don't let the music iframe intercept taps
 - Don't add SaaS marketing chrome (pricing tables, multi CTA pill pairs) that fights the personal bento
-- Don't introduce a second typeface on the main site or load from Google Fonts — Satoshi is self-hosted and covers all roles (**exception:** JetBrains Mono is lazy-loaded **only** inside expanded Beat lab for the code editor)
-- Don't put `@strudel/web` on the homepage critical path or leave patterns running after Beat lab closes
-- Don't wire Beat lab into the YouTube MusicPlayer mini-dock
+- Don't introduce a second typeface on the main site or load from Google Fonts — Satoshi is self-hosted and covers all roles (**exception:** JetBrains Mono is lazy-loaded **only** inside expanded Ghostlink for the code editor)
+- Don't put `@strudel/web` on the homepage critical path or leave patterns running after Ghostlink closes
+- Don't wire Ghostlink into the YouTube MusicPlayer mini-dock
 
 ---
 
@@ -270,8 +270,8 @@ Replaces `.aurora-bg` on the **dark homepage only**. Light parchment + paper gra
 
 - **Home:** photography and product UI live *inside* tiles (music covers, trek photos, case covers) — the grid is the composition.
 - **Case studies:** product shots, research artifacts, short looping demos. No stock lifestyle filler.
-- **Personality:** side quests (Himalaya, Duolingo, music, Beat lab) are allowed — Beat lab is playful + nerdy (creative + technical in one surface); Work filter must still surface real case studies first.
-- **Beat lab expandable:** `@strudel/web` island (dynamic-import on first expand only); **four world channels** (`neo.trance`, `botanica`, `utopiaOS`, `break(core)`) with per-world **skins** (CSS tokens + animated BG canvas + decorative world mark). Shared expanded shell: world tabs top-left; **Mute + Minimize** top-right (icon buttons); Strudel IDE center-left (**JetBrains Mono**, lazy-loaded on expand, line numbers, scrim contrast); read-only **section timeline** bottom (playhead + fill, loops forever — not a scrubber). Each world is a **radio channel** — sectional living song that **auto-starts on expand** (default **muted**), auto-advances via ghost (no click-to-jump). **Ghost writer** + per `(worldId, sectionId)` edit memory; **Ghost waiting** when dirty on auto-advance until blur/Update. Controls: **Mute/Unmute** (transport + timeline continue while muted), subtle **Update**, Reset section/track. No Play/Pause/Stop/Restart. `hush` + teardown Strudel/BG RAF on close / tab hidden — separate from YouTube MusicPlayer. Credit Strudel (AGPL). `prefers-reduced-motion`: static BG plates.
+- **Personality:** side quests (Himalaya, Duolingo, music, Ghostlink) are allowed — Ghostlink is playful + nerdy (creative + technical in one surface); Work filter must still surface real case studies first.
+- **Ghostlink expandable:** `@strudel/web` island (dynamic-import on first expand only); **four worlds** (`neo.trance`, `botanica`, `utopiaOS`, `break(core)`) with per-world **skins** (CSS tokens + animated BG canvas + decorative world mark). Shared expanded shell: world tabs top-left; **Mute + Minimize** top-right (icon buttons); Strudel IDE center-left (**JetBrains Mono**, lazy-loaded on expand, line numbers, scrim contrast); read-only **section timeline** bottom (playhead + fill, loops forever — not a scrubber). Each world is a living song you plug into and co-write with the ghost — it **auto-starts on expand** (default **muted**), auto-advances via ghost (no click-to-jump). **Ghost writer** + per `(worldId, sectionId)` edit memory; **Ghost waiting** when dirty on auto-advance until blur/Update. Controls: **Mute/Unmute** (playback + timeline continue while muted), subtle **Update**, Reset section/track. No Play/Pause/Stop/Restart. `hush` + teardown Strudel/BG RAF on close / tab hidden — separate from YouTube MusicPlayer. Credit Strudel (AGPL). `prefers-reduced-motion`: static BG plates.
 - **Dark mode:** distinctive — indigo field + ASCII wave texture. Preserve it; don't flatten to generic gray dark mode.
 
 ---
