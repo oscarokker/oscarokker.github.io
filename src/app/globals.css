@@ -4056,15 +4056,6 @@ html[data-theme="dark"] .beat-lab-expanded-root[data-visible="true"] .intro-expa
   overflow: hidden;
 }
 
-.beat-lab-editor-scrim {
-  position: absolute;
-  inset: 0;
-  background: var(--bl-scrim, rgba(5, 7, 15, 0.62));
-  border: 1px solid var(--bl-chrome-border, rgba(61, 224, 255, 0.2));
-  border-radius: inherit;
-  pointer-events: none;
-}
-
 .beat-lab-editor-row {
   position: relative;
   z-index: 1;
@@ -4089,7 +4080,7 @@ html[data-theme="dark"] .beat-lab-expanded-root[data-visible="true"] .intro-expa
   display: block;
 }
 
-.beat-lab-editor--mono {
+.beat-lab-shell .beat-lab-editor--mono {
   flex: 1 1 auto;
   min-height: 100%;
   max-height: inherit;
@@ -4098,69 +4089,13 @@ html[data-theme="dark"] .beat-lab-expanded-root[data-visible="true"] .intro-expa
   resize: none;
   border: none;
   border-radius: 0;
-  background: transparent;
+  background-color: transparent;
   color: var(--bl-code, #f4f7ff);
   font-family: var(--bl-font-mono);
   font-size: 0.75rem;
   line-height: 1.55;
   caret-color: var(--bl-accent, #3de0ff);
   outline: none;
-}
-
-.beat-lab-editor-stack.is-live .beat-lab-editor-scrim {
-  box-shadow: inset 0 0 0 1px rgba(61, 224, 255, 0.12);
-}
-
-.beat-lab-editor-stack.is-live.is-audible .beat-lab-editor-scrim {
-  animation: beat-lab-editor-glow 2.4s ease-in-out infinite;
-}
-
-@keyframes beat-lab-editor-glow {
-  0%,
-  100% {
-    box-shadow: inset 0 0 0 1px rgba(61, 224, 255, 0.18);
-  }
-  50% {
-    box-shadow: inset 0 0 24px rgba(61, 224, 255, 0.12);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .beat-lab-editor-stack.is-live.is-audible .beat-lab-editor-scrim {
-    animation: none;
-  }
-}
-
-.beat-lab-world-mark {
-  flex: 0 1 38%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
-  padding: 8px 4px;
-  min-width: 0;
-  pointer-events: none;
-}
-
-.beat-lab-world-mark-line1,
-.beat-lab-world-mark-line2 {
-  display: block;
-  font-weight: 300;
-  letter-spacing: 0.28em;
-  text-transform: uppercase;
-  line-height: 1.15;
-  color: var(--bl-mark, rgba(244, 247, 255, 0.88));
-  text-shadow: 0 0 40px var(--bl-accent-glow, rgba(61, 224, 255, 0.35));
-}
-
-.beat-lab-world-mark-line1 {
-  font-size: clamp(1.1rem, 2.2vw, 1.65rem);
-}
-
-.beat-lab-world-mark-line2 {
-  font-size: clamp(0.95rem, 1.8vw, 1.35rem);
-  margin-top: 0.35em;
-  opacity: 0.92;
 }
 
 .beat-lab-timeline {
@@ -4245,10 +4180,8 @@ html[data-theme="dark"] .beat-lab-expanded-root[data-visible="true"] .intro-expa
   --bl-chrome: #f4f7ff;
   --bl-chrome-border: rgba(61, 224, 255, 0.45);
   --bl-glass: rgba(5, 7, 15, 0.42);
-  --bl-scrim: rgba(5, 7, 15, 0.68);
-  --bl-code: #f4f7ff;
-  --bl-code-dim: #a8b4c8;
-  --bl-mark: rgba(244, 247, 255, 0.9);
+  --bl-code: #E4F1FF;
+  --bl-code-dim: color-mix(in srgb, #E4F1FF 48%, transparent);
   --bl-hud-wash: rgba(5, 7, 15, 0.28);
   --bl-timeline-border: rgba(168, 180, 200, 0.2);
   --bl-timeline-fill: rgba(61, 224, 255, 0.12);
@@ -4279,10 +4212,8 @@ html[data-theme="dark"] .beat-lab-expanded-root[data-visible="true"] .intro-expa
   --bl-chrome: #1a1a18;
   --bl-chrome-border: rgba(63, 163, 77, 0.35);
   --bl-glass: rgba(255, 255, 255, 0.55);
-  --bl-scrim: rgba(255, 255, 255, 0.72);
   --bl-code: #1a1a18;
   --bl-code-dim: #6b7f6e;
-  --bl-mark: #1a1a18;
   --bl-hud-wash: rgba(247, 249, 244, 0.55);
   --bl-timeline-border: rgba(26, 26, 24, 0.12);
   --bl-timeline-fill: rgba(63, 163, 77, 0.15);
@@ -4302,10 +4233,8 @@ html[data-theme="dark"] .beat-lab-expanded-root[data-visible="true"] .intro-expa
   --bl-chrome: #0b0d12;
   --bl-chrome-border: rgba(75, 163, 240, 0.4);
   --bl-glass: rgba(255, 255, 255, 0.5);
-  --bl-scrim: rgba(255, 255, 255, 0.62);
   --bl-code: #0b0d12;
   --bl-code-dim: #5a6b7d;
-  --bl-mark: #0b0d12;
   --bl-hud-wash: rgba(245, 248, 252, 0.5);
   --bl-timeline-border: rgba(11, 13, 18, 0.1);
   --bl-timeline-fill: rgba(75, 163, 240, 0.14);
@@ -4324,10 +4253,8 @@ html[data-theme="dark"] .beat-lab-expanded-root[data-visible="true"] .intro-expa
   --bl-chrome: #f2f0f5;
   --bl-chrome-border: rgba(255, 43, 214, 0.4);
   --bl-glass: rgba(7, 4, 10, 0.55);
-  --bl-scrim: rgba(7, 4, 10, 0.78);
-  --bl-code: #f2f0f5;
-  --bl-code-dim: #9a8aa8;
-  --bl-mark: #f2f0f5;
+  --bl-code: #FFE6F2;
+  --bl-code-dim: color-mix(in srgb, #FFE6F2 48%, transparent);
   --bl-hud-wash: rgba(7, 4, 10, 0.45);
   --bl-timeline-border: rgba(242, 240, 245, 0.12);
   --bl-timeline-fill: rgba(255, 43, 214, 0.12);
@@ -4375,10 +4302,6 @@ html[data-theme="dark"] .beat-lab-expanded-root[data-visible="true"] .intro-expa
   letter-spacing: 0.08em;
   text-transform: lowercase;
   color: var(--bl-code-dim);
-}
-
-html[data-device="mobile"] .beat-lab-world-mark {
-  display: none;
 }
 
 html[data-device="mobile"] .beat-lab-editor-col {

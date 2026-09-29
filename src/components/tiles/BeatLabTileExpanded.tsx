@@ -892,8 +892,6 @@ export function BeatLabTileExpanded({
                     id={editorId}
                     value={editorValue}
                     textareaRef={editorRef}
-                    playing={playing}
-                    muted={muted}
                     onChange={(next) => {
                       setEditorValue(next);
                       editorValueRef.current = next;
@@ -944,17 +942,6 @@ export function BeatLabTileExpanded({
                   <p className="text-body-sm m-0 beat-lab-credit">
                     Strudel (AGPL) · patterns by Oscar Rode
                   </p>
-                </div>
-
-                <div className="beat-lab-world-mark" aria-hidden>
-                  <span className="beat-lab-world-mark-line1">
-                    {worldById(activeId).mark.line1}
-                  </span>
-                  {worldById(activeId).mark.line2 ? (
-                    <span className="beat-lab-world-mark-line2">
-                      {worldById(activeId).mark.line2}
-                    </span>
-                  ) : null}
                 </div>
               </div>
 
