@@ -477,10 +477,6 @@ export function BeatLabTileExpanded({
     return editorValueRef.current !== committedSourceRef.current;
   }, []);
 
-  const isEditorFocused = useCallback(() => {
-    return document.activeElement === editorRef.current;
-  }, []);
-
   const runEvaluate = useCallback(
     async (code: string, options?: { hushBeforeEval?: boolean }) => {
       setBusy(true);
@@ -554,8 +550,9 @@ export function BeatLabTileExpanded({
 
       if (options?.skipEditor) return;
 
-      const blocked = isEditorFocused() && isEditorDirty();
-      if (blocked) {
+      // Defer editor rewrite whenever the buffer differs from the last ghost
+      // commit — not only while focused (pill clicks blur the textarea first).
+      if (isEditorDirty()) {
         setPendingGhostSection(nextIndex);
         setGhostCue(`Ghost waiting · ${section.label}`);
         return;
@@ -564,7 +561,6 @@ export function BeatLabTileExpanded({
     },
     [
       isEditorDirty,
-      isEditorFocused,
       resolveSectionSource,
       runEvaluate,
       syncUserEditFlag,
@@ -668,16 +664,9 @@ export function BeatLabTileExpanded({
     if (busy || !playing) return;
     commitCurrentSection(editorValue);
     setPendingGhostSection(null);
+    setGhostCue(null);
     await runEvaluate(editorValue, { hushBeforeEval: false });
-    void applyPendingGhostIfAny();
-  }, [
-    busy,
-    playing,
-    editorValue,
-    commitCurrentSection,
-    runEvaluate,
-    applyPendingGhostIfAny,
-  ]);
+  }, [busy, playing, editorValue, commitCurrentSection, runEvaluate]);
 
   const handleStop = useCallback(() => {
     hush();
@@ -720,7 +709,9 @@ export function BeatLabTileExpanded({
 
   const handleResetSection = useCallback(() => {
     const compositionId = activeIdRef.current;
-    const section = currentSection();
+    const sectionIndexAtReset = sectionIndexRef.current;
+    const section =
+      sectionsFor(compositionId)[sectionIndexAtReset] ?? currentSection();
     const nextEdits = clearSectionEdit(
       sectionEditsRef.current,
       compositionId,
@@ -732,9 +723,15 @@ export function BeatLabTileExpanded({
     editorValueRef.current = authored;
     committedSourceRef.current = authored;
     setSectionHasUserEdit(false);
+    setPendingGhostSection(null);
+    setGhostCue(null);
     setError(null);
+    // Intentionally does not change sectionIndex — only Reset track returns to Intro.
     if (playingRef.current) {
       void runEvaluate(authored, { hushBeforeEval: false });
+      void getTransportCycle().then((cycle) => {
+        sectionStartCycleRef.current = cycle;
+      });
     }
   }, [runEvaluate]);
 
