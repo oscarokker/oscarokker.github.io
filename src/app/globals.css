@@ -4049,6 +4049,77 @@ html[data-theme="dark"] .beat-lab-expanded-root[data-visible="true"] .intro-expa
   gap: 14px;
 }
 
+.beat-lab-section-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px 12px;
+}
+
+.beat-lab-section-meta .beat-lab-editor-label {
+  position: static;
+  width: auto;
+  height: auto;
+  margin: 0;
+  padding: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.beat-lab-section-index {
+  font-weight: 400;
+  color: color-mix(in srgb, var(--color-text-primary) 55%, transparent);
+}
+
+.beat-lab-loop-progress {
+  color: color-mix(in srgb, var(--color-text-primary) 60%, transparent);
+  font-variant-numeric: tabular-nums;
+}
+
+.beat-lab-section-timeline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.beat-lab-section-pill {
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--color-text-primary) 14%, transparent);
+  background: transparent;
+  color: color-mix(in srgb, var(--color-text-primary) 70%, transparent);
+  font-size: 0.75rem;
+  line-height: 1.2;
+  cursor: pointer;
+}
+
+.beat-lab-section-pill.is-active,
+.beat-lab-section-pill[aria-selected="true"] {
+  border-color: color-mix(in srgb, #8573ff 45%, transparent);
+  background: color-mix(in srgb, #8573ff 12%, transparent);
+  color: var(--color-text-primary);
+}
+
+.beat-lab-section-pill:focus-visible {
+  outline: 2px solid var(--color-focus-ring, #8573ff);
+  outline-offset: 2px;
+}
+
+.beat-lab-section-pill:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.beat-lab-ghost-cue {
+  color: color-mix(in srgb, var(--color-text-primary) 65%, transparent);
+  font-size: 0.8125rem;
+}
+
 .beat-lab-editor-label {
   position: absolute;
   width: 1px;
