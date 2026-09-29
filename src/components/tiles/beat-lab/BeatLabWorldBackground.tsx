@@ -29,12 +29,21 @@ export function BeatLabWorldBackground({
     const reduced = prefersReducedMotion();
     let t = 0;
 
+    const shell = canvas.parentElement ?? canvas;
+
     const resize = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
-      const rect = canvas.getBoundingClientRect();
-      canvas.width = Math.max(1, Math.floor(rect.width * dpr));
-      canvas.height = Math.max(1, Math.floor(rect.height * dpr));
+      const rect = shell.getBoundingClientRect();
+      const width = Math.floor(rect.width * dpr);
+      const height = Math.floor(rect.height * dpr);
+      // Expand starts at 0×0 while the morph card is still display:none.
+      // Don't lock a 1×1 bitmap; ResizeObserver retries once the shell lays out.
+      if (width < 2 || height < 2) return false;
+      if (canvas.width === width && canvas.height === height) return true;
+      canvas.width = width;
+      canvas.height = height;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      return true;
     };
 
     const paintNeoTrance = (w: number, h: number, time: number) => {
@@ -134,14 +143,18 @@ export function BeatLabWorldBackground({
     const paint = painters[worldId] ?? paintNeoTrance;
 
     const draw = (time: number) => {
-      const w = canvas.clientWidth;
-      const h = canvas.clientHeight;
-      if (w < 1 || h < 1) return;
+      const w = shell.clientWidth;
+      const h = shell.clientHeight;
+      if (w < 2 || h < 2) return;
       paint(w, h, time);
     };
 
-    resize();
-    draw(0);
+    const paintNow = () => {
+      if (!resize()) return;
+      draw(reduced ? 0 : t);
+    };
+
+    paintNow();
 
     const tick = (now: number) => {
       if (document.hidden || !active) return;
@@ -156,13 +169,18 @@ export function BeatLabWorldBackground({
       rafRef.current = window.requestAnimationFrame(tick);
     }
 
+    const observer = new ResizeObserver(() => {
+      paintNow();
+    });
+    observer.observe(shell);
+
     const onResize = () => {
-      resize();
-      draw(reduced ? 0 : t);
+      paintNow();
     };
     window.addEventListener("resize", onResize);
 
     return () => {
+      observer.disconnect();
       window.cancelAnimationFrame(rafRef.current);
       window.removeEventListener("resize", onResize);
     };
