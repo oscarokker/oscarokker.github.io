@@ -165,6 +165,8 @@ export function BeatLabTileExpanded({
   const committedSourceRef = useRef("");
   const ghostApplyRef = useRef(false);
   const transportTimerRef = useRef(0);
+  /** Bumped on world change so an in-flight section advance cannot restart the previous world. */
+  const playbackEpochRef = useRef(0);
 
   const [activeId, setActiveId] = useState<CompositionId>("neo-trance");
   const [sectionIndex, setSectionIndex] = useState(0);
@@ -525,6 +527,7 @@ export function BeatLabTileExpanded({
 
   const advanceToSection = useCallback(
     async (nextIndex: number, options?: { skipEditor?: boolean }) => {
+      const epoch = playbackEpochRef.current;
       const compositionId = activeIdRef.current;
       const sections = sectionsFor(compositionId);
       const section = sections[nextIndex];
@@ -532,11 +535,19 @@ export function BeatLabTileExpanded({
 
       const source = resolveSectionSource(compositionId, section.id);
       sectionStartCycleRef.current = await getTransportCycle();
+      if (playbackEpochRef.current !== epoch) return;
       setSectionIndex(nextIndex);
       setLoopInSection({ current: 0, total: section.loops });
       syncUserEditFlag(compositionId, section.id);
 
-      await runEvaluate(source, { hushBeforeEval: false });
+      // `$:` patterns stack unless hush clears them. Only this section should sound.
+      await runEvaluate(source, { hushBeforeEval: true });
+      if (
+        playbackEpochRef.current !== epoch ||
+        activeIdRef.current !== compositionId
+      ) {
+        return;
+      }
 
       if (options?.skipEditor) return;
 
@@ -748,6 +759,7 @@ export function BeatLabTileExpanded({
   const handleTabSelect = useCallback(
     (id: CompositionId) => {
       if (id === activeIdRef.current) return;
+      const epoch = ++playbackEpochRef.current;
       const leavingSection = currentSection();
       let edits = sectionEditsRef.current;
       if (isEditorDirty()) {
@@ -778,7 +790,9 @@ export function BeatLabTileExpanded({
       setGhostCue(null);
       setError(null);
       if (livingSessionRef.current) {
-        void runEvaluate(nextCode, { hushBeforeEval: false }).then(async () => {
+        // Hush the previous world's `$:` patterns before the new one registers.
+        void runEvaluate(nextCode, { hushBeforeEval: true }).then(async () => {
+          if (playbackEpochRef.current !== epoch) return;
           sectionStartCycleRef.current = await getTransportCycle();
         });
       }
