@@ -4115,6 +4115,11 @@ html[data-theme="dark"] .beat-lab-expanded-root[data-visible="true"] .intro-expa
   cursor: not-allowed;
 }
 
+.beat-lab-section-pill--readonly {
+  cursor: default;
+  pointer-events: none;
+}
+
 .beat-lab-ghost-cue {
   color: color-mix(in srgb, var(--color-text-primary) 65%, transparent);
   font-size: 0.8125rem;

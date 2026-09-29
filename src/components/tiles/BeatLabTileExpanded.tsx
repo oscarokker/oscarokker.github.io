@@ -24,7 +24,6 @@ import {
   ensureStrudel,
   evaluateCode,
   getTransportCycle,
-  hush,
   setMuted,
   teardown,
 } from "@/lib/beat-lab/engine";
@@ -140,8 +139,9 @@ export function BeatLabTileExpanded({
   const dialogRef = useRef<HTMLDivElement>(null);
   const morphBodyRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
-  const playRef = useRef<HTMLButtonElement>(null);
+  const muteRef = useRef<HTMLButtonElement>(null);
   const editorRef = useRef<HTMLTextAreaElement>(null);
+  const livingSessionRef = useRef(false);
   const previouslyFocused = useRef<HTMLElement | null>(null);
   const exitDone = useRef(false);
   const hasOpened = useRef(false);
@@ -172,7 +172,8 @@ export function BeatLabTileExpanded({
     ),
   );
   const [playing, setPlaying] = useState(false);
-  const [muted, setMutedState] = useState(false);
+  /** Default muted so expand can auto-start under autoplay policies; unmute is explicit. */
+  const [muted, setMutedState] = useState(true);
   const [ready, setReady] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -259,26 +260,6 @@ export function BeatLabTileExpanded({
     };
   }, []);
 
-  // Visibility / tab hidden → hush (no ghost audio).
-  useEffect(() => {
-    const onVisibility = () => {
-      if (document.visibilityState === "hidden") {
-        void teardownAudio();
-      }
-    };
-    document.addEventListener("visibilitychange", onVisibility);
-    return () => document.removeEventListener("visibilitychange", onVisibility);
-  }, [teardownAudio]);
-
-  // Stop audio as soon as close begins (before morph exit finishes).
-  useEffect(() => {
-    if (!visible) {
-      // Intentional lifecycle teardown (matches prior Tone island).
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- hush + clear playing on close
-      void teardownAudio();
-    }
-  }, [visible, teardownAudio]);
-
   const scrollExpandedPanelToTop = useCallback(() => {
     morphBodyRef.current?.scrollTo(0, 0);
   }, []);
@@ -321,7 +302,7 @@ export function BeatLabTileExpanded({
       hasOpened.current = true;
       window.requestAnimationFrame(() => {
         scrollExpandedPanelToTop();
-        (playRef.current ?? closeRef.current)?.focus({ preventScroll: true });
+        (muteRef.current ?? closeRef.current)?.focus({ preventScroll: true });
       });
       return;
     }
@@ -338,7 +319,7 @@ export function BeatLabTileExpanded({
         phaseRef.current = "open";
         hasOpened.current = true;
         scrollExpandedPanelToTop();
-        playRef.current?.focus({ preventScroll: true });
+        muteRef.current?.focus({ preventScroll: true });
       });
     });
 
@@ -550,8 +531,7 @@ export function BeatLabTileExpanded({
 
       if (options?.skipEditor) return;
 
-      // Defer editor rewrite whenever the buffer differs from the last ghost
-      // commit — not only while focused (pill clicks blur the textarea first).
+      // Defer editor rewrite whenever the buffer differs from the last ghost commit.
       if (isEditorDirty()) {
         setPendingGhostSection(nextIndex);
         setGhostCue(`Ghost waiting · ${section.label}`);
@@ -637,7 +617,7 @@ export function BeatLabTileExpanded({
     window.setTimeout(() => setGhostCue(null), 2800);
   }, []);
 
-  const handlePlay = useCallback(async () => {
+  const startLivingChannel = useCallback(async () => {
     if (busy) return;
     if (isEditorDirty()) {
       commitCurrentSection(editorValueRef.current);
@@ -660,21 +640,42 @@ export function BeatLabTileExpanded({
     writeEditorFromGhost,
   ]);
 
+  // Visibility / tab hidden → hush (no ghost audio while backgrounded).
+  useEffect(() => {
+    const onVisibility = () => {
+      if (document.visibilityState === "hidden") {
+        void teardownAudio();
+      }
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => document.removeEventListener("visibilitychange", onVisibility);
+  }, [teardownAudio]);
+
+  // Auto-start living channel on expand; teardown when leaving the channel.
+  useEffect(() => {
+    if (!visible) {
+      livingSessionRef.current = false;
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- hush + clear playing on close
+      void teardownAudio();
+      return;
+    }
+
+    if (!ready || livingSessionRef.current) return;
+    livingSessionRef.current = true;
+    void (async () => {
+      await setMuted(true);
+      setMutedState(true);
+      await startLivingChannel();
+    })();
+  }, [visible, ready, teardownAudio, startLivingChannel]);
+
   const handleUpdate = useCallback(async () => {
-    if (busy || !playing) return;
+    if (busy || !livingSessionRef.current) return;
     commitCurrentSection(editorValue);
     setPendingGhostSection(null);
     setGhostCue(null);
     await runEvaluate(editorValue, { hushBeforeEval: false });
-  }, [busy, playing, editorValue, commitCurrentSection, runEvaluate]);
-
-  const handleStop = useCallback(() => {
-    hush();
-    setPlaying(false);
-    setError(null);
-    setPendingGhostSection(null);
-    setGhostCue(null);
-  }, []);
+  }, [busy, editorValue, commitCurrentSection, runEvaluate]);
 
   const handleMuteToggle = useCallback(() => {
     setMutedState((prev) => {
@@ -767,7 +768,7 @@ export function BeatLabTileExpanded({
       setPendingGhostSection(null);
       setGhostCue(null);
       setError(null);
-      if (playingRef.current) {
+      if (livingSessionRef.current) {
         void runEvaluate(nextCode, { hushBeforeEval: false }).then(async () => {
           sectionStartCycleRef.current = await getTransportCycle();
         });
@@ -776,15 +777,7 @@ export function BeatLabTileExpanded({
     [isEditorDirty, runEvaluate, syncUserEditFlag],
   );
 
-  const handleSectionJump = useCallback(
-    (index: number) => {
-      if (index === sectionIndexRef.current) return;
-      void advanceToSection(index);
-    },
-    [advanceToSection],
-  );
-
-  // Ctrl/Cmd+Enter = Play/Update, Ctrl/Cmd+. = Stop (Esc handled below).
+  // Ctrl/Cmd+Enter = commit co-creation while the channel plays.
   useEffect(() => {
     if (!visible) return;
 
@@ -793,23 +786,13 @@ export function BeatLabTileExpanded({
 
       if (mod && event.key === "Enter") {
         event.preventDefault();
-        if (playingRef.current) {
-          void handleUpdate();
-        } else {
-          void handlePlay();
-        }
-        return;
-      }
-
-      if (mod && event.key === ".") {
-        event.preventDefault();
-        handleStop();
+        void handleUpdate();
       }
     };
 
     document.addEventListener("keydown", onKeyDown);
     return () => document.removeEventListener("keydown", onKeyDown);
-  }, [visible, handlePlay, handleUpdate, handleStop]);
+  }, [visible, handleUpdate]);
 
   const cardStyle: CSSProperties = {
     top: sourceRect.top,
@@ -862,42 +845,28 @@ export function BeatLabTileExpanded({
             <div
               className="beat-lab-toolbar-actions"
               role="group"
-              aria-label="Transport"
+              aria-label="Channel audio"
             >
               <button
-                ref={playRef}
                 type="button"
                 className="beat-lab-btn beat-lab-btn--primary"
-                onClick={handlePlay}
-                disabled={busy}
-                aria-pressed={playing}
-                aria-label={playing ? "Playing — restart pattern" : "Play"}
-              >
-                {busy ? "…" : playing ? "Playing" : "Play"}
-              </button>
-              <button
-                type="button"
-                className="beat-lab-btn"
-                onClick={handleUpdate}
+                onClick={() => void handleUpdate()}
                 disabled={busy || !playing}
-                aria-label="Update — re-evaluate editor while playing"
+                aria-label="Update — commit your edit while the channel plays"
               >
-                Update
+                {busy ? "…" : "Update"}
               </button>
               <button
-                type="button"
-                className="beat-lab-btn"
-                onClick={handleStop}
-                aria-label="Stop"
-              >
-                Stop
-              </button>
-              <button
+                ref={muteRef}
                 type="button"
                 className="beat-lab-btn"
                 onClick={handleMuteToggle}
                 aria-pressed={muted}
-                aria-label={muted ? "Unmute" : "Mute"}
+                aria-label={
+                  muted
+                    ? "Unmute — hear the living channel"
+                    : "Mute — channel keeps playing"
+                }
               >
                 {muted ? "Unmute" : "Mute"}
               </button>
@@ -960,28 +929,27 @@ export function BeatLabTileExpanded({
                 >
                   Loop {loopInSection.current}/{loopInSection.total} in section
                 </p>
+              ) : ready ? (
+                <p className="text-body-sm m-0 beat-lab-loop-progress">
+                  Tuning in…
+                </p>
               ) : null}
             </div>
 
             <div
               className="beat-lab-section-timeline"
-              role="tablist"
-              aria-label="Song sections"
+              aria-label="Song sections (auto-advance only)"
             >
               {sectionsFor(activeId).map((section, index) => {
                 const active = index === sectionIndex;
                 return (
-                  <button
+                  <span
                     key={section.id}
-                    type="button"
-                    role="tab"
-                    className={`beat-lab-section-pill${active ? " is-active" : ""}`}
-                    aria-selected={active}
-                    onClick={() => handleSectionJump(index)}
-                    disabled={busy}
+                    className={`beat-lab-section-pill beat-lab-section-pill--readonly${active ? " is-active" : ""}`}
+                    aria-current={active ? "step" : undefined}
                   >
                     {section.label}
-                  </button>
+                  </span>
                 );
               })}
             </div>
@@ -1039,7 +1007,7 @@ export function BeatLabTileExpanded({
                 id="beat-lab-shortcuts"
                 className="text-body-sm m-0 beat-lab-shortcuts"
               >
-                Ctrl/⌘+Enter play or update · Ctrl/⌘+. stop
+                Ctrl/⌘+Enter update · channel auto-plays while open
               </p>
               <button
                 type="button"
