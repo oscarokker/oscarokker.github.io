@@ -16,8 +16,6 @@ interface BeatLabCodeEditorProps {
   onChange: (value: string) => void;
   onBlur?: () => void;
   textareaRef: RefObject<HTMLTextAreaElement | null>;
-  playing: boolean;
-  muted: boolean;
   describedBy?: string;
 }
 
@@ -27,8 +25,6 @@ export function BeatLabCodeEditor({
   onChange,
   onBlur,
   textareaRef,
-  playing,
-  muted,
   describedBy,
 }: BeatLabCodeEditorProps) {
   const gutterRef = useRef<HTMLDivElement>(null);
@@ -70,9 +66,8 @@ export function BeatLabCodeEditor({
 
   return (
     <div
-      className={`beat-lab-editor-stack${playing ? " is-live" : ""}${playing && !muted ? " is-audible" : ""}`}
+      className="beat-lab-editor-stack"
     >
-      <div className="beat-lab-editor-scrim" aria-hidden />
       <div className="beat-lab-editor-row">
         <div
           ref={gutterRef}
