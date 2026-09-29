@@ -11,6 +11,7 @@ export const CONTINUOUS_CORNER_SELECTORS = [
   ".music-morph-card",
   ".music-morph-player",
   ".beat-lab-morph-card",
+  ".beat-lab-shell",
   ".intro-morph-card",
   ".case-study-morph-card",
   ".case-study-cover-stage",

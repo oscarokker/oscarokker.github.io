@@ -3960,7 +3960,7 @@ html[data-theme="dark"] .beat-lab-expanded-root[data-visible="true"] .intro-expa
   flex: 1 1 auto;
   min-height: 0;
   height: 100%;
-  border-radius: inherit;
+  border-radius: var(--tile-radius);
   overflow: hidden;
   color: var(--bl-chrome, #f4f7ff);
   --bl-font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco,
@@ -4790,6 +4790,7 @@ html[data-device="mobile"] .beat-lab-helpers {
   .music-morph-card,
   .music-morph-player,
   .beat-lab-morph-card,
+  .beat-lab-shell,
   .intro-morph-card,
   .case-study-morph-card,
   .case-study-cover-stage,

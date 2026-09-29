@@ -109,7 +109,7 @@ Hierarchy comes from **size + serif/sans pairing**, not from many weights.
 | Pills / thumbs | `9999px` | `--radius-full` |
 | **Case-study figures & videos** | **`24px`** | Always — matches portfolio stills (Rayo-quiet figures) |
 
-**Continuous corner smoothing:** **`60%`** (`--corner-smoothing: 0.6`) — Apple / Figma iOS preset (squircles), sitewide on soft-radius chrome (tiles, morph cards, case-study media, cover art). Native CSS `corner-shape: squircle` where supported; `figma-squircle` SVG-mask polyfill (`ContinuousCorners`) elsewhere. **Do** keep radius magnitudes; change the curve. **Don’t** apply continuous smoothing to pills (`9999px`) or perfect circles (`50%`).
+**Continuous corner smoothing:** **`60%`** (`--corner-smoothing: 0.6`) — Apple / Figma iOS preset (squircles), sitewide on soft-radius chrome (tiles, morph cards, the expanded Ghostlink shell, case-study media, cover art). Native CSS `corner-shape: squircle` where supported; `figma-squircle` SVG-mask polyfill (`ContinuousCorners`) elsewhere. **Do** keep radius magnitudes; change the curve. **Don’t** apply continuous smoothing to pills (`9999px`) or perfect circles (`50%`).
 
 ### Elevation
 
