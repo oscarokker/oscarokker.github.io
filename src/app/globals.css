@@ -4135,9 +4135,11 @@ html[data-theme="dark"] .beat-lab-expanded-root[data-visible="true"] .intro-expa
 
 .beat-lab-main {
   display: flex;
-  flex: 1 1 auto;
+  flex: 1 1 0%;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
   min-height: 0;
-  gap: 12px 20px;
   margin-top: 10px;
   align-items: stretch;
 }
@@ -4146,16 +4148,25 @@ html[data-theme="dark"] .beat-lab-expanded-root[data-visible="true"] .intro-expa
   display: flex;
   flex-direction: column;
   gap: 8px;
-  flex: 1 1 58%;
+  flex: 1 1 0%;
+  align-self: stretch;
+  width: 100%;
   min-width: 0;
   min-height: 0;
 }
 
+/* Fill the center band: top bar above, timeline below. Basis 0% so the
+   code's intrinsic height cannot pin the stack short of the leftover space.
+   The shell already has a measured height; this region takes the rest. */
 .beat-lab-editor-stack {
   position: relative;
-  flex: 1 1 auto;
-  min-height: 12rem;
-  max-height: min(42dvh, 420px);
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 0%;
+  align-self: stretch;
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
   border-radius: 6px;
   overflow: hidden;
 }
@@ -4164,12 +4175,19 @@ html[data-theme="dark"] .beat-lab-expanded-root[data-visible="true"] .intro-expa
   position: relative;
   z-index: 1;
   display: flex;
-  height: 100%;
-  min-height: inherit;
+  flex: 1 1 0%;
+  align-self: stretch;
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .beat-lab-editor-gutter {
   flex: 0 0 auto;
+  align-self: stretch;
+  min-height: 0;
+  max-height: 100%;
   padding: 12px 8px 12px 12px;
   overflow: hidden;
   font-family: var(--bl-font-mono);
@@ -4185,12 +4203,19 @@ html[data-theme="dark"] .beat-lab-expanded-root[data-visible="true"] .intro-expa
 }
 
 .beat-lab-shell .beat-lab-editor--mono {
-  flex: 1 1 auto;
-  min-height: 100%;
-  max-height: inherit;
+  flex: 1 1 0%;
+  align-self: stretch;
+  width: auto;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  max-height: none;
   margin: 0;
   padding: 12px 14px 12px 4px;
+  box-sizing: border-box;
   resize: none;
+  overflow: auto;
+  field-sizing: fixed;
   border: none;
   border-radius: 0;
   background-color: transparent;
@@ -4390,7 +4415,17 @@ html[data-theme="dark"] .beat-lab-expanded-root[data-visible="true"] .intro-expa
 }
 
 html[data-device="mobile"] .beat-lab-editor-col {
-  flex-basis: 100%;
+  flex-basis: auto;
+  width: 100%;
+}
+
+/* The legacy mobile editor floor (7.5rem) must not pin the shell textarea.
+   Fullscreen and tablet/desktop expanded shells all stretch the same stack. */
+html[data-device="mobile"] .beat-lab-shell .beat-lab-editor--mono,
+.beat-lab-morph-card[data-stage="mobile"] .beat-lab-shell .beat-lab-editor--mono {
+  min-height: 0;
+  height: 100%;
+  max-height: none;
 }
 
 /* Mobile fullscreen: the shell is the screen. Radius 0 so ContinuousCorners
