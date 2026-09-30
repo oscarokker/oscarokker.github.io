@@ -9,6 +9,10 @@ import {
   readCornerRadiusPx,
   shouldSkipContinuousCorners,
 } from "@/lib/continuous-corners";
+import {
+  isCornerMorphPaused,
+  subscribeCornerMorphRefresh,
+} from "@/lib/morph-motion";
 
 function applyMask(el: HTMLElement) {
   const styles = getComputedStyle(el);
@@ -73,9 +77,30 @@ export function ContinuousCorners() {
 
     const ro = new ResizeObserver((entries) => {
       for (const entry of entries) {
-        if (entry.target instanceof HTMLElement) applyMask(entry.target);
+        if (!(entry.target instanceof HTMLElement)) continue;
+        // Layout morphs tween width/height every frame. Rebuilding the SVG
+        // mask here drops frames and reads as a pop. The card resumes us
+        // once when the tween settles.
+        if (isCornerMorphPaused(entry.target)) continue;
+        applyMask(entry.target);
       }
     });
+
+    const refresh = (root: HTMLElement) => {
+      const nodes: HTMLElement[] = [];
+      if (root.matches(CONTINUOUS_CORNER_SELECTORS)) nodes.push(root);
+      root.querySelectorAll(CONTINUOUS_CORNER_SELECTORS).forEach((node) => {
+        if (node instanceof HTMLElement) nodes.push(node);
+      });
+      for (const el of nodes) {
+        if (isCornerMorphPaused(el)) continue;
+        elements.add(el);
+        ro.observe(el);
+        applyMask(el);
+      }
+    };
+
+    const unsubscribe = subscribeCornerMorphRefresh(refresh);
 
     scan();
 
@@ -94,6 +119,7 @@ export function ContinuousCorners() {
     mo.observe(document.body, { childList: true, subtree: true });
 
     return () => {
+      unsubscribe();
       mo.disconnect();
       ro.disconnect();
       elements.forEach(clearMask);

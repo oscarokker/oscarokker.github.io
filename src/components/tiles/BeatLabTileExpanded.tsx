@@ -53,6 +53,12 @@ import {
   measureGhostlinkShell,
 } from "@/lib/beat-lab/expanded-shell";
 import { lockBodyScroll } from "@/lib/lockBodyScroll";
+import {
+  commitMorphTarget,
+  isMorphGeometryTransition,
+  pauseCornerMorph,
+  resumeCornerMorph,
+} from "@/lib/morph-motion";
 
 export interface BeatLabSourceRect {
   top: number;
@@ -149,6 +155,7 @@ export function BeatLabTileExpanded({
   const morphRectRef = useRef<MorphRect>(sourceRect);
   const expandedRef = useRef(false);
   const phaseRef = useRef<"enter" | "open" | "exit">("enter");
+  const cornerSettleRef = useRef(0);
   const visibleRef = useRef(visible);
   const playingRef = useRef(false);
   const editorValueRef = useRef("");
@@ -272,6 +279,8 @@ export function BeatLabTileExpanded({
   }, []);
 
   const finishExit = useCallback(() => {
+    window.clearTimeout(cornerSettleRef.current);
+    resumeCornerMorph(dialogRef.current);
     if (exitDone.current) return;
     exitDone.current = true;
     previouslyFocused.current?.focus?.();
@@ -309,8 +318,12 @@ export function BeatLabTileExpanded({
     const raf1 = window.requestAnimationFrame(() => {
       raf2 = window.requestAnimationFrame(() => {
         if (!visibleRef.current || phaseRef.current === "exit") return;
-        card.style.transition = "";
-        applyRect(target, true);
+        window.clearTimeout(cornerSettleRef.current);
+        cornerSettleRef.current = commitMorphTarget(
+          card,
+          () => applyRect(target, true),
+          560,
+        );
         phaseRef.current = "open";
         hasOpened.current = true;
         scrollExpandedPanelToTop();
@@ -375,7 +388,9 @@ export function BeatLabTileExpanded({
       return;
     }
 
-    card.style.transition = "";
+    window.clearTimeout(cornerSettleRef.current);
+    pauseCornerMorph(card);
+    card.style.removeProperty("transition");
     applyRect(origin, false);
 
     const timeout = window.setTimeout(finishExit, 560);
@@ -418,15 +433,10 @@ export function BeatLabTileExpanded({
   const handleTransitionEnd = useCallback(
     (event: ReactTransitionEvent<HTMLDivElement>) => {
       if (event.target !== event.currentTarget) return;
-      if (
-        event.propertyName !== "top" &&
-        event.propertyName !== "width" &&
-        event.propertyName !== "height" &&
-        event.propertyName !== "left"
-      ) {
-        return;
-      }
+      if (!isMorphGeometryTransition(event.propertyName)) return;
       if (phaseRef.current === "open" && expandedRef.current) {
+        window.clearTimeout(cornerSettleRef.current);
+        resumeCornerMorph(event.currentTarget);
         scrollExpandedPanelToTop();
         return;
       }

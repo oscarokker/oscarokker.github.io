@@ -1485,19 +1485,36 @@ html[data-device="mobile"] .photo-stack-gallery-title {
   pointer-events: none;
 }
 
+/* Mounted for the whole morph, like Intro / Himalaya. opacity 0 is rendered
+   (not display:none or visibility:hidden) so the fade has a from-value.
+   pointer-events keep the player inert until expanded. */
 .music-morph-body {
-  display: none;
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  box-sizing: border-box;
   width: 100%;
+  height: 100%;
   min-height: 0;
   flex-direction: column;
   opacity: 0;
+  visibility: visible;
+  pointer-events: none;
+  /* Keep this on the base rule only. A different transition on the expanded
+     selector, or a delay here, lets the measure pass (it toggles
+     data-expanded and flushes layout) show opacity 1 before the tween. */
+  transition: opacity var(--transition-base);
 }
 
 .music-morph-card[data-expanded="true"] .music-morph-body {
-  display: flex;
+  position: relative;
+  inset: auto;
   flex: 1 1 auto;
+  height: auto;
   opacity: 1;
-  transition: opacity var(--transition-base) 90ms;
+  visibility: visible;
+  pointer-events: auto;
 }
 
 .music-morph-player {
@@ -1552,9 +1569,14 @@ html[data-device="mobile"] .photo-stack-gallery-title {
 }
 
 .music-morph-card[data-mini="true"] .music-morph-body {
+  position: relative;
+  inset: auto;
   display: flex;
   flex: 1;
+  height: 100%;
   opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
 }
 
 .music-morph-card[data-mini="true"] .music-morph-player {
@@ -3940,20 +3962,35 @@ html[data-theme="dark"] .beat-lab-expanded-root[data-visible="true"] .intro-expa
   pointer-events: none;
 }
 
+/* Mounted for the whole morph, like Intro / Himalaya. opacity 0 is rendered
+   (not display:none or visibility:hidden) so the HUD fade has a from-value. */
 .beat-lab-morph-body {
-  display: none;
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  box-sizing: border-box;
   width: 100%;
+  height: 100%;
   min-height: 0;
   flex-direction: column;
   gap: 16px;
   opacity: 0;
+  visibility: visible;
+  pointer-events: none;
+  /* Same as music: transition lives on the base rule so toggling
+     data-expanded cannot retarget opacity without a from-value. */
+  transition: opacity var(--transition-base) 90ms;
 }
 
 .beat-lab-morph-card[data-expanded="true"] .beat-lab-morph-body {
-  display: flex;
+  position: relative;
+  inset: auto;
   flex: 1 1 auto;
+  height: auto;
   opacity: 1;
-  transition: opacity var(--transition-base) 90ms;
+  visibility: visible;
+  pointer-events: auto;
   overflow: hidden;
   overscroll-behavior: contain;
   min-height: 0;
@@ -4311,7 +4348,10 @@ html[data-device="mobile"] .beat-lab-editor-col {
 
 /* Mobile fullscreen: the shell is the screen. Radius 0 so ContinuousCorners
    (60% on desktop/tablet) drops the mask. Safe-area padding lives on the HUD,
-   not on the card, so the world canvas stays edge to edge. */
+   not on the card, so the world canvas stays edge to edge.
+   Width and height stay on the measured inline rect (100vw × 100dvh from
+   measureGhostlinkShell). Do not set width/height here, and never with
+   !important — that cancels the width half of the morph. */
 html[data-device="mobile"] .beat-lab-morph-card[data-expanded="true"],
 .beat-lab-morph-card[data-expanded="true"][data-stage="mobile"] {
   padding: 0;

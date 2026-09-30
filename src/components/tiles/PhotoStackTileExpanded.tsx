@@ -19,6 +19,12 @@ import {
   PhotoStackPreview,
 } from "@/components/tiles/PhotoMedia";
 import { DownloadIcon, MinimizeIcon } from "@/components/ChromeIcons";
+import {
+  commitMorphTarget,
+  isMorphGeometryTransition,
+  pauseCornerMorph,
+  resumeCornerMorph,
+} from "@/lib/morph-motion";
 import { albumCaptionFromPhotoSrc } from "@/lib/album-folder-label";
 import { withBasePath } from "@/lib/base-path";
 import { lockBodyScroll } from "@/lib/lockBodyScroll";
@@ -153,6 +159,7 @@ export function PhotoStackTileExpanded({
   const morphRectRef = useRef<MorphRect>(sourceRect);
   const expandedRef = useRef(false);
   const phaseRef = useRef<"enter" | "open" | "exit">("enter");
+  const cornerSettleRef = useRef(0);
   const visibleRef = useRef(visible);
   visibleRef.current = visible;
   const scrollIdleTimeout = useRef(0);
@@ -174,6 +181,8 @@ export function PhotoStackTileExpanded({
   }, []);
 
   const finishExit = useCallback(() => {
+    window.clearTimeout(cornerSettleRef.current);
+    resumeCornerMorph(dialogRef.current);
     if (exitDone.current) return;
     exitDone.current = true;
     previouslyFocused.current?.focus?.();
@@ -208,8 +217,12 @@ export function PhotoStackTileExpanded({
     const raf1 = window.requestAnimationFrame(() => {
       raf2 = window.requestAnimationFrame(() => {
         if (!visibleRef.current || phaseRef.current === "exit") return;
-        card.style.transition = "";
-        applyRect(target, true);
+        window.clearTimeout(cornerSettleRef.current);
+        cornerSettleRef.current = commitMorphTarget(
+          card,
+          () => applyRect(target, true),
+          650,
+        );
         phaseRef.current = "open";
         hasOpened.current = true;
         closeRef.current?.focus();
@@ -353,7 +366,9 @@ export function PhotoStackTileExpanded({
       return;
     }
 
-    card.style.transition = "";
+    window.clearTimeout(cornerSettleRef.current);
+    pauseCornerMorph(card);
+    card.style.removeProperty("transition");
     applyRect(origin, false);
 
     const timeout = window.setTimeout(finishExit, 650);
@@ -396,15 +411,13 @@ export function PhotoStackTileExpanded({
   const handleTransitionEnd = useCallback(
     (event: ReactTransitionEvent<HTMLDivElement>) => {
       if (event.target !== event.currentTarget) return;
-      if (phaseRef.current !== "exit") return;
-      if (
-        event.propertyName !== "top" &&
-        event.propertyName !== "width" &&
-        event.propertyName !== "height" &&
-        event.propertyName !== "left"
-      ) {
+      if (!isMorphGeometryTransition(event.propertyName)) return;
+      if (phaseRef.current === "open") {
+        window.clearTimeout(cornerSettleRef.current);
+        resumeCornerMorph(event.currentTarget);
         return;
       }
+      if (phaseRef.current !== "exit") return;
       finishExit();
     },
     [finishExit],

@@ -3,6 +3,7 @@
 import {
   createContext,
   useContext,
+  useEffect,
   useState,
   useCallback,
   type ReactNode,
@@ -42,6 +43,27 @@ interface MusicPlayerContextValue {
 
 const MusicPlayerContext = createContext<MusicPlayerContextValue | null>(null);
 
+/** Grid shell the live player morphed from. Hidden while the overlay stands in for it. */
+let musicSourceShell: HTMLElement | null = null;
+
+export function attachMusicSourceShell(shell: HTMLElement | null) {
+  if (musicSourceShell && musicSourceShell !== shell) {
+    musicSourceShell.style.visibility = "";
+  }
+  musicSourceShell = shell;
+}
+
+export function hideMusicSourceShell() {
+  if (!musicSourceShell) return;
+  musicSourceShell.style.visibility = "hidden";
+}
+
+export function showMusicSourceShell() {
+  if (!musicSourceShell) return;
+  musicSourceShell.style.visibility = "";
+  musicSourceShell = null;
+}
+
 export function MusicPlayerProvider({ children }: { children: ReactNode }) {
   const [currentTrack, setCurrentTrack] = useState<MusicTrack | null>(null);
   const [playerState, setPlayerState] = useState<PlayerState>("hidden");
@@ -66,7 +88,10 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
     // Clear immediately to prevent race with next playTrack
     setCurrentTrack(null);
     setSourceRect(null);
+    showMusicSourceShell();
   }, []);
+
+  useEffect(() => showMusicSourceShell, []);
 
   return (
     <MusicPlayerContext.Provider

@@ -17,7 +17,15 @@ import { accentClass } from "@/lib/accent";
 import { withBasePath } from "@/lib/base-path";
 import { lockBodyScroll } from "@/lib/lockBodyScroll";
 import { MinimizeIcon } from "@/components/ChromeIcons";
-import { useMusicPlayer } from "@/contexts/MusicPlayerContext";
+import {
+  hideMusicSourceShell,
+  useMusicPlayer,
+} from "@/contexts/MusicPlayerContext";
+import {
+  commitMorphTarget,
+  isMorphGeometryTransition,
+  resumeCornerMorph,
+} from "@/lib/morph-motion";
 
 function prefersReducedMotion(): boolean {
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -56,6 +64,10 @@ function measureExpandedTarget(card: HTMLElement): MorphRect {
     maxHeight: card.style.maxHeight,
   };
 
+  const face = card.querySelector<HTMLElement>(".music-morph-body");
+  const previousFaceTransition = face?.style.transition ?? "";
+  if (face) face.style.transition = "none";
+
   card.style.transition = "none";
   card.style.width = `${width}px`;
   card.style.height = "auto";
@@ -72,7 +84,13 @@ function measureExpandedTarget(card: HTMLElement): MorphRect {
   card.style.height = previous.height;
   card.style.maxHeight = previous.maxHeight;
   card.dataset.expanded = "false";
+  // Commit opacity 0 while the face transition is still suppressed. Re-enabling
+  // it in the same frame as the toggle interpolates from opacity 1.
   void card.offsetHeight;
+  if (face) {
+    if (previousFaceTransition) face.style.transition = previousFaceTransition;
+    else face.style.removeProperty("transition");
+  }
 
   return { top, left, width, height };
 }
@@ -138,6 +156,7 @@ export function MusicPlayer() {
   const morphRectRef = useRef<MorphRect | null>(null);
   const expandedRef = useRef(false);
   const phaseRef = useRef<"enter" | "open" | "exit" | "docked">("enter");
+  const cornerSettleRef = useRef(0);
   const hasStartedRef = useRef(false);
   const iframeReadyRef = useRef(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -293,6 +312,8 @@ export function MusicPlayer() {
     const card = dialogRef.current;
     if (!card) return;
 
+    hideMusicSourceShell();
+
     if (phaseRef.current === "docked" && isExpanded) {
       // Expanding from mini
       phaseRef.current = "enter";
@@ -304,8 +325,12 @@ export function MusicPlayer() {
         return;
       }
 
-      card.style.transition = "";
-      applyRect(target, true);
+      window.clearTimeout(cornerSettleRef.current);
+      cornerSettleRef.current = commitMorphTarget(
+        card,
+        () => applyRect(target, true),
+        520,
+      );
       phaseRef.current = "open";
       return;
     }
@@ -335,13 +360,20 @@ export function MusicPlayer() {
     const target = isExpanded
       ? measureExpandedTarget(card)
       : getMiniTargetRect();
+    // Measure toggles expanded styles. Put the tile rect back before paint.
+    applyRect(sourceRect, false);
+    card.style.transition = "none";
 
     let raf2 = 0;
     const raf1 = window.requestAnimationFrame(() => {
       raf2 = window.requestAnimationFrame(() => {
         if (!visible || phaseRef.current === "exit") return;
-        card.style.transition = "";
-        applyRect(target, isExpanded);
+        window.clearTimeout(cornerSettleRef.current);
+        cornerSettleRef.current = commitMorphTarget(
+          card,
+          () => applyRect(target, isExpanded),
+          520,
+        );
         phaseRef.current = isExpanded ? "open" : "docked";
         if (isExpanded) {
           minimizeRef.current?.focus();
@@ -355,7 +387,7 @@ export function MusicPlayer() {
     };
   }, [visible, sourceRect, track, isExpanded, isMini, applyRect]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!visible || !track) return;
 
     if (isMini && phaseRef.current === "open") {
@@ -371,8 +403,12 @@ export function MusicPlayer() {
         return;
       }
 
-      card.style.transition = "";
-      applyRect(miniRect, false);
+      window.clearTimeout(cornerSettleRef.current);
+      cornerSettleRef.current = commitMorphTarget(
+        card,
+        () => applyRect(miniRect, false),
+        520,
+      );
       phaseRef.current = "docked";
     }
   }, [isMini, visible, track, applyRect]);
@@ -506,6 +542,17 @@ export function MusicPlayer() {
     }
   }, []);
 
+  const handleMorphTransitionEnd = useCallback(
+    (event: ReactTransitionEvent<HTMLDivElement>) => {
+      if (event.target !== event.currentTarget) return;
+      if (!isMorphGeometryTransition(event.propertyName)) return;
+      if (phaseRef.current !== "open" && phaseRef.current !== "docked") return;
+      window.clearTimeout(cornerSettleRef.current);
+      resumeCornerMorph(event.currentTarget);
+    },
+    [],
+  );
+
   const handleCardKeyDown = useCallback(
     (event: ReactKeyboardEvent<HTMLDivElement>) => {
       if (event.key === "Escape" && isExpanded) {
@@ -554,9 +601,10 @@ export function MusicPlayer() {
         role={isMini ? "region" : "dialog"}
         aria-modal={isExpanded ? "true" : undefined}
         aria-label={heading}
-        data-expanded={isExpanded ? "true" : "false"}
+        data-expanded="false"
         data-mini={isMini ? "true" : "false"}
         style={cardStyle}
+        onTransitionEnd={handleMorphTransitionEnd}
         onKeyDown={handleCardKeyDown}
         onClick={isMini ? handleMiniClick : undefined}
       >
