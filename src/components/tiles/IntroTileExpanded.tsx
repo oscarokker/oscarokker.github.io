@@ -19,6 +19,12 @@ import { spawnClickRipple } from "@/lib/clickRipple";
 import { lockBodyScroll } from "@/lib/lockBodyScroll";
 import type { IntroParagraphMark } from "@/lib/types";
 import { MinimizeIcon } from "@/components/ChromeIcons";
+import {
+  commitMorphTarget,
+  isMorphGeometryTransition,
+  pauseCornerMorph,
+  resumeCornerMorph,
+} from "@/lib/morph-motion";
 
 export interface IntroSourceRect {
   top: number;
@@ -218,6 +224,7 @@ export function IntroTileExpanded({
   const morphRectRef = useRef<MorphRect>(sourceRect);
   const expandedRef = useRef(false);
   const phaseRef = useRef<"enter" | "open" | "exit">("enter");
+  const cornerSettleRef = useRef(0);
   const visibleRef = useRef(visible);
   visibleRef.current = visible;
 
@@ -241,6 +248,8 @@ export function IntroTileExpanded({
   }, []);
 
   const finishExit = useCallback(() => {
+    window.clearTimeout(cornerSettleRef.current);
+    resumeCornerMorph(dialogRef.current);
     if (exitDone.current) return;
     exitDone.current = true;
     previouslyFocused.current?.focus?.();
@@ -279,8 +288,12 @@ export function IntroTileExpanded({
     const raf1 = window.requestAnimationFrame(() => {
       raf2 = window.requestAnimationFrame(() => {
         if (!visibleRef.current || phaseRef.current === "exit") return;
-        card.style.transition = "";
-        applyRect(target, true);
+        window.clearTimeout(cornerSettleRef.current);
+        cornerSettleRef.current = commitMorphTarget(
+          card,
+          () => applyRect(target, true),
+          650,
+        );
         phaseRef.current = "open";
         hasOpened.current = true;
         closeRef.current?.focus();
@@ -330,7 +343,9 @@ export function IntroTileExpanded({
     }
 
     // Ensure we're transitioning from the open state
-    card.style.transition = "";
+    window.clearTimeout(cornerSettleRef.current);
+    pauseCornerMorph(card);
+    card.style.removeProperty("transition");
     applyRect(origin, false);
 
     const timeout = window.setTimeout(finishExit, 650);
@@ -373,15 +388,13 @@ export function IntroTileExpanded({
   const handleTransitionEnd = useCallback(
     (event: ReactTransitionEvent<HTMLDivElement>) => {
       if (event.target !== event.currentTarget) return;
-      if (phaseRef.current !== "exit") return;
-      if (
-        event.propertyName !== "top" &&
-        event.propertyName !== "width" &&
-        event.propertyName !== "height" &&
-        event.propertyName !== "left"
-      ) {
+      if (!isMorphGeometryTransition(event.propertyName)) return;
+      if (phaseRef.current === "open") {
+        window.clearTimeout(cornerSettleRef.current);
+        resumeCornerMorph(event.currentTarget);
         return;
       }
+      if (phaseRef.current !== "exit") return;
       finishExit();
     },
     [finishExit],

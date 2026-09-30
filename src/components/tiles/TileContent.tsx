@@ -15,7 +15,10 @@ import { useCursorLabelOptional } from "@/hooks/useCursorLabel";
 import { useTileExpand } from "@/hooks/useTileExpand";
 import { accentClass } from "@/lib/accent";
 import { withBasePath } from "@/lib/base-path";
-import { useMusicPlayer } from "@/contexts/MusicPlayerContext";
+import {
+  attachMusicSourceShell,
+  useMusicPlayer,
+} from "@/contexts/MusicPlayerContext";
 import {
   CopyIcon,
   DownloadIcon,
@@ -378,6 +381,9 @@ export function MusicTile({
 
     const rect = tileRef.current?.getBoundingClientRect();
     if (!rect) return;
+
+    const shell = tileRef.current?.closest(".tile-card");
+    attachMusicSourceShell(shell instanceof HTMLElement ? shell : null);
 
     playTrack(
       {

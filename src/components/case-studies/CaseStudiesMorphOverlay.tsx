@@ -18,6 +18,11 @@ import {
 } from "@/components/case-studies/CaseStudiesTransition";
 import { accentClass } from "@/lib/accent";
 import { spawnClickRipple } from "@/lib/clickRipple";
+import {
+  commitMorphTarget,
+  isMorphGeometryTransition,
+  resumeCornerMorph,
+} from "@/lib/morph-motion";
 
 function applyRect(card: HTMLElement, rect: MorphRect) {
   card.style.top = `${rect.top}px`;
@@ -29,6 +34,7 @@ function applyRect(card: HTMLElement, rect: MorphRect) {
 export function CaseStudyMorphOverlay() {
   const transition = useCaseStudyTransitionOptional();
   const cardRef = useRef<HTMLDivElement>(null);
+  const cornerSettleRef = useRef(0);
   const phaseRef = useRef(transition?.phase ?? "idle");
   const openingRippleKeyRef = useRef<string | null>(null);
   const completeExpand = transition?.completeExpand;
@@ -52,9 +58,15 @@ export function CaseStudyMorphOverlay() {
       let raf2 = 0;
       const raf1 = window.requestAnimationFrame(() => {
         raf2 = window.requestAnimationFrame(() => {
-          card.style.transition = "";
-          applyRect(card, target);
-          card.dataset.expanded = "true";
+          window.clearTimeout(cornerSettleRef.current);
+          cornerSettleRef.current = commitMorphTarget(
+            card,
+            () => {
+              applyRect(card, target);
+              card.dataset.expanded = "true";
+            },
+            650,
+          );
         });
       });
 
@@ -69,7 +81,7 @@ export function CaseStudyMorphOverlay() {
       applyRect(card, viewportRect());
       card.dataset.expanded = "true";
       void card.offsetHeight;
-      card.style.transition = "";
+      card.style.removeProperty("transition");
       return;
     }
 
@@ -88,9 +100,15 @@ export function CaseStudyMorphOverlay() {
       let raf2 = 0;
       const raf1 = window.requestAnimationFrame(() => {
         raf2 = window.requestAnimationFrame(() => {
-          card.style.transition = "";
-          applyRect(card, snapshot.sourceRect);
-          card.dataset.expanded = "false";
+          window.clearTimeout(cornerSettleRef.current);
+          cornerSettleRef.current = commitMorphTarget(
+            card,
+            () => {
+              applyRect(card, snapshot.sourceRect);
+              card.dataset.expanded = "false";
+            },
+            650,
+          );
         });
       });
 
@@ -120,12 +138,18 @@ export function CaseStudyMorphOverlay() {
 
   useEffect(() => {
     if (transition?.phase === "expanding") {
-      const timeout = window.setTimeout(() => completeExpand?.(), 650);
+      const timeout = window.setTimeout(() => {
+        resumeCornerMorph(cardRef.current);
+        completeExpand?.();
+      }, 650);
       return () => window.clearTimeout(timeout);
     }
 
     if (transition?.phase === "collapsing") {
-      const timeout = window.setTimeout(() => completeCollapse?.(), 650);
+      const timeout = window.setTimeout(() => {
+        resumeCornerMorph(cardRef.current);
+        completeCollapse?.();
+      }, 650);
       return () => window.clearTimeout(timeout);
     }
   }, [completeCollapse, completeExpand, transition?.phase]);
@@ -133,14 +157,10 @@ export function CaseStudyMorphOverlay() {
   const handleTransitionEnd = useCallback(
     (event: ReactTransitionEvent<HTMLDivElement>) => {
       if (event.target !== event.currentTarget) return;
-      if (
-        event.propertyName !== "top" &&
-        event.propertyName !== "left" &&
-        event.propertyName !== "width" &&
-        event.propertyName !== "height"
-      ) {
-        return;
-      }
+      if (!isMorphGeometryTransition(event.propertyName)) return;
+
+      window.clearTimeout(cornerSettleRef.current);
+      resumeCornerMorph(event.currentTarget);
 
       if (phaseRef.current === "expanding") {
         completeExpand?.();

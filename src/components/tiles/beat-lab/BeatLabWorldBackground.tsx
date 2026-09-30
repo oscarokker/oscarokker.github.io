@@ -36,8 +36,8 @@ export function BeatLabWorldBackground({
       const rect = shell.getBoundingClientRect();
       const width = Math.floor(rect.width * dpr);
       const height = Math.floor(rect.height * dpr);
-      // Expand starts at 0×0 while the morph card is still display:none.
-      // Don't lock a 1×1 bitmap; ResizeObserver retries once the shell lays out.
+      // The shell can still be tiny on the first layout frame of the morph.
+      // Don't lock a 1×1 bitmap; ResizeObserver retries once it has a real box.
       if (width < 2 || height < 2) return false;
       if (canvas.width === width && canvas.height === height) return true;
       canvas.width = width;
