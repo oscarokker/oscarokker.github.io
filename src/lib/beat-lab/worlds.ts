@@ -24,7 +24,3 @@ export const WORLDS: WorldConfig[] = [
     label: "break(core)",
   },
 ];
-
-export function worldById(id: CompositionId): WorldConfig {
-  return WORLDS.find((w) => w.id === id) ?? WORLDS[0];
-}
