@@ -353,6 +353,10 @@
   --site-min-width: 320px;
   --nav-height: 48px;
 
+  /* Shared expanded-tile backdrop. Static length — do not animate this custom
+     property inside blur(); a registered @property there computed the filter to none. */
+  --expanded-backdrop-blur: 20px;
+
   /* Motion */
   --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
   --transition-press: 160ms cubic-bezier(0.4, 0, 0.2, 1);
@@ -2268,6 +2272,12 @@ html[data-device="mobile"] .intro-tile-avatar {
   inset: 0;
   z-index: 1350;
   pointer-events: none;
+  /* A grouping property here (opacity, filter, transform, isolation) makes
+     backdrop-filter sample an empty layer: scrim with a sharp page behind. */
+  opacity: 1;
+  isolation: auto;
+  filter: none;
+  transform: none;
 }
 
 .intro-expanded-root[data-visible="true"] {
@@ -2354,21 +2364,25 @@ html[data-device="mobile"] .music-player-mini-mode .music-morph-player iframe {
   padding: 0;
   margin: 0;
   cursor: pointer;
-  /* Do not animate opacity on this element — it isolates compositing and
-     makes backdrop-filter sample an empty layer (darken without blur). */
+  /* Native button drawing drops backdrop-filter and paints a sharp control. */
+  appearance: none;
+  -webkit-appearance: none;
+  /* Opacity stays at 1. Animating it isolates compositing so backdrop-filter
+     samples an empty layer (dim scrim, sharp page). Scrim fades via background-color. */
+  opacity: 1;
+  isolation: auto;
   background-color: color-mix(in srgb, var(--color-overlay-scrim) 0%, transparent);
   backdrop-filter: blur(0px);
   -webkit-backdrop-filter: blur(0px);
-  transition:
-    background-color var(--transition-base),
-    backdrop-filter var(--transition-base),
-    -webkit-backdrop-filter var(--transition-base);
+  /* Scrim only. Do not transition backdrop-filter — Chrome keeps the from-frame's
+     empty backdrop and the used blur never reaches the token (sharp page). */
+  transition: background-color var(--transition-base);
 }
 
 .intro-expanded-root[data-visible="true"] .intro-expanded-backdrop {
   background-color: var(--color-overlay-scrim);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(var(--expanded-backdrop-blur, 20px));
+  -webkit-backdrop-filter: blur(var(--expanded-backdrop-blur, 20px));
 }
 
 .intro-expanded-root[data-visible="false"] .intro-expanded-backdrop {
@@ -2380,11 +2394,11 @@ html[data-device="mobile"] .music-player-mini-mode .music-morph-player iframe {
   transition-duration: 480ms;
 }
 
-/* Ensure enter animates from unblurred even when mounted already visible */
+/* Scrim only. Do not put backdrop-filter in @starting-style — Chrome keeps the
+   from-value's empty backdrop layer and the page stays sharp after the fade.
+   Enter blur is armed by ExpandedBackdropSettle after the page has painted. */
 @starting-style {
   .intro-expanded-root[data-visible="true"] .intro-expanded-backdrop {
-    backdrop-filter: blur(0px);
-    -webkit-backdrop-filter: blur(0px);
     background-color: color-mix(in srgb, var(--color-overlay-scrim) 0%, transparent);
   }
 }
@@ -2607,6 +2621,12 @@ html[data-device="mobile"] .intro-morph-expanded {
   .beat-lab-morph-body {
     transition-duration: 1ms !important;
     transition-delay: 0ms !important;
+  }
+
+  /* Skip the blur transition, but the open state must still be blurred. */
+  .intro-expanded-root[data-visible="true"] .intro-expanded-backdrop {
+    backdrop-filter: blur(var(--expanded-backdrop-blur, 20px)) !important;
+    -webkit-backdrop-filter: blur(var(--expanded-backdrop-blur, 20px)) !important;
   }
 }
 
@@ -3860,8 +3880,6 @@ html[data-device="mobile"] .case-study-cover-stage {
     var(--color-overlay-scrim) 82%,
     rgba(26, 26, 24, 0.28)
   );
-  backdrop-filter: blur(22px);
-  -webkit-backdrop-filter: blur(22px);
 }
 
 html[data-theme="dark"] .beat-lab-expanded-root[data-visible="true"] .intro-expanded-backdrop {
@@ -3886,6 +3904,7 @@ html[data-theme="dark"] .beat-lab-expanded-root[data-visible="true"] .intro-expa
     width var(--transition-base),
     height var(--transition-base),
     padding var(--transition-base),
+    border-radius var(--transition-base),
     box-shadow var(--transition-slow);
 }
 
@@ -3962,6 +3981,7 @@ html[data-theme="dark"] .beat-lab-expanded-root[data-visible="true"] .intro-expa
   height: 100%;
   border-radius: var(--tile-radius);
   overflow: hidden;
+  transition: border-radius var(--transition-base);
   color: var(--bl-chrome, #f4f7ff);
   --bl-font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco,
     Consolas, monospace;
@@ -4051,7 +4071,7 @@ html[data-theme="dark"] .beat-lab-expanded-root[data-visible="true"] .intro-expa
   position: relative;
   flex: 1 1 auto;
   min-height: 12rem;
-  max-height: min(42vh, 420px);
+  max-height: min(42dvh, 420px);
   border-radius: 6px;
   overflow: hidden;
 }
@@ -4289,8 +4309,45 @@ html[data-device="mobile"] .beat-lab-editor-col {
   flex-basis: 100%;
 }
 
-html[data-device="mobile"] .beat-lab-morph-card[data-expanded="true"] {
-  width: calc(100vw - var(--page-padding, 24px) * 2) !important;
+/* Mobile fullscreen: the shell is the screen. Radius 0 so ContinuousCorners
+   (60% on desktop/tablet) drops the mask. Safe-area padding lives on the HUD,
+   not on the card, so the world canvas stays edge to edge. */
+html[data-device="mobile"] .beat-lab-morph-card[data-expanded="true"],
+.beat-lab-morph-card[data-expanded="true"][data-stage="mobile"] {
+  padding: 0;
+  border-width: 0;
+  border-radius: 0;
+}
+
+html[data-device="mobile"] .beat-lab-morph-card[data-expanded="true"] .beat-lab-shell,
+.beat-lab-morph-card[data-expanded="true"][data-stage="mobile"] .beat-lab-shell {
+  border-radius: 0;
+}
+
+html[data-device="mobile"] .beat-lab-shell-hud {
+  padding-top: calc(14px + env(safe-area-inset-top, 0px));
+  padding-right: calc(16px + env(safe-area-inset-right, 0px));
+  padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+  padding-left: calc(16px + env(safe-area-inset-left, 0px));
+}
+
+@media (max-width: 767px) {
+  .beat-lab-morph-card[data-expanded="true"] {
+    padding: 0;
+    border-width: 0;
+    border-radius: 0;
+  }
+
+  .beat-lab-morph-card[data-expanded="true"] .beat-lab-shell {
+    border-radius: 0;
+  }
+
+  .beat-lab-shell-hud {
+    padding-top: calc(14px + env(safe-area-inset-top, 0px));
+    padding-right: calc(16px + env(safe-area-inset-right, 0px));
+    padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+    padding-left: calc(16px + env(safe-area-inset-left, 0px));
+  }
 }
 
 .beat-lab-toolbar {
@@ -4601,7 +4658,7 @@ html[data-device="mobile"] .beat-lab-morph-card[data-expanded="true"] {
 }
 
 html[data-device="mobile"] .beat-lab-morph-card[data-expanded="true"] {
-  padding: 16px 16px 18px;
+  padding: 0;
 }
 
 html[data-device="mobile"] .beat-lab-morph-card[data-expanded="true"] .beat-lab-morph-body {

@@ -48,6 +48,10 @@ import {
   type SectionId,
   type SongSection,
 } from "@/lib/beat-lab/sections";
+import {
+  ghostlinkShellMode,
+  measureGhostlinkShell,
+} from "@/lib/beat-lab/expanded-shell";
 import { lockBodyScroll } from "@/lib/lockBodyScroll";
 
 export interface BeatLabSourceRect {
@@ -88,43 +92,33 @@ function getPagePadding(): number {
   return Number.isFinite(parsed) ? parsed : 24;
 }
 
-function getExpandedTargetWidth(padding: number): number {
-  return Math.min(window.innerWidth * 0.92, 1120, window.innerWidth - padding * 2);
+/** Used px for `100vw` / `100dvh` so the shell tracks dynamic mobile chrome. */
+function readViewportCss(): { vw: number; dvh: number } {
+  const probe = document.createElement("div");
+  probe.setAttribute("aria-hidden", "true");
+  probe.style.cssText =
+    "position:fixed;top:0;left:0;width:100vw;height:100dvh;margin:0;padding:0;border:0;visibility:hidden;pointer-events:none;";
+  document.body.appendChild(probe);
+  const rect = probe.getBoundingClientRect();
+  probe.remove();
+  return {
+    vw: rect.width > 0 ? rect.width : window.innerWidth,
+    dvh:
+      rect.height > 0
+        ? rect.height
+        : (window.visualViewport?.height ?? window.innerHeight),
+  };
 }
 
-function measureExpandedTarget(card: HTMLElement): MorphRect {
-  const padding = Math.max(24, getPagePadding());
-  const width = getExpandedTargetWidth(padding);
-  const maxHeight = window.innerHeight - padding * 2;
-
-  const previous = {
-    transition: card.style.transition,
-    top: card.style.top,
-    left: card.style.left,
-    width: card.style.width,
-    height: card.style.height,
-    maxHeight: card.style.maxHeight,
-  };
-
-  card.style.transition = "none";
-  card.style.width = `${width}px`;
-  card.style.height = "auto";
-  card.style.maxHeight = `${maxHeight}px`;
-  card.dataset.expanded = "true";
-  const height = Math.min(Math.max(card.scrollHeight, 520), maxHeight);
-  const left = Math.max(padding, (window.innerWidth - width) / 2);
-  const top = Math.max(padding, (window.innerHeight - height) / 2);
-
-  card.style.transition = previous.transition;
-  card.style.top = previous.top;
-  card.style.left = previous.left;
-  card.style.width = previous.width;
-  card.style.height = previous.height;
-  card.style.maxHeight = previous.maxHeight;
-  card.dataset.expanded = "false";
-  void card.offsetHeight;
-
-  return { top, left, width, height };
+function measureExpandedTarget(): MorphRect {
+  const { vw, dvh } = readViewportCss();
+  return measureGhostlinkShell({
+    vw,
+    dvh,
+    breakpointWidth: window.innerWidth,
+    pagePadding: getPagePadding(),
+    portrait: window.matchMedia("(orientation: portrait)").matches,
+  });
 }
 
 const ERROR_HINT =
@@ -274,6 +268,7 @@ export function BeatLabTileExpanded({
     card.style.width = `${rect.width}px`;
     card.style.height = `${rect.height}px`;
     card.dataset.expanded = expanded ? "true" : "false";
+    card.dataset.stage = ghostlinkShellMode(window.innerWidth);
   }, []);
 
   const finishExit = useCallback(() => {
@@ -296,7 +291,7 @@ export function BeatLabTileExpanded({
     onMorphReady();
 
     if (prefersReducedMotion()) {
-      const target = measureExpandedTarget(card);
+      const target = measureExpandedTarget();
       applyRect(target, true);
       phaseRef.current = "open";
       hasOpened.current = true;
@@ -307,7 +302,7 @@ export function BeatLabTileExpanded({
       return;
     }
 
-    const target = measureExpandedTarget(card);
+    const target = measureExpandedTarget();
     applyRect(sourceRect, false);
 
     let raf2 = 0;
@@ -336,13 +331,19 @@ export function BeatLabTileExpanded({
       if (!card) return;
       const previousTransition = card.style.transition;
       card.style.transition = "none";
-      applyRect(measureExpandedTarget(card), true);
+      applyRect(measureExpandedTarget(), true);
       void card.offsetHeight;
       card.style.transition = previousTransition;
     };
 
     window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
+    window.visualViewport?.addEventListener("resize", onResize);
+    window.addEventListener("orientationchange", onResize);
+    return () => {
+      window.removeEventListener("resize", onResize);
+      window.visualViewport?.removeEventListener("resize", onResize);
+      window.removeEventListener("orientationchange", onResize);
+    };
   }, [applyRect]);
 
   useEffect(() => lockBodyScroll(), []);
@@ -438,6 +439,8 @@ export function BeatLabTileExpanded({
   const handleBackdropClick = useCallback(
     (event: ReactMouseEvent<HTMLButtonElement>) => {
       event.preventDefault();
+      // Mobile is true fullscreen — no outside-click rim. Minimize and Escape still close.
+      if (ghostlinkShellMode(window.innerWidth) === "mobile") return;
       onClose();
     },
     [onClose],
