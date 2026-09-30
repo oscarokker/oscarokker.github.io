@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { BeatLabNeoTranceVideo } from "@/components/tiles/beat-lab/BeatLabNeoTranceVideo";
 import type { CompositionId } from "@/lib/beat-lab/compositions";
 
 interface BeatLabWorldBackgroundProps {
@@ -8,11 +9,21 @@ interface BeatLabWorldBackgroundProps {
   active: boolean;
 }
 
+export function BeatLabWorldBackground({
+  worldId,
+  active,
+}: BeatLabWorldBackgroundProps) {
+  if (worldId === "neo-trance") {
+    return <BeatLabNeoTranceVideo active={active} />;
+  }
+  return <BeatLabCanvasWorldBackground worldId={worldId} active={active} />;
+}
+
 function prefersReducedMotion(): boolean {
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
-export function BeatLabWorldBackground({
+function BeatLabCanvasWorldBackground({
   worldId,
   active,
 }: BeatLabWorldBackgroundProps) {
