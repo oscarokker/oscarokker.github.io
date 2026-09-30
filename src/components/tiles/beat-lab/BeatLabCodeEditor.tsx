@@ -93,6 +93,7 @@ export function BeatLabCodeEditor({
           onBlur={onBlur}
           onScroll={syncScroll}
           onKeyDown={handleKeyDown}
+          aria-label="Pattern"
           aria-describedby={describedBy}
         />
       </div>

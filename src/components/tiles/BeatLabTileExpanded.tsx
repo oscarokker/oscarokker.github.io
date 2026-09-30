@@ -27,7 +27,7 @@ import {
   type CompositionId,
 } from "@/lib/beat-lab/compositions";
 import { ensureJetBrainsMono } from "@/lib/beat-lab/load-jetbrains-mono";
-import { WORLDS, worldById } from "@/lib/beat-lab/worlds";
+import { WORLDS } from "@/lib/beat-lab/worlds";
 import {
   ensureStrudel,
   evaluateCode,
@@ -187,11 +187,9 @@ export function BeatLabTileExpanded({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loopInSection, setLoopInSection] = useState({ current: 0, total: 6 });
-  const [ghostCue, setGhostCue] = useState<string | null>(null);
   const [pendingGhostSection, setPendingGhostSection] = useState<number | null>(
     null,
   );
-  const [sectionHasUserEdit, setSectionHasUserEdit] = useState(false);
   const sectionEditsRef = useRef<SectionEditMap>(sectionEdits);
 
   useEffect(() => {
@@ -227,19 +225,11 @@ export function BeatLabTileExpanded({
     [],
   );
 
-  const syncUserEditFlag = useCallback(
-    (compositionId: CompositionId, sectionId: SectionId) => {
-      const key = `${compositionId}:${sectionId}`;
-      setSectionHasUserEdit(Boolean(sectionEditsRef.current[key]));
-    },
-    [],
-  );
-
   useEffect(() => {
     const section = currentSection();
-    syncUserEditFlag(activeId, section.id);
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- reset loop counter when world or section changes
     setLoopInSection({ current: 0, total: section.loops });
-  }, [activeId, sectionIndex, syncUserEditFlag]);
+  }, [activeId, sectionIndex]);
 
   const teardownAudio = useCallback(async () => {
     setPlaying(false);
@@ -487,28 +477,23 @@ export function BeatLabTileExpanded({
     [],
   );
 
-  const writeEditorFromGhost = useCallback(
-    async (source: string, sectionLabel: string) => {
-      if (ghostApplyRef.current) return;
-      ghostApplyRef.current = true;
-      setGhostCue(`Ghost · ${sectionLabel}`);
-      try {
-        await applyGhostRewrite(
-          source,
-          (value) => {
-            setEditorValue(value);
-            editorValueRef.current = value;
-          },
-          { reducedMotion: prefersReducedMotion() },
-        );
-        committedSourceRef.current = source;
-      } finally {
-        ghostApplyRef.current = false;
-        window.setTimeout(() => setGhostCue(null), 2400);
-      }
-    },
-    [],
-  );
+  const writeEditorFromGhost = useCallback(async (source: string) => {
+    if (ghostApplyRef.current) return;
+    ghostApplyRef.current = true;
+    try {
+      await applyGhostRewrite(
+        source,
+        (value) => {
+          setEditorValue(value);
+          editorValueRef.current = value;
+        },
+        { reducedMotion: prefersReducedMotion() },
+      );
+      committedSourceRef.current = source;
+    } finally {
+      ghostApplyRef.current = false;
+    }
+  }, []);
 
   const applyPendingGhostIfAny = useCallback(async () => {
     if (pendingGhostSection === null) return;
@@ -520,8 +505,7 @@ export function BeatLabTileExpanded({
     }
     const source = resolveSectionSource(activeIdRef.current, section.id);
     setPendingGhostSection(null);
-    setGhostCue(null);
-    await writeEditorFromGhost(source, section.label);
+    await writeEditorFromGhost(source);
   }, [pendingGhostSection, resolveSectionSource, writeEditorFromGhost]);
 
   const advanceToSection = useCallback(
@@ -537,7 +521,6 @@ export function BeatLabTileExpanded({
       if (playbackEpochRef.current !== epoch) return;
       setSectionIndex(nextIndex);
       setLoopInSection({ current: 0, total: section.loops });
-      syncUserEditFlag(compositionId, section.id);
 
       // `$:` patterns stack unless hush clears them. Only this section should sound.
       await runEvaluate(source, { hushBeforeEval: true });
@@ -553,18 +536,11 @@ export function BeatLabTileExpanded({
       // Defer editor rewrite whenever the buffer differs from the last ghost commit.
       if (isEditorDirty()) {
         setPendingGhostSection(nextIndex);
-        setGhostCue(`Ghost waiting · ${section.label}`);
         return;
       }
-      await writeEditorFromGhost(source, section.label);
+      await writeEditorFromGhost(source);
     },
-    [
-      isEditorDirty,
-      resolveSectionSource,
-      runEvaluate,
-      syncUserEditFlag,
-      writeEditorFromGhost,
-    ],
+    [isEditorDirty, resolveSectionSource, runEvaluate, writeEditorFromGhost],
   );
 
   useEffect(() => {
@@ -631,9 +607,6 @@ export function BeatLabTileExpanded({
     );
     setSectionEdits(next);
     committedSourceRef.current = source;
-    setSectionHasUserEdit(true);
-    setGhostCue("Your edit saved for this section");
-    window.setTimeout(() => setGhostCue(null), 2800);
   }, []);
 
   const startLivingChannel = useCallback(async () => {
@@ -649,7 +622,7 @@ export function BeatLabTileExpanded({
     await runEvaluate(code, { hushBeforeEval: true });
     sectionStartCycleRef.current = await getTransportCycle();
     setLoopInSection({ current: 0, total: section.loops });
-    await writeEditorFromGhost(code, section.label);
+    await writeEditorFromGhost(code);
   }, [
     busy,
     commitCurrentSection,
@@ -692,7 +665,6 @@ export function BeatLabTileExpanded({
     if (busy || !livingSessionRef.current) return;
     commitCurrentSection(editorValue);
     setPendingGhostSection(null);
-    setGhostCue(null);
     await runEvaluate(editorValue, { hushBeforeEval: false });
   }, [busy, editorValue, commitCurrentSection, runEvaluate]);
 
@@ -732,10 +704,8 @@ export function BeatLabTileExpanded({
       setEditorValue(nextCode);
       editorValueRef.current = nextCode;
       committedSourceRef.current = nextCode;
-      syncUserEditFlag(id, section.id);
       setLoopInSection({ current: 0, total: section.loops });
       setPendingGhostSection(null);
-      setGhostCue(null);
       setError(null);
       if (livingSessionRef.current) {
         // Hush the previous world's `$:` patterns before the new one registers.
@@ -745,7 +715,7 @@ export function BeatLabTileExpanded({
         });
       }
     },
-    [isEditorDirty, runEvaluate, syncUserEditFlag],
+    [isEditorDirty, runEvaluate],
   );
 
   // Ctrl/Cmd+Enter = commit co-creation while the channel plays.
@@ -885,23 +855,6 @@ export function BeatLabTileExpanded({
                 className="beat-lab-main"
               >
                 <div className="beat-lab-editor-col">
-                  <label className="beat-lab-editor-label" htmlFor={editorId}>
-                    {worldById(activeId).label} ·{" "}
-                    {sectionsFor(activeId)[sectionIndex]?.label ?? "section"}
-                  </label>
-
-                  {ghostCue || sectionHasUserEdit ? (
-                    <p
-                      className="text-body-sm m-0 beat-lab-ghost-cue"
-                      role="status"
-                    >
-                      {ghostCue ??
-                        (sectionHasUserEdit
-                          ? "Your edit remembered for this section"
-                          : null)}
-                    </p>
-                  ) : null}
-
                   <BeatLabCodeEditor
                     id={editorId}
                     value={editorValue}
@@ -914,9 +867,7 @@ export function BeatLabTileExpanded({
                     onBlur={() => {
                       void applyPendingGhostIfAny();
                     }}
-                    describedBy={
-                      error ? "beat-lab-error beat-lab-shortcuts" : "beat-lab-shortcuts"
-                    }
+                    describedBy={error ? "beat-lab-error" : undefined}
                   />
 
                   {error ? (
@@ -929,21 +880,6 @@ export function BeatLabTileExpanded({
                     </p>
                   ) : null}
 
-                  <p
-                    id="beat-lab-shortcuts"
-                    className="text-body-sm m-0 beat-lab-shortcuts"
-                  >
-                    Ctrl/⌘+Enter update · co-write with the ghost while the world plays
-                    {playing ? (
-                      <span className="beat-lab-loop-progress">
-                        {" "}
-                        · loop {loopInSection.current}/{loopInSection.total}
-                      </span>
-                    ) : ready ? (
-                      <span className="beat-lab-loop-progress"> · tuning in…</span>
-                    ) : null}
-                  </p>
-
                   {!ready ? (
                     <p
                       className="text-body-sm m-0 beat-lab-status"
@@ -952,10 +888,6 @@ export function BeatLabTileExpanded({
                       Loading Strudel…
                     </p>
                   ) : null}
-
-                  <p className="text-body-sm m-0 beat-lab-credit">
-                    Strudel (AGPL) · patterns by Oscar Rode
-                  </p>
                 </div>
               </div>
 
