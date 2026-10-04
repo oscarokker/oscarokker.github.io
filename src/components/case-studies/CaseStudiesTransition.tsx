@@ -44,7 +44,6 @@ export interface CaseStudySnapshot {
   subtitle: string;
   accent?: string;
   coverSrc?: string;
-  comingSoon?: boolean;
   sourceRect: MorphRect;
   pointer?: { clientX: number; clientY: number };
 }
@@ -95,7 +94,6 @@ function persistSnapshot(snapshot: CaseStudySnapshot) {
         subtitle: snapshot.subtitle,
         accent: snapshot.accent,
         coverSrc: snapshot.coverSrc,
-        comingSoon: snapshot.comingSoon,
         sourceRect: snapshot.sourceRect,
       }),
     );

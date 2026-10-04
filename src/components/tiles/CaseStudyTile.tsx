@@ -25,7 +25,6 @@ interface CaseStudyTileProps {
   coverSrc?: string;
   coverVideoSrc?: string;
   coverPosterSrc?: string;
-  comingSoon?: boolean;
 }
 
 function isModifiedClick(event: {
@@ -45,7 +44,6 @@ export function CaseStudyTile({
   coverSrc,
   coverVideoSrc,
   coverPosterSrc,
-  comingSoon,
 }: CaseStudyTileProps) {
   const tileRef = useRef<HTMLAnchorElement>(null);
   const { openFromTile, registerTile, phase, snapshot } =
@@ -54,11 +52,10 @@ export function CaseStudyTile({
   const href = caseStudyHref(slug);
 
   useLayoutEffect(() => {
-    if (comingSoon) return;
     const shell = tileRef.current?.closest(".tile-card") as HTMLElement | null;
     registerTile(slug, shell);
     return () => registerTile(slug, null);
-  }, [comingSoon, registerTile, slug]);
+  }, [registerTile, slug]);
 
   const open = useCallback(
     (event?: { clientX: number; clientY: number }) => {
@@ -117,13 +114,8 @@ export function CaseStudyTile({
       coverSrc={coverSrc}
       coverVideoSrc={coverVideoSrc}
       coverPosterSrc={coverPosterSrc}
-      comingSoon={comingSoon}
     />
   );
-
-  if (comingSoon) {
-    return <div className="case-study-tile">{face}</div>;
-  }
 
   return (
     <a

@@ -8,6 +8,8 @@ Oscar Rode's portfolio is a personal UX/UI surface — not a SaaS landing page. 
 
 This file is the contract for future design and implementation. Prefer these tokens over inventing new colors, radii, or type roles.
 
+**Names:** the user-facing product is **Ghostlink**. Code and CSS identifiers stay `beat-lab` / `BeatLab` on purpose for now (components, class names, and routes). Do not rename them in a drive-by cleanup.
+
 ---
 
 ## Tokens — Colors
@@ -64,8 +66,8 @@ This file is the contract for future design and implementation. Prefer these tok
 - **Fallback:** system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif
 
 ### Rare exception: Nunito Sans for Duolingo streak counter · `--font-nunito`
-- **Source:** Google Fonts via next/font/google — weights 800, 900 only.
-- **Why:** Stand-in for proprietary Duolingo Sans (only served from Duolingo's CDN). Nunito Sans is a visually compatible free alternative.
+- **Source:** Self-hosted latin WOFF2 via next/font/local (`src/fonts/NunitoSans-latin.woff2`, SIL OFL). Variable weight axis 200–1000; the streak uses 900. Not loaded from Google at build time.
+- **Why:** Stand-in for proprietary Duolingo Sans (only served from Duolingo's CDN). Nunito Sans is a visually compatible free alternative. `next/font/google` has flaked GitHub Pages builds.
 - **Scope:** Applied **only** to `.duolingo-streak-value` (the streak number). All other Duolingo tile text, the flame icon, and the rest of the site remain Satoshi.
 - **Fallback:** system-ui, sans-serif
 
@@ -197,9 +199,6 @@ Centered column ~680px. Structure: Role → Impact → Problem → decision beat
 ### Modals / galleries (About, Himalaya)
 Close control ≥44×44, above content, not under images/text.
 
-### Coming-soon tiles
-Visible but not fake-tappable: `aria-disabled`, no press scale, default cursor.
-
 ---
 
 ## Do's and Don'ts
@@ -221,7 +220,7 @@ Visible but not fake-tappable: `aria-disabled`, no press scale, default cursor.
 - Don't put research stills into the Source Insights phone-row carousel
 - Don't let the music iframe intercept taps
 - Don't add SaaS marketing chrome (pricing tables, multi CTA pill pairs) that fights the personal bento
-- Don't introduce a second typeface on the main site or load from Google Fonts — Satoshi is self-hosted and covers all roles (**exception:** JetBrains Mono is lazy-loaded **only** inside expanded Ghostlink for the code editor)
+- Don't introduce a second typeface on the main site or load from Google Fonts — Satoshi is self-hosted and covers all roles (**exceptions:** Nunito Sans is self-hosted and applied only to the Duolingo streak number; JetBrains Mono is lazy-loaded **only** inside expanded Ghostlink for the code editor)
 - Don't put `@strudel/web` on the homepage critical path or leave patterns running after Ghostlink closes
 - Don't wire Ghostlink into the YouTube MusicPlayer mini-dock
 
@@ -295,9 +294,8 @@ Call these out when found; fix in CSS + this file together:
 5. Hover labels appearing on touch devices  
 6. Phone-row used for non-phone figures  
 7. Mini-player iframe blocking clicks  
-8. Coming-soon tiles behaving like buttons  
-9. Light mode drifting to pure white canvas  
-10. New hex accents not in `--color-tile-*` / token tables  
+8. Light mode drifting to pure white canvas  
+9. New hex accents not in `--color-tile-*` / token tables  
 
 ---
 
