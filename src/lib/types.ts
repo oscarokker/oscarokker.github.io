@@ -49,7 +49,6 @@ export interface CaseStudyTileData extends BaseTileData {
     coverSrc?: string;
     coverVideoSrc?: string;
     coverPosterSrc?: string;
-    comingSoon?: boolean;
   };
 }
 

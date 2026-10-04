@@ -2,16 +2,10 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
-First, run the development server:
+First, run the development server with webpack. Turbopack (`next dev` without `--webpack`) fails to compile `@strudel/web` (`Can't resolve <dynamic>` on the SharedWorker clock). Production builds already pass `--webpack` (`npm run build`).
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npx next dev --webpack
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.

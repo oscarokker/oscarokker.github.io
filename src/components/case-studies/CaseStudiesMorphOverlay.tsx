@@ -211,7 +211,6 @@ export function CaseStudyMorphOverlay() {
         <CaseStudyFace
           accent={snapshot.accent}
           coverSrc={snapshot.coverSrc}
-          comingSoon={snapshot.comingSoon}
         />
       </div>
     </div>,

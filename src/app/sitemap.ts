@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { getPublishedCaseStudySlugs } from "@/data/case-studies";
+import { getCaseStudySlugs } from "@/data/case-studies";
 
 export const dynamic = "force-static";
 
@@ -16,8 +16,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
   ];
 
-  // Published case studies only (excludes coming-soon)
-  const publishedSlugs = getPublishedCaseStudySlugs();
+  const publishedSlugs = getCaseStudySlugs();
   for (const slug of publishedSlugs) {
     routes.push({
       url: `${baseUrl}/case-studies/${slug}/`,

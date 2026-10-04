@@ -4,6 +4,8 @@ import { useEffect, useRef } from "react";
 import { BeatLabNeoTranceVideo } from "@/components/tiles/beat-lab/BeatLabNeoTranceVideo";
 import type { CompositionId } from "@/lib/beat-lab/compositions";
 
+type CanvasWorldId = Exclude<CompositionId, "neo-trance">;
+
 interface BeatLabWorldBackgroundProps {
   worldId: CompositionId;
   active: boolean;
@@ -26,7 +28,10 @@ function prefersReducedMotion(): boolean {
 function BeatLabCanvasWorldBackground({
   worldId,
   active,
-}: BeatLabWorldBackgroundProps) {
+}: {
+  worldId: CanvasWorldId;
+  active: boolean;
+}) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const rafRef = useRef(0);
 
@@ -55,39 +60,6 @@ function BeatLabCanvasWorldBackground({
       canvas.height = height;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       return true;
-    };
-
-    const paintNeoTrance = (w: number, h: number, time: number) => {
-      const g = ctx.createRadialGradient(
-        w * 0.35,
-        h * 0.45,
-        0,
-        w * 0.5,
-        h * 0.5,
-        Math.max(w, h) * 0.75,
-      );
-      g.addColorStop(0, "#1a6bff");
-      g.addColorStop(0.35, "#0a1224");
-      g.addColorStop(1, "#05070f");
-      ctx.fillStyle = g;
-      ctx.fillRect(0, 0, w, h);
-
-      ctx.globalCompositeOperation = "screen";
-      for (let i = 0; i < 6; i++) {
-        const angle = time * 0.00015 + i * 1.05;
-        const cx = w * 0.5 + Math.cos(angle) * w * 0.12;
-        const cy = h * 0.5 + Math.sin(angle * 1.3) * h * 0.1;
-        const beam = ctx.createLinearGradient(cx, cy, w, h * 0.2);
-        beam.addColorStop(0, "rgba(61, 224, 255, 0.35)");
-        beam.addColorStop(1, "rgba(61, 224, 255, 0)");
-        ctx.strokeStyle = beam;
-        ctx.lineWidth = 2 + i * 0.4;
-        ctx.beginPath();
-        ctx.moveTo(cx, cy);
-        ctx.lineTo(w * 0.95, h * (0.15 + i * 0.08));
-        ctx.stroke();
-      }
-      ctx.globalCompositeOperation = "source-over";
     };
 
     const paintBotanica = (w: number, h: number, time: number) => {
@@ -142,16 +114,15 @@ function BeatLabCanvasWorldBackground({
     };
 
     const painters: Record<
-      CompositionId,
+      CanvasWorldId,
       (w: number, h: number, time: number) => void
     > = {
-      "neo-trance": paintNeoTrance,
       botanica: paintBotanica,
       "utopia-os": paintUtopia,
       breakcore: paintBreakcore,
     };
 
-    const paint = painters[worldId] ?? paintNeoTrance;
+    const paint = painters[worldId];
 
     const draw = (time: number) => {
       const w = shell.clientWidth;

@@ -50,13 +50,11 @@ function getCursorMeta(tile: TileData): CursorMeta | null {
         label: `Open ${tile.props.label}`,
         accent: tile.props.accent,
       };
-    case "case-study": {
-      if (tile.props.comingSoon) return null;
+    case "case-study":
       return {
         label: tile.props.title,
         accent: tile.props.accent,
       };
-    }
     case "music":
       if (tile.props.youtubeId) {
         return {
@@ -126,20 +124,7 @@ function tileAccent(tile: TileData): string | undefined {
   return "accent" in tile.props ? tile.props.accent : undefined;
 }
 
-function isComingSoonCaseStudy(tile: TileData): boolean {
-  return tile.variant === "case-study" && Boolean(tile.props.comingSoon);
-}
-
-function isInteractiveTile(tile: TileData): boolean {
-  if (isComingSoonCaseStudy(tile)) return false;
-  return true;
-}
-
 export function Tile({ tile, isActive, sortOrder, entranceState }: TileProps) {
-  const comingSoon = isComingSoonCaseStudy(tile);
-  // Filter match stays on the slot (FLIP / packing). Coming-soon cards are
-  // always visually + interactively inactive, even when the filter matches.
-  const cardActive = isActive && !comingSoon;
   const className = [
     "tile-card",
     accentClass(tileAccent(tile)),
@@ -148,16 +133,16 @@ export function Tile({ tile, isActive, sortOrder, entranceState }: TileProps) {
   ]
     .filter(Boolean)
     .join(" ");
-  const cursor = cardActive ? getCursorMeta(tile) : null;
+  const cursor = isActive ? getCursorMeta(tile) : null;
   const activeRippleRef = useRef<HTMLElement | null>(null);
 
   const { pointerHandlers } = usePointerGesture({
     onPointerDownImmediate: useCallback(
       (event: React.PointerEvent<HTMLElement>) => {
-        if (!cardActive) return;
+        if (!isActive) return;
         activeRippleRef.current = spawnTileClickRipple(event.currentTarget, event);
       },
-      [cardActive],
+      [isActive],
     ),
     onDragStart: useCallback(() => {
       if (activeRippleRef.current) {
@@ -181,10 +166,8 @@ export function Tile({ tile, isActive, sortOrder, entranceState }: TileProps) {
     >
       <article
         className={className}
-        data-active={cardActive}
-        data-coming-soon={comingSoon ? "true" : undefined}
+        data-active={isActive}
         {...pointerHandlers}
-        {...(comingSoon ? { "aria-disabled": "true" } : {})}
         {...(cursor
           ? {
               "data-cursor-label": cursor.label,

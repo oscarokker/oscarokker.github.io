@@ -10,7 +10,6 @@ interface CaseStudyFaceProps {
   coverSrc?: string;
   coverVideoSrc?: string;
   coverPosterSrc?: string;
-  comingSoon?: boolean;
 }
 
 export function CaseStudyFace({
@@ -18,7 +17,6 @@ export function CaseStudyFace({
   coverSrc,
   coverVideoSrc,
   coverPosterSrc,
-  comingSoon,
 }: CaseStudyFaceProps) {
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const hasCover = coverSrc || coverVideoSrc || coverPosterSrc;
@@ -41,7 +39,7 @@ export function CaseStudyFace({
 
   return (
     <div
-      className={`tile-card-inner case-study-face relative ${accentClass(accent)} h-full ${hasCover ? "case-study-face--cover" : ""} ${!hasCover && comingSoon ? "justify-center items-center" : ""}`}
+      className={`tile-card-inner case-study-face relative ${accentClass(accent)} h-full ${hasCover ? "case-study-face--cover" : ""}`}
     >
       {hasCover ? (
         <div className="case-study-face-cover-wrap" aria-hidden>
@@ -75,13 +73,6 @@ export function CaseStudyFace({
           }}
         />
       )}
-      {!hasCover && comingSoon ? (
-        <div className="relative z-[2]">
-          <p className="case-study-coming-soon text-caption m-0 text-[var(--color-text-primary)]">
-            coming soon
-          </p>
-        </div>
-      ) : null}
     </div>
   );
 }

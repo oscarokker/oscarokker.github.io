@@ -3,8 +3,7 @@ import { notFound } from "next/navigation";
 import { CaseStudyArticle } from "@/components/case-studies/CaseStudiesArticle";
 import {
   getCaseStudy,
-  getPublishedCaseStudySlugs,
-  isComingSoonCaseStudy,
+  getCaseStudySlugs,
   type CaseStudyCoverId,
 } from "@/data/case-studies";
 
@@ -26,7 +25,7 @@ const COVER_PHOTOS: Partial<
 export const dynamicParams = false;
 
 export function generateStaticParams() {
-  return getPublishedCaseStudySlugs().map((slug) => ({ slug }));
+  return getCaseStudySlugs().map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({
@@ -36,7 +35,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const study = getCaseStudy(slug);
-  if (!study || isComingSoonCaseStudy(slug)) return { title: "Case study" };
+  if (!study) return { title: "Case study" };
 
   const canonicalUrl = `https://oscarrode.com/case-studies/${slug}/`;
   const coverPhoto = COVER_PHOTOS[study.cover];
@@ -79,7 +78,7 @@ export default async function CaseStudyPage({
 }) {
   const { slug } = await params;
   const study = getCaseStudy(slug);
-  if (!study || isComingSoonCaseStudy(slug)) notFound();
+  if (!study) notFound();
 
   const coverPhoto = COVER_PHOTOS[study.cover];
   const coverImage = coverPhoto?.src || `/case-studies/${study.cover}-cover.png`;

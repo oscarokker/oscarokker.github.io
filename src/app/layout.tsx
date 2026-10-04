@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
-import { Nunito_Sans } from "next/font/google";
 import { AppShell } from "@/components/AppShell";
 import { InlineScript } from "@/components/InlineScript";
 import { ThemeProvider } from "@/components/ThemeProvider";
@@ -10,6 +9,7 @@ import { THEME_INIT_SCRIPT } from "@/lib/theme";
 import { CASE_STUDY_BOOT_SCRIPT } from "@/lib/case-study-href";
 import { DEVICE_INIT_SCRIPT } from "@/lib/device";
 import "./globals.css";
+import "./ghostlink.css";
 
 const SITE_TITLE = "Oscar Rode · Design Portfolio";
 const SITE_DESCRIPTION =
@@ -22,11 +22,11 @@ const satoshi = localFont({
   weight: "300 900",
 });
 
-const nunitoSans = Nunito_Sans({
-  subsets: ["latin"],
+const nunitoSans = localFont({
+  src: "../fonts/NunitoSans-latin.woff2",
   variable: "--font-nunito",
   display: "swap",
-  weight: ["800", "900"],
+  weight: "200 1000",
 });
 
 export const metadata: Metadata = {

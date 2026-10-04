@@ -325,20 +325,8 @@ export const caseStudies: CaseStudy[] = [
   }
 ];
 
-import { tiles } from "@/data/tiles";
-import type { CaseStudyTileData } from "@/lib/types";
-
 const caseStudiesBySlug = new Map(
   caseStudies.map((study) => [study.slug, study]),
-);
-
-const comingSoonSlugs = new Set(
-  tiles
-    .filter(
-      (tile): tile is CaseStudyTileData => tile.variant === "case-study",
-    )
-    .filter((tile) => tile.props.comingSoon)
-    .map((tile) => tile.props.slug),
 );
 
 export function getCaseStudy(slug: string): CaseStudy | undefined {
@@ -347,13 +335,4 @@ export function getCaseStudy(slug: string): CaseStudy | undefined {
 
 export function getCaseStudySlugs(): string[] {
   return caseStudies.map((study) => study.slug);
-}
-
-export function isComingSoonCaseStudy(slug: string): boolean {
-  return comingSoonSlugs.has(slug);
-}
-
-/** Slugs that get a public `/case-studies/[slug]` page in the static export. */
-export function getPublishedCaseStudySlugs(): string[] {
-  return getCaseStudySlugs().filter((slug) => !isComingSoonCaseStudy(slug));
 }
