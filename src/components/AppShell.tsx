@@ -1,13 +1,15 @@
 "use client";
 
-import { useCallback, useSyncExternalStore } from "react";
+import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
 import { CustomCursor } from "@/components/CustomCursor";
 import { Header } from "@/components/Header";
 import { AsciiWaveBackground } from "@/components/AsciiWaveBackground";
 import { CaseStudyMorphOverlay } from "@/components/case-studies/CaseStudiesMorphOverlay";
 import { CaseStudyTransitionProvider, useCaseStudyTransition } from "@/components/case-studies/CaseStudiesTransition";
-import { CaseStudyArticle } from "@/components/case-studies/CaseStudiesArticle";
-import { getCaseStudy } from "@/data/case-studies";
+import {
+  loadCaseStudyContent,
+  readLoadedCaseStudy,
+} from "@/data/load-case-study";
 import { MusicPlayerProvider } from "@/contexts/MusicPlayerContext";
 import { MusicPlayer } from "@/components/MusicPlayer";
 import {
@@ -36,15 +38,26 @@ function filterFromLocation(): FilterCategory {
 
 function InDocumentCaseStudyLayer() {
   const { inDocumentSlug } = useCaseStudyTransition();
-  
-  if (!inDocumentSlug) return null;
-  
-  const study = getCaseStudy(inDocumentSlug);
-  if (!study) return null;
-  
+  const [ticket, setTicket] = useState(0);
+  const ready = inDocumentSlug ? readLoadedCaseStudy(inDocumentSlug) : null;
+
+  useEffect(() => {
+    if (!inDocumentSlug || readLoadedCaseStudy(inDocumentSlug)) return;
+    let cancelled = false;
+    loadCaseStudyContent().then(() => {
+      if (!cancelled) setTicket((n) => n + 1);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [inDocumentSlug, ticket]);
+
+  if (!inDocumentSlug || !ready) return null;
+
+  const { study, Article } = ready;
   return (
-    <div className="case-study-in-document-layer">
-      <CaseStudyArticle study={study} />
+    <div key={ticket} className="case-study-in-document-layer">
+      <Article study={study} />
     </div>
   );
 }

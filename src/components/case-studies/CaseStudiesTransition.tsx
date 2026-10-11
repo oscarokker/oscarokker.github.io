@@ -30,6 +30,7 @@ import {
   readPortfolioFilter,
 } from "@/lib/portfolio-filter";
 import { lockBodyScroll } from "@/lib/lockBodyScroll";
+import { loadCaseStudyContent } from "@/data/load-case-study";
 
 export interface MorphRect {
   top: number;
@@ -326,25 +327,28 @@ export function CaseStudyTransitionProvider({
       clearCursorLabel?.();
 
       const href = withBasePath(caseStudyHref(next.slug));
-      
+      // Start the case-study chunk during the morph so the article is ready
+      // when the cover lifts. The module stays out of the layout chunk.
+      const contentReady = loadCaseStudyContent();
+
       if (prefersReducedMotion()) {
         flushSync(() => setPhase("covering"));
         window.scrollTo({ top: 0, behavior: "instant" });
-        
-        // Use in-document approach even for reduced motion
-        window.history.pushState(
-          { caseStudySlug: next.slug, fromGrid: true },
-          "",
-          href
-        );
-        setInDocumentSlug(next.slug);
-        
-        // Immediately reveal since there's no animation
-        clearPendingOpen();
-        setPhase("idle");
-        setSnapshot(null);
-        setLabelSuppressed?.(false);
-        clearBootCover();
+
+        void contentReady.then(() => {
+          if (pendingCollapseRef.current) return;
+          window.history.pushState(
+            { caseStudySlug: next.slug, fromGrid: true },
+            "",
+            href
+          );
+          setInDocumentSlug(next.slug);
+          clearPendingOpen();
+          setPhase("idle");
+          setSnapshot(null);
+          setLabelSuppressed?.(false);
+          clearBootCover();
+        });
         return;
       }
 
@@ -366,36 +370,39 @@ export function CaseStudyTransitionProvider({
     const href = withBasePath(caseStudyHref(current.slug));
     markPendingOpen(current.slug);
     didAssignOpenRef.current = true;
-    
-    // Show case study in-document instead of loading new page
+
+    // Show case study in-document instead of loading new page.
+    // Hold the covering card until the route chunk is in memory.
+    const contentReady = loadCaseStudyContent();
     window.requestAnimationFrame(() => {
       window.requestAnimationFrame(() => {
-        if (pendingCollapseRef.current) return;
-        if (phaseRef.current !== "covering") return;
-        if (isCaseStudyPath(locationPath())) return;
-        
-        // Update URL without reload
-        window.history.pushState(
-          { caseStudySlug: current.slug, fromGrid: true },
-          "",
-          href
-        );
-        setInDocumentSlug(current.slug);
-        
-        // Manually trigger the ready → revealing → idle sequence
-        // since usePathname() doesn't change on pushState
-        clearPendingOpen();
-        setPhase("revealing");
-        window.clearTimeout(revealTimeoutRef.current);
-        revealTimeoutRef.current = window.setTimeout(
-          () => {
-            setPhase("idle");
-            setSnapshot(null);
-            setLabelSuppressed?.(false);
-            clearBootCover();
-          },
-          prefersReducedMotion() ? 0 : 280,
-        );
+        void contentReady.then(() => {
+          if (pendingCollapseRef.current) return;
+          if (phaseRef.current !== "covering") return;
+          if (isCaseStudyPath(locationPath())) return;
+
+          window.history.pushState(
+            { caseStudySlug: current.slug, fromGrid: true },
+            "",
+            href
+          );
+          setInDocumentSlug(current.slug);
+
+          // Manually trigger the ready → revealing → idle sequence
+          // since usePathname() doesn't change on pushState
+          clearPendingOpen();
+          setPhase("revealing");
+          window.clearTimeout(revealTimeoutRef.current);
+          revealTimeoutRef.current = window.setTimeout(
+            () => {
+              setPhase("idle");
+              setSnapshot(null);
+              setLabelSuppressed?.(false);
+              clearBootCover();
+            },
+            prefersReducedMotion() ? 0 : 280,
+          );
+        });
       });
     });
   }, [setLabelSuppressed]);
