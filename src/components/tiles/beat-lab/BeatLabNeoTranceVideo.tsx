@@ -5,7 +5,6 @@ import { withBasePath } from "@/lib/base-path";
 
 const POSTER_SRC = "/ghostlink/neotrance-poster.jpg";
 const WEBM_SRC = "/ghostlink/neotrance-bg.webm";
-const MP4_SRC = "/ghostlink/neotrance-bg.mp4";
 
 /**
  * First and last frames of the clip don't match. Fade the video out onto the
@@ -282,7 +281,6 @@ export function BeatLabNeoTranceVideo({ active }: BeatLabNeoTranceVideoProps) {
           poster={posterUrl}
         >
           <source src={withBasePath(WEBM_SRC)} type="video/webm" />
-          <source src={withBasePath(MP4_SRC)} type="video/mp4" />
         </video>
       ) : null}
       <div className="beat-lab-neotrance-scrim" />
