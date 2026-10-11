@@ -1,6 +1,7 @@
-/* Ghostlink (@strudel/web). Imported after globals.css in layout.tsx so
-   these rules stay after the rest of the site CSS. Selectors stay beat-lab
-   on purpose — the user-facing name is Ghostlink. */
+/* Ghostlink (@strudel/web). Imported from the homepage (the only route that
+   renders the Ghostlink tile) after layout globals.css, so these rules stay
+   after the rest of the site CSS and are not shipped to other routes.
+   Selectors stay beat-lab on purpose — the user-facing name is Ghostlink. */
 
 /* ─── Ghostlink (@strudel/web MiniREPL) ──────────────────────────── */
 

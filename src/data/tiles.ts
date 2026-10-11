@@ -12,7 +12,7 @@ export const tiles: TileData[] = [
       paragraphs: [
         "My name is Oscar Rode, a UI/UX designer based in Copenhagen. I build systems that translate research into design into something development can ship.",
         "I hold a master’s and bachelor’s in Digital Design & Interactive Technologies from the IT University of Copenhagen, which trained me to tackle wicked problems through systems thinking. I've always been into technology, but only discovered UX in high school while studying the architecture and engineering of the Sydney Opera House.",
-        "I co-founded CheapVoyage, an AI-driven travel planner for digital nomads and backpackers, and turned complexity into clarity under early-stage startup pressure. What energizes me most is designing human-AI interfaces that genuinely improves the quality of people's work and everyday life.",
+        "I co-founded CheapVoyage, an AI-driven travel planner for digital nomads and backpackers, and turned complexity into clarity under early-stage startup pressure. What energizes me most is designing human-AI interfaces that genuinely improve the quality of people's work and everyday life.",
         "I love working across disciplines and within constraints (limited resources, tight deadlines). Simplifying a complex problem to its core, and building a simple solution that holds.",
       ],
       paragraphMarks: [
@@ -89,7 +89,7 @@ export const tiles: TileData[] = [
       subtitle: "UX Designer",
       slug: "spotify-podcasts",
       accent: "violet",
-      coverSrc: "/case-studies/spotify-source-insights-cover.png",
+      coverSrc: "/case-studies/spotify-source-insights-cover.webp",
     },
   },
   {
@@ -165,9 +165,9 @@ export const tiles: TileData[] = [
       listingUrl: "/api/himalaya-photos.json",
       // Collapsed stack only. Expanded gallery streams Manaslu, then Annapurna.
       images: [
-        "/himalayan-trekking/manaslu-august-2024/PXL_20240804_092734561.jpg",
-        "/himalayan-trekking/manaslu-august-2024/PXL_20240804_095527543.jpg",
-        "/himalayan-trekking/manaslu-august-2024/PXL_20240804_095543347.jpg",
+        "/himalayan-trekking/manaslu-august-2024/PXL_20240804_092734561.webp",
+        "/himalayan-trekking/manaslu-august-2024/PXL_20240804_095527543.webp",
+        "/himalayan-trekking/manaslu-august-2024/PXL_20240804_095543347.webp",
       ],
     },
   },

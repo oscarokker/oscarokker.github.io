@@ -16,9 +16,9 @@ const COVER_PHOTOS: Partial<
     height: 1024,
   },
   podcasts: {
-    src: "/case-studies/spotify-source-insights-cover.png",
-    width: 1792,
-    height: 2048,
+    src: "/case-studies/spotify-source-insights-cover.webp",
+    width: 1360,
+    height: 1554,
   },
 };
 
@@ -52,7 +52,7 @@ export async function generateMetadata({
       description: study.intro,
       type: "article",
       url: canonicalUrl,
-      siteName: "Oscar Rode Portfolio",
+      siteName: "Oscar Rode · Design Portfolio",
       images: [
         {
           url: coverImage,

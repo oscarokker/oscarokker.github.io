@@ -20,6 +20,21 @@ interface PhotoMediaProps {
   priority?: boolean;
 }
 
+/** Collapsed stack is ~240px wide. 240px is 1x, 480px is 2x. */
+const STACK_WIDTHS = [240, 480] as const;
+
+/**
+ * Gallery URLs stay on the album path (deduped with the listing). The
+ * collapsed stack loads a width-capped derivative so the 1600px file is
+ * not the preview.
+ */
+export function himalayaStackSrc(src: string, width: number): string | null {
+  const match = src.match(/^(\/himalayan-trekking)\/([^/]+)\/([^/]+)$/);
+  if (!match || match[2] === "stack") return null;
+  const file = match[3].replace(/\.(jpe?g|png|webp)$/i, ".webp");
+  return `${match[1]}/stack/${width}/${match[2]}/${file}`;
+}
+
 export function PhotoMedia({
   src,
   alt,
@@ -34,6 +49,23 @@ export function PhotoMedia({
         className={`photo-media-placeholder photo-media-placeholder--${tone}`}
         role="img"
         aria-label={alt}
+      />
+    );
+  }
+
+  const stack1x = himalayaStackSrc(src, STACK_WIDTHS[0]);
+  const stack2x = himalayaStackSrc(src, STACK_WIDTHS[1]);
+  if (stack1x && stack2x) {
+    return (
+      // Native img so the stack can ship an explicit 1x/2x pair.
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        src={withBasePath(stack2x)}
+        srcSet={`${withBasePath(stack1x)} 1x, ${withBasePath(stack2x)} 2x`}
+        alt={alt}
+        sizes={sizes}
+        className="photo-stack-image"
+        decoding="async"
       />
     );
   }
