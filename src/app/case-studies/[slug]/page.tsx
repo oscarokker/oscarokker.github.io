@@ -52,7 +52,7 @@ export async function generateMetadata({
       description: study.intro,
       type: "article",
       url: canonicalUrl,
-      siteName: "Oscar Rode Portfolio",
+      siteName: "Oscar Rode · Design Portfolio",
       images: [
         {
           url: coverImage,
