@@ -89,7 +89,7 @@ export const tiles: TileData[] = [
       subtitle: "UX Designer",
       slug: "spotify-podcasts",
       accent: "violet",
-      coverSrc: "/case-studies/spotify-source-insights-cover.png",
+      coverSrc: "/case-studies/spotify-source-insights-cover.webp",
     },
   },
   {
