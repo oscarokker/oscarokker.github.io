@@ -28,11 +28,7 @@ import {
 import { albumCaptionFromPhotoSrc } from "@/lib/album-folder-label";
 import { withBasePath } from "@/lib/base-path";
 import { lockBodyScroll } from "@/lib/lockBodyScroll";
-import {
-  GALLERY_PHOTO_SIZES,
-  optimizedPhotoSrc,
-  optimizedPhotoSrcSet,
-} from "@/lib/photo-src";
+import { optimizedPhotoSrc } from "@/lib/photo-src";
 
 export interface PhotoStackSourceRect {
   top: number;
@@ -600,8 +596,6 @@ function GalleryPhoto({
           <img
             className="photo-gallery-image"
             src={optimizedPhotoSrc(src)}
-            srcSet={optimizedPhotoSrcSet(src)}
-            sizes={GALLERY_PHOTO_SIZES}
             alt={alt}
             loading={priority ? "eager" : "lazy"}
             fetchPriority={priority ? "high" : "auto"}

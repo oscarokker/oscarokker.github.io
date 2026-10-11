@@ -165,9 +165,9 @@ export const tiles: TileData[] = [
       listingUrl: "/api/himalaya-photos.json",
       // Collapsed stack only. Expanded gallery streams Manaslu, then Annapurna.
       images: [
-        "/himalayan-trekking/manaslu-august-2024/PXL_20240804_092734561.jpg",
-        "/himalayan-trekking/manaslu-august-2024/PXL_20240804_095527543.jpg",
-        "/himalayan-trekking/manaslu-august-2024/PXL_20240804_095543347.jpg",
+        "/himalayan-trekking/manaslu-august-2024/PXL_20240804_092734561.webp",
+        "/himalayan-trekking/manaslu-august-2024/PXL_20240804_095527543.webp",
+        "/himalayan-trekking/manaslu-august-2024/PXL_20240804_095543347.webp",
       ],
     },
   },
