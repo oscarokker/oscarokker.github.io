@@ -2,9 +2,11 @@
  * Ghostlink Strudel island.
  *
  * Dynamic-imported only from the expanded tile (never homepage critical path).
- * Samples: dirt-samples (github) + tidal-drum-machines (strudel.cc map +
- * geikha/tidal-drum-machines WAV base) — reliable CORS from GitHub Pages.
+ * Samples are the packs the worlds actually trigger, self-hosted under
+ * /ghostlink/samples so playback does not fetch GitHub or strudel.cc.
  */
+
+import { withBasePath } from "@/lib/base-path";
 
 export type StrudelModule = typeof import("@strudel/web");
 
@@ -69,13 +71,15 @@ function installVizWidgetPolyfills(Pattern: {
   }
 }
 
-const DIRT_SAMPLES = "github:tidalcycles/dirt-samples";
-const DRUM_MACHINES_JSON = "https://strudel.cc/tidal-drum-machines.json";
-const DRUM_MACHINES_BASE =
-  "github:geikha/tidal-drum-machines/main/machines/";
+/** Dirt hits the patterns name (full index lists so `bd:2` / `hh:9` stay put). */
+const DIRT_SAMPLES = "/ghostlink/samples/dirt.json";
+const DIRT_SAMPLES_BASE = "/ghostlink/samples/dirt/";
+/** RolandTR909 `rd` and `hh` only — the bank() calls in neo.trance. */
+const DRUM_MACHINES_JSON = "/ghostlink/samples/drums.json";
+const DRUM_MACHINES_BASE = "/ghostlink/samples/drums/";
 /** Pitched `piano` map. Dirt-samples' strudel.json does not include `piano`. */
-const PIANO_SAMPLES =
-  "https://raw.githubusercontent.com/felixroos/dough-samples/main/piano.json";
+const PIANO_SAMPLES = "/ghostlink/samples/piano.json";
+const PIANO_SAMPLES_BASE = "/ghostlink/samples/piano/";
 
 async function loadAndInit(): Promise<StrudelModule> {
   const mod = await import("@strudel/web");
@@ -83,12 +87,18 @@ async function loadAndInit(): Promise<StrudelModule> {
   installVizWidgetPolyfills(mod.Pattern);
   strudelRepl = (await mod.initStrudel({
     prebake: async () => {
-      // Default drum/texture samples (bd, sd, hh, jazz, insect, amencutup, 808oh, …).
-      await mod.samples(DIRT_SAMPLES);
-      // Banked machines for .bank("RolandTR909") etc. (`rd` / `oh` live here).
-      await mod.samples(DRUM_MACHINES_JSON, DRUM_MACHINES_BASE);
+      // Default drum/texture samples (bd, sd, hh, wind, insect, amencutup, …).
+      await mod.samples(withBasePath(DIRT_SAMPLES), withBasePath(DIRT_SAMPLES_BASE));
+      // Banked machines for .bank("RolandTR909") (`rd` / `hh` live here).
+      await mod.samples(
+        withBasePath(DRUM_MACHINES_JSON),
+        withBasePath(DRUM_MACHINES_BASE),
+      );
       // Botanica lead. `gm_*` soundfonts stay unloaded.
-      await mod.samples(PIANO_SAMPLES);
+      await mod.samples(
+        withBasePath(PIANO_SAMPLES),
+        withBasePath(PIANO_SAMPLES_BASE),
+      );
     },
   })) as StrudelRepl;
   if (typeof mod.evalScope === "function") {
@@ -246,11 +256,3 @@ export async function teardown(): Promise<void> {
 export function markDisposed(): void {
   disposed = true;
 }
-
-/** Documented sample strategy for PR / DESIGN. */
-export const SAMPLE_STRATEGY = {
-  dirt: DIRT_SAMPLES,
-  drumsJson: DRUM_MACHINES_JSON,
-  drumsBase: DRUM_MACHINES_BASE,
-  piano: PIANO_SAMPLES,
-} as const;
