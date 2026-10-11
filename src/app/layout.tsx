@@ -9,7 +9,6 @@ import { THEME_INIT_SCRIPT } from "@/lib/theme";
 import { CASE_STUDY_BOOT_SCRIPT } from "@/lib/case-study-href";
 import { DEVICE_INIT_SCRIPT } from "@/lib/device";
 import "./globals.css";
-import "./ghostlink.css";
 
 const SITE_TITLE = "Oscar Rode · Design Portfolio";
 const SITE_DESCRIPTION =

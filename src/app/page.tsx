@@ -1,4 +1,5 @@
 import { Portfolio } from "@/components/Portfolio";
+import "./ghostlink.css";
 
 export default function Home() {
   const jsonLd = {
