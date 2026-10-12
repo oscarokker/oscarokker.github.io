@@ -1,5 +1,9 @@
 import type { TileData } from "@/lib/types";
 
+/** Shared by the Ghostlink tile face and its cursor label. */
+export const GHOSTLINK_ONE_LINER =
+  "Plug into a living musical world and co-write with the ghost.";
+
 export const tiles: TileData[] = [
   {
     id: "intro",
@@ -29,6 +33,21 @@ export const tiles: TileData[] = [
         },
       ],
       imageSrc: "/oscar-rode-profile-picture.png",
+    },
+  },
+  {
+    id: "case-study-1",
+    categories: ["work"],
+    size: "2x2",
+    variant: "case-study",
+    props: {
+      title: "CheapVoyage",
+      subtitle: "Co-Founder & UX Designer",
+      slug: "cheap-voyage",
+      accent: "teal",
+      coverSrc: "/case-studies/cheapvoyage/beat7-8-poster.jpg",
+      coverVideoSrc: "/case-studies/cheapvoyage/beat7-8-demo.mp4",
+      coverPosterSrc: "/case-studies/cheapvoyage/beat7-8-poster.jpg",
     },
   },
   {
@@ -62,21 +81,6 @@ export const tiles: TileData[] = [
       label: "X",
       href: "https://x.com/oscarrode",
       icon: "/x-icon.svg",
-    },
-  },
-  {
-    id: "case-study-1",
-    categories: ["work"],
-    size: "2x2",
-    variant: "case-study",
-    props: {
-      title: "CheapVoyage",
-      subtitle: "Co-Founder & UX Designer",
-      slug: "cheap-voyage",
-      accent: "teal",
-      coverSrc: "/case-studies/cheapvoyage/beat7-8-poster.jpg",
-      coverVideoSrc: "/case-studies/cheapvoyage/beat7-8-demo.mp4",
-      coverPosterSrc: "/case-studies/cheapvoyage/beat7-8-poster.jpg",
     },
   },
   {
@@ -193,8 +197,7 @@ export const tiles: TileData[] = [
     variant: "beat-lab",
     props: {
       title: "Ghostlink",
-      description:
-        "Plug into a living musical world and co-write with the ghost.",
+      description: GHOSTLINK_ONE_LINER,
       accent: "violet",
     },
   },

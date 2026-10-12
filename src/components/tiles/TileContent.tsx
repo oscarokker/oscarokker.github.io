@@ -3,8 +3,13 @@
 import Image from "next/image";
 import {
   useCallback,
+  useEffect,
+  useId,
   useRef,
   useState,
+  type FocusEvent,
+  type KeyboardEvent,
+  type MouseEvent,
   type ReactNode,
 } from "react";
 import { IntroTileExpanded } from "@/components/tiles/IntroTileExpanded";
@@ -599,26 +604,126 @@ export function CvTile({
   downloadFileName,
   accent,
 }: CvTileProps) {
+  const [open, setOpen] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const tileButtonRef = useRef<HTMLButtonElement>(null);
+  const downloadRef = useRef<HTMLAnchorElement>(null);
+  const focusDownloadRef = useRef(false);
+  const fromKeyboardRef = useRef(false);
+  const ignoreBlurRef = useRef(false);
+  const downloadId = useId();
+  const fileHref = withBasePath(fileSrc);
+
+  useEffect(() => {
+    if (!open || !focusDownloadRef.current) return;
+    focusDownloadRef.current = false;
+    ignoreBlurRef.current = true;
+    downloadRef.current?.focus();
+    ignoreBlurRef.current = false;
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
+    const onPointerDown = (event: PointerEvent) => {
+      const root = rootRef.current;
+      if (!root) return;
+      if (event.target instanceof Node && root.contains(event.target)) return;
+      setOpen(false);
+    };
+    document.addEventListener("pointerdown", onPointerDown, true);
+    return () => document.removeEventListener("pointerdown", onPointerDown, true);
+  }, [open]);
+
+  const revealFromKeyboard = useCallback(() => {
+    if (open) {
+      downloadRef.current?.focus();
+      return;
+    }
+    focusDownloadRef.current = true;
+    setOpen(true);
+  }, [open]);
+
+  const handleTileKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
+    if (event.key === "Enter" || event.key === " ") {
+      fromKeyboardRef.current = true;
+    }
+  };
+
+  const handleTileClick = (event: MouseEvent<HTMLButtonElement>) => {
+    const fromKeyboard = fromKeyboardRef.current || event.detail === 0;
+    fromKeyboardRef.current = false;
+    if (fromKeyboard) {
+      revealFromKeyboard();
+      return;
+    }
+    setOpen((current) => !current);
+  };
+
+  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (event.key !== "Escape" || !open) return;
+    event.preventDefault();
+    event.stopPropagation();
+    setOpen(false);
+    tileButtonRef.current?.focus();
+  };
+
+  const handleBlur = (event: FocusEvent<HTMLDivElement>) => {
+    if (ignoreBlurRef.current) return;
+    const next = event.relatedTarget;
+    if (next instanceof Node && event.currentTarget.contains(next)) return;
+    setOpen(false);
+  };
+
+  const handleDownloadKeyDown = (event: KeyboardEvent<HTMLAnchorElement>) => {
+    if (event.key !== " ") return;
+    event.preventDefault();
+    event.currentTarget.click();
+  };
+
   return (
-    <a
-      href={withBasePath(fileSrc)}
-      download={downloadFileName}
-      className={`tile-card-inner cv-tile no-underline h-full ${accentClass(accent)}`}
-      aria-label="Download CV (PDF, 7.7 MB)"
+    <div
+      ref={rootRef}
+      className={`tile-card-inner cv-tile h-full ${accentClass(accent)}`}
+      data-download-open={open ? "true" : "false"}
+      onKeyDown={handleKeyDown}
+      onBlur={handleBlur}
     >
-      <TileChromeHint>
-        <DownloadIcon />
-      </TileChromeHint>
-      <Image
-        src={withBasePath(logoSrc)}
-        alt=""
-        width={64}
-        height={64}
-        className="cv-tile-logo"
-        aria-hidden
-        unoptimized
-      />
-      <span className="cv-tile-size-hint">7.7 MB</span>
-    </a>
+      <button
+        ref={tileButtonRef}
+        type="button"
+        className="cv-tile-hit"
+        aria-expanded={open}
+        aria-controls={downloadId}
+        aria-label="CV"
+        onKeyDown={handleTileKeyDown}
+        onClick={handleTileClick}
+      >
+        <TileChromeHint>
+          <DownloadIcon />
+        </TileChromeHint>
+        <Image
+          src={withBasePath(logoSrc)}
+          alt=""
+          width={64}
+          height={64}
+          className="cv-tile-logo"
+          aria-hidden
+          unoptimized
+        />
+      </button>
+      <a
+        ref={downloadRef}
+        id={downloadId}
+        href={fileHref}
+        download={downloadFileName}
+        className="cv-tile-download"
+        tabIndex={open ? 0 : -1}
+        inert={!open}
+        aria-hidden={open ? undefined : true}
+        onKeyDown={handleDownloadKeyDown}
+      >
+        Download CV
+      </a>
+    </div>
   );
 }

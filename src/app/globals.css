@@ -479,7 +479,7 @@
   font-size: var(--text-display-size);
   line-height: var(--text-display-leading);
   letter-spacing: var(--text-display-tracking);
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .text-h1 {
@@ -495,6 +495,14 @@
   font-size: var(--text-h2-size);
   line-height: var(--text-h2-leading);
   letter-spacing: var(--text-h2-tracking);
+  font-weight: 600;
+}
+
+/* Tile titles stay 700. Editorial H2 is the 600 above. */
+.tile-card .text-h2,
+.beat-lab-tile-title,
+.photo-stack-gallery-title,
+.music-morph-card .text-h2 {
   font-weight: 700;
 }
 
@@ -2656,13 +2664,33 @@ html[data-device="mobile"] .intro-morph-expanded {
   outline: none;
 }
 
-.cv-tile:focus-visible {
+.cv-tile-hit {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: inherit;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  outline: none;
+}
+
+.cv-tile-hit:focus-visible {
   box-shadow: inset 0 0 0 2px var(--color-accent);
 }
 
 .tile-card:has(.cv-tile):hover .intro-tile-expand,
 .cv-tile:hover .intro-tile-expand,
-.cv-tile:focus-visible .intro-tile-expand {
+.cv-tile-hit:focus-visible .intro-tile-expand {
   opacity: 1;
   transform: scale(1);
 }
@@ -2688,31 +2716,67 @@ html[data-device="mobile"] .cv-tile-logo {
   }
 }
 
-.cv-tile-size-hint {
+.cv-tile-download {
   position: absolute;
-  bottom: 12px;
+  z-index: 2;
   left: 50%;
-  transform: translateX(-50%);
-  padding: 4px 10px;
+  bottom: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-width: 44px;
+  min-height: 44px;
+  max-width: calc(100% - 24px);
+  padding: 0 16px;
   border-radius: var(--radius-full);
-  background: var(--color-bg-nav);
-  color: var(--color-text-secondary);
+  background: var(--color-chrome-bg);
+  color: var(--color-chrome-fg);
+  box-shadow: var(--shadow-chrome);
   font-family: var(--font-sans), system-ui, sans-serif;
-  font-size: 12px;
+  font-size: var(--text-body-sm-size);
   font-weight: 500;
+  line-height: 1.2;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
   opacity: 0;
-  transition: opacity var(--transition-fast);
   pointer-events: none;
+  transform: translateX(-50%) translateY(6px);
+  transition:
+    opacity var(--transition-fast),
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast);
 }
 
-@media (pointer: coarse), (max-width: 680px) {
-  .cv-tile-size-hint {
-    opacity: 0.8;
+.cv-tile[data-download-open="true"] .cv-tile-download {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(0);
+}
+
+.cv-tile-download:hover,
+.cv-tile-download:focus-visible {
+  box-shadow: var(--shadow-chrome-hover);
+  translate: 0 -1px;
+}
+
+.cv-tile-download:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cv-tile-download,
+  .cv-tile[data-download-open="true"] .cv-tile-download {
+    transform: translateX(-50%);
+    transition: none;
   }
-}
 
-.tile-card:has(.cv-tile):hover .cv-tile-size-hint {
-  opacity: 0.8;
+  .cv-tile-download:hover,
+  .cv-tile-download:focus-visible {
+    translate: none;
+  }
 }
 
 /* ─── Duolingo tile ───────────────────────────────────────────────── */
@@ -3344,7 +3408,7 @@ html[data-device="mobile"] .nav-pill.case-study-toggle .nav-pill-button {
 .case-study-headline {
   margin: 0;
   font-size: clamp(1.85rem, 4.2vw, 2.65rem);
-  font-weight: 900;
+  font-weight: 600;
   letter-spacing: -0.03em;
   line-height: 1.15;
   color: var(--color-text-primary);
@@ -3367,7 +3431,7 @@ html[data-device="mobile"] .nav-pill.case-study-toggle .nav-pill-button {
 .case-study-section h2 {
   margin: 0;
   font-size: var(--text-h2-size);
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: var(--text-h2-tracking);
   color: var(--color-text-primary);
 }
