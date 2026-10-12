@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useRef } from "react";
+import { GHOSTLINK_ONE_LINER } from "@/data/tiles";
 import type { TileData, FilterCategory } from "@/lib/types";
 import { CaseStudyTile } from "@/components/tiles/CaseStudyTile";
 import {
@@ -89,7 +90,7 @@ function getCursorMeta(tile: TileData): CursorMeta | null {
       };
     case "beat-lab":
       return {
-        label: "Programmable beats — edit a step, hear it change",
+        label: GHOSTLINK_ONE_LINER,
         accent: tile.props.accent,
       };
   }

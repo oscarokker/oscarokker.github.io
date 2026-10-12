@@ -1,5 +1,9 @@
 import type { TileData } from "@/lib/types";
 
+/** Shared by the Ghostlink tile face and its cursor label. */
+export const GHOSTLINK_ONE_LINER =
+  "Plug into a living musical world and co-write with the ghost.";
+
 export const tiles: TileData[] = [
   {
     id: "intro",
@@ -193,8 +197,7 @@ export const tiles: TileData[] = [
     variant: "beat-lab",
     props: {
       title: "Ghostlink",
-      description:
-        "Plug into a living musical world and co-write with the ghost.",
+      description: GHOSTLINK_ONE_LINER,
       accent: "violet",
     },
   },
