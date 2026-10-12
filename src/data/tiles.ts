@@ -32,6 +32,21 @@ export const tiles: TileData[] = [
     },
   },
   {
+    id: "case-study-1",
+    categories: ["work"],
+    size: "2x2",
+    variant: "case-study",
+    props: {
+      title: "CheapVoyage",
+      subtitle: "Co-Founder & UX Designer",
+      slug: "cheap-voyage",
+      accent: "teal",
+      coverSrc: "/case-studies/cheapvoyage/beat7-8-poster.jpg",
+      coverVideoSrc: "/case-studies/cheapvoyage/beat7-8-demo.mp4",
+      coverPosterSrc: "/case-studies/cheapvoyage/beat7-8-poster.jpg",
+    },
+  },
+  {
     id: "contact-email",
     categories: ["about"],
     size: "1x1",
@@ -62,21 +77,6 @@ export const tiles: TileData[] = [
       label: "X",
       href: "https://x.com/oscarrode",
       icon: "/x-icon.svg",
-    },
-  },
-  {
-    id: "case-study-1",
-    categories: ["work"],
-    size: "2x2",
-    variant: "case-study",
-    props: {
-      title: "CheapVoyage",
-      subtitle: "Co-Founder & UX Designer",
-      slug: "cheap-voyage",
-      accent: "teal",
-      coverSrc: "/case-studies/cheapvoyage/beat7-8-poster.jpg",
-      coverVideoSrc: "/case-studies/cheapvoyage/beat7-8-demo.mp4",
-      coverPosterSrc: "/case-studies/cheapvoyage/beat7-8-poster.jpg",
     },
   },
   {
