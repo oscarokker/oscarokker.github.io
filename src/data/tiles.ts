@@ -1,6 +1,6 @@
 import type { TileData } from "@/lib/types";
 
-/** Shared by the Ghostlink tile face and its cursor label. */
+/** One-liner on the Ghostlink tile face. The cursor label is separate. */
 export const GHOSTLINK_ONE_LINER =
   "Plug into a living musical world and co-write with the ghost.";
 
