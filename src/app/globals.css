@@ -479,7 +479,7 @@
   font-size: var(--text-display-size);
   line-height: var(--text-display-leading);
   letter-spacing: var(--text-display-tracking);
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .text-h1 {
@@ -495,6 +495,14 @@
   font-size: var(--text-h2-size);
   line-height: var(--text-h2-leading);
   letter-spacing: var(--text-h2-tracking);
+  font-weight: 600;
+}
+
+/* Tile titles stay 700. Editorial H2 is the 600 above. */
+.tile-card .text-h2,
+.beat-lab-tile-title,
+.photo-stack-gallery-title,
+.music-morph-card .text-h2 {
   font-weight: 700;
 }
 
@@ -3400,7 +3408,7 @@ html[data-device="mobile"] .nav-pill.case-study-toggle .nav-pill-button {
 .case-study-headline {
   margin: 0;
   font-size: clamp(1.85rem, 4.2vw, 2.65rem);
-  font-weight: 900;
+  font-weight: 600;
   letter-spacing: -0.03em;
   line-height: 1.15;
   color: var(--color-text-primary);
@@ -3423,7 +3431,7 @@ html[data-device="mobile"] .nav-pill.case-study-toggle .nav-pill-button {
 .case-study-section h2 {
   margin: 0;
   font-size: var(--text-h2-size);
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: var(--text-h2-tracking);
   color: var(--color-text-primary);
 }

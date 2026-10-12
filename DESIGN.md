@@ -62,7 +62,7 @@ This file is the contract for future design and implementation. Prefer these tok
 ### Satoshi — sole family · `--font-satoshi` / `--font-sans` / `--font-body`
 - **Source:** Fontshare (ITF Free Font License) — self-host WOFF2 via next/font/local. Not Google Fonts.
 - **Why:** Warm geometric grotesk with rounded terminals — matches Phosphor softness; hierarchy from weight + size (no Lora/Open Sans split).
-- **Ship weights:** variable 300–900 (or static 400 · 500 · 700 · 900). Map old 600→700, 800→900.
+- **Ship weights:** variable 300–900 (or static 400 · 500 · 600 · 700 · 900).
 - **Fallback:** system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif
 
 ### Rare exception: Nunito Sans for Duolingo streak counter · `--font-nunito`
@@ -72,12 +72,12 @@ This file is the contract for future design and implementation. Prefer these tok
 - **Fallback:** system-ui, sans-serif
 
 ### Role → weight lock
-Display/name/case hero 900; H1 600; H2/tile titles 700; H3 500; body/body-lg 400; labels/captions/nav 500; Duolingo streak 900.
+Display/name/case hero 600; H1 600; H2 600; tile titles 700; H3 500; body/body-lg 400; labels/captions/nav 500; Duolingo streak 900.
 
 Keep existing size/leading/tracking scale; family becomes Satoshi everywhere.
 
 **Do:** one family sitewide; retire/alias --font-lora/--font-serif.  
-**Don't:** keep Lora for quotes; load from Google; leave 600/800 unmapped.
+**Don't:** keep Lora for quotes; load from Google.
 
 ### Type scale (CSS already live)
 
@@ -205,7 +205,7 @@ Close control ≥44×44, above content, not under images/text.
 
 ### Do
 - Keep parchment (light) and midnight indigo (dark) as the only canvases; let amber glow stay atmospheric in dark, not a brand flood
-- Use Satoshi for all type; hierarchy from weight (400/500/700/900) + size, not multiple families
+- Use Satoshi for all type; hierarchy from weight (400/500/600/700/900) + size, not multiple families
 - Use pill geometry for filters and reading toggles; soft tile radius for bento cards; **24px** for case-study media
 - Center figure captions in secondary gray with 12px gap under media
 - Design for mobile thumbs: 44×44 minimum, two-row header, hide filtered tiles, no hover-only labels
@@ -303,7 +303,7 @@ Call these out when found; fix in CSS + this file together:
 
 - Canvas light: `#f0eee6` · dark: `#0d0c14`  
 - Text primary / secondary / tertiary as tokens above  
-- Satoshi for all type: 900 display/hero, 600 H1, 700 H2, 500 H3/labels, 400 body
+- Satoshi for all type: 600 display/H1/H2 and case hero, 700 tile titles, 500 H3/labels, 400 body
 - Tiles: soft shadow + `--tile-radius` · Filters: pill `9999px`  
 - Case figures: 24px radius · caption centered secondary · mt 12px  
 - Mobile: 44×44 targets · two-row header · music = round note FAB  
