@@ -3390,6 +3390,23 @@ html[data-device="mobile"]:has(.case-study-toggle) {
   background: transparent;
 }
 
+/* Summary chosen in the URL, before React hydrates and measures the thumb.
+   The static HTML always marks Detailed active; this restyles the chips
+   and hides detailed-only blocks so the first paint matches the param. */
+html[data-reading="summary"] .case-study-page:not([data-reading-ready="true"]) .nav-pill-button[data-reading="detailed"] {
+  color: var(--color-text-secondary);
+}
+
+html[data-reading="summary"] .case-study-page:not([data-reading-ready="true"]) .nav-pill-button[data-reading="summary"] {
+  color: var(--color-text-primary);
+  background: var(--color-bg-nav-active);
+}
+
+html[data-reading="summary"] .case-study-page:not([data-reading-ready="true"]) [data-detailed="true"],
+html[data-reading="summary"] .case-study-page:not([data-reading-ready="true"]) .reading-fold:has(> .reading-fold-clip > [data-detailed="true"]) {
+  display: none;
+}
+
 html[data-device="mobile"] .nav-pill.case-study-back,
 html[data-device="mobile"] .nav-pill.case-study-toggle {
   width: max-content;

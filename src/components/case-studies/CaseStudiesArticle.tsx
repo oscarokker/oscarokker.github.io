@@ -21,8 +21,11 @@ import { useSlidingThumb } from "@/hooks/useSlidingThumb";
 import { accentClass } from "@/lib/accent";
 import { withBasePath } from "@/lib/base-path";
 import { CASE_STUDY_FROM_GRID_KEY } from "@/lib/case-study-href";
-
-type ReadingMode = "detailed" | "summary";
+import {
+  readReadingMode,
+  writeReadingMode,
+  type ReadingMode,
+} from "@/lib/reading-mode";
 
 interface CaseStudyArticleProps {
   study: CaseStudy;
@@ -125,8 +128,20 @@ export function CaseStudyArticle({ study }: CaseStudyArticleProps) {
     () => phase === "idle" && snapshot?.slug !== study.slug,
   );
   const [mode, setMode] = useState<ReadingMode>("detailed");
+  const [readingReady, setReadingReady] = useState(false);
   const { containerRef: toggleRef, thumb, thumbReady } = useSlidingThumb(mode);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+
+  useLayoutEffect(() => {
+    const next = readReadingMode();
+    document.documentElement.setAttribute("data-reading", next);
+    if (mode !== next) {
+      setMode(next);
+      return;
+    }
+    writeReadingMode(next);
+    setReadingReady(true);
+  }, [mode]);
 
   useLayoutEffect(() => {
     const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -170,6 +185,8 @@ export function CaseStudyArticle({ study }: CaseStudyArticleProps) {
   }, [closeToGrid]);
 
   const handleMode = useCallback((next: ReadingMode) => {
+    document.documentElement.setAttribute("data-reading", next);
+    writeReadingMode(next);
     setMode(next);
   }, []);
 
@@ -189,6 +206,7 @@ export function CaseStudyArticle({ study }: CaseStudyArticleProps) {
       data-from-morph={fromMorph ? "true" : "false"}
       data-revealed={revealed ? "true" : "false"}
       data-reading-mode={mode}
+      data-reading-ready={readingReady ? "true" : "false"}
       aria-labelledby={titleId}
     >
       <div className="case-study-collapse-slot">
@@ -239,6 +257,7 @@ export function CaseStudyArticle({ study }: CaseStudyArticleProps) {
             role="tab"
             aria-selected={mode === "detailed"}
             aria-controls={bodyId}
+            data-reading="detailed"
             data-active={mode === "detailed"}
             onPointerDown={(event) => {
               if (event.button !== 0 || mode === "detailed") return;
@@ -262,6 +281,7 @@ export function CaseStudyArticle({ study }: CaseStudyArticleProps) {
             role="tab"
             aria-selected={mode === "summary"}
             aria-controls={bodyId}
+            data-reading="summary"
             data-active={mode === "summary"}
             onPointerDown={(event) => {
               if (event.button !== 0 || mode === "summary") return;
