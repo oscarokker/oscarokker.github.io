@@ -51,3 +51,11 @@ export function readPortfolioFilter(): FilterCategory {
     return "all";
   }
 }
+
+/**
+ * Blocking <head> script. Sets `data-portfolio-filter` before first paint so
+ * CSS can hide non-matching tiles. No-JS leaves the attribute unset and every
+ * tile visible. Must stay in sync with parseFilterParam (including legacy
+ * "music"). Does not touch history.
+ */
+export const PORTFOLIO_FILTER_BOOT_SCRIPT = `(function(){try{var raw=new URLSearchParams(location.search).get("${FILTER_QUERY_KEY}");if(raw==="music")raw="side-quests";if(raw==="work"||raw==="about"||raw==="side-quests"){document.documentElement.setAttribute("data-portfolio-filter",raw)}}catch(e){}})()`;

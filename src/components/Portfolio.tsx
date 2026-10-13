@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore } from "react";
 import type { FilterCategory } from "@/lib/types";
 import { tiles } from "@/data/tiles";
 import { Tile, tileMatchesFilter } from "@/components/Tile";
@@ -44,6 +44,14 @@ export function Portfolio({
 
   useEffect(() => {
     rememberPortfolioFilter(activeFilter);
+  }, [activeFilter]);
+
+  // Drop the first-paint filter attribute once React's data-active matches
+  // the URL. History and the Back button stay on the existing replaceState
+  // path; this only retires the boot CSS.
+  useLayoutEffect(() => {
+    if (activeFilter !== filterFromLocation()) return;
+    document.documentElement.removeAttribute("data-portfolio-filter");
   }, [activeFilter]);
 
   // Trigger staggered entrance animation on first mount only

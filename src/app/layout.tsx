@@ -8,6 +8,7 @@ import { ExpandedBackdropSettle } from "@/components/ExpandedBackdropSettle";
 import { THEME_INIT_SCRIPT } from "@/lib/theme";
 import { CASE_STUDY_BOOT_SCRIPT } from "@/lib/case-study-href";
 import { READING_BOOT_SCRIPT } from "@/lib/reading-mode";
+import { PORTFOLIO_FILTER_BOOT_SCRIPT } from "@/lib/portfolio-filter";
 import { DEVICE_INIT_SCRIPT } from "@/lib/device";
 import "./globals.css";
 
@@ -87,6 +88,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <InlineScript html={DEVICE_INIT_SCRIPT} />
         <InlineScript html={CASE_STUDY_BOOT_SCRIPT} />
         <InlineScript html={READING_BOOT_SCRIPT} />
+        <InlineScript html={PORTFOLIO_FILTER_BOOT_SCRIPT} />
       </head>
       <body className="min-h-full">
         <ThemeProvider>

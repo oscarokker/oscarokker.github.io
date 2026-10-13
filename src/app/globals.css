@@ -873,6 +873,51 @@ html[data-device="mobile"] .tile-card[data-active="false"] {
   pointer-events: none;
 }
 
+/* First paint for /?filter=… before React hydrates. The boot script sets
+   html[data-portfolio-filter]; static HTML still renders every tile
+   data-active="true". No-JS never sets the attribute, so all tiles show.
+   Visuals match the post-hydration filter: greyed on desktop, removed on mobile. */
+html[data-portfolio-filter="work"] .tile-slot:not([data-categories~="work"]),
+html[data-portfolio-filter="about"] .tile-slot:not([data-categories~="about"]),
+html[data-portfolio-filter="side-quests"] .tile-slot:not([data-categories~="side-quests"]) {
+  pointer-events: none;
+}
+
+html[data-portfolio-filter="work"] .tile-slot:not([data-categories~="work"]) > .tile-card,
+html[data-portfolio-filter="about"] .tile-slot:not([data-categories~="about"]) > .tile-card,
+html[data-portfolio-filter="side-quests"] .tile-slot:not([data-categories~="side-quests"]) > .tile-card {
+  opacity: var(--color-tile-inactive-opacity);
+  filter: grayscale(var(--color-tile-inactive-grayscale));
+  pointer-events: none;
+}
+
+html[data-device="mobile"][data-portfolio-filter="work"] .tile-slot:not([data-categories~="work"]),
+html[data-device="mobile"][data-portfolio-filter="about"] .tile-slot:not([data-categories~="about"]),
+html[data-device="mobile"][data-portfolio-filter="side-quests"] .tile-slot:not([data-categories~="side-quests"]) {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  html[data-portfolio-filter="work"] .tile-slot:not([data-categories~="work"]),
+  html[data-portfolio-filter="about"] .tile-slot:not([data-categories~="about"]),
+  html[data-portfolio-filter="side-quests"] .tile-slot:not([data-categories~="side-quests"]) {
+    display: none;
+  }
+}
+
+html[data-portfolio-filter="work"] .site-nav-filters .nav-pill-button[data-active="true"],
+html[data-portfolio-filter="about"] .site-nav-filters .nav-pill-button[data-active="true"],
+html[data-portfolio-filter="side-quests"] .site-nav-filters .nav-pill-button[data-active="true"] {
+  color: var(--color-text-secondary);
+}
+
+html[data-portfolio-filter="work"] .site-nav-filters .nav-pill-button[data-filter="work"],
+html[data-portfolio-filter="about"] .site-nav-filters .nav-pill-button[data-filter="about"],
+html[data-portfolio-filter="side-quests"] .site-nav-filters .nav-pill-button[data-filter="side-quests"] {
+  color: var(--color-text-primary);
+  background: var(--color-bg-nav-active);
+}
+
 .tile-card[data-active="true"]:hover {
   transform: translateY(-4px);
   box-shadow: var(--shadow-tile-hover);
