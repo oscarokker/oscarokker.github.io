@@ -1833,6 +1833,10 @@ html[data-device="mobile"] .site-nav-filters {
     gap: 8px;
   }
 
+  .nav-pill.case-study-toggle {
+    top: var(--case-study-pill-top, calc(var(--page-padding) + 40px + 12px));
+  }
+
   .nav-pill.case-study-toggle .nav-pill-button {
     flex: 0 0 auto;
     min-height: 0;
@@ -1840,6 +1844,13 @@ html[data-device="mobile"] .site-nav-filters {
     overflow: visible;
     text-overflow: unset;
     font-size: var(--text-body-sm-size);
+  }
+
+  /* Same clearance as html[data-device="mobile"]:has(.case-study-toggle)
+     when the device attribute is missing on a narrow viewport. */
+  html:has(.case-study-toggle) {
+    --case-study-pill-top: calc(var(--page-padding) + 40px + 12px);
+    --case-study-scroll-clearance: calc(var(--case-study-pill-top) + 40px + 20px);
   }
 
   /* Entrance: no Y on bottom filters */
@@ -3128,6 +3139,8 @@ html[data-device="mobile"] .cv-tile-logo {
   z-index: 1250;
   overflow-y: auto;
   background: var(--color-bg);
+  /* This layer is the scrollport for in-document case studies. */
+  scroll-padding-top: var(--case-study-scroll-clearance, 120px);
 }
 
 /* First paint of a morph navigation: hide destination until React covering is up. */
@@ -3196,6 +3209,27 @@ html[data-theme="dark"][data-case-study-boot="cover"] body::before {
 
 /* ─── Case study page ────────────────────────────────────────────── */
 
+/* Case studies have no site header. The sticky chrome row is the 40px
+   close control at --page-padding.
+   Desktop/tablet: pill top 60px (20px padding + 40px control). Scroll
+   clearance 120px = 60px + 40px pill + 20px so a heading never sits under
+   the pill or its shadow.
+   Mobile (--page-padding 16px): pill top 68px = 16 + 40 + 12px gap.
+   Scroll clearance 128px = 68 + 40px pill + 20px air.
+   Keep these on <html> so both the document scroller and descendants see
+   the same tokens. scroll-padding on .case-study-page alone does not
+   affect either scrollport. */
+html:has(.case-study-toggle) {
+  --case-study-pill-top: 60px;
+  --case-study-scroll-clearance: 120px;
+  scroll-padding-top: var(--case-study-scroll-clearance);
+}
+
+html[data-device="mobile"]:has(.case-study-toggle) {
+  --case-study-pill-top: calc(var(--page-padding) + 40px + 12px);
+  --case-study-scroll-clearance: calc(var(--case-study-pill-top) + 40px + 20px);
+}
+
 .case-study-page {
   position: relative;
   isolation: isolate;
@@ -3204,7 +3238,7 @@ html[data-theme="dark"][data-case-study-boot="cover"] body::before {
   background-color: var(--color-bg);
   padding: var(--page-padding) var(--page-padding) 128px;
   font-family: var(--font-sans), system-ui, sans-serif;
-  scroll-padding-top: 120px;
+  scroll-padding-top: var(--case-study-scroll-clearance, 120px);
 }
 
 .case-study-ripple-host {
@@ -3296,7 +3330,7 @@ html[data-theme="dark"][data-case-study-boot="cover"] body::before {
 .nav-pill.case-study-toggle {
   align-self: center;
   position: sticky;
-  top: 60px;
+  top: var(--case-study-pill-top, 60px);
   z-index: 40;
   flex-shrink: 0;
   width: max-content;
