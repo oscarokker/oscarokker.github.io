@@ -1828,6 +1828,7 @@ html[data-device="mobile"] .site-nav-filters {
     text-overflow: ellipsis;
   }
 
+  .nav-pill.case-study-back,
   .nav-pill.case-study-toggle {
     width: max-content;
     gap: 8px;
@@ -1837,6 +1838,7 @@ html[data-device="mobile"] .site-nav-filters {
     top: var(--case-study-pill-top, calc(var(--page-padding) + 40px + 12px));
   }
 
+  .nav-pill.case-study-back .nav-pill-button,
   .nav-pill.case-study-toggle .nav-pill-button {
     flex: 0 0 auto;
     min-height: 0;
@@ -3210,7 +3212,7 @@ html[data-theme="dark"][data-case-study-boot="cover"] body::before {
 /* ─── Case study page ────────────────────────────────────────────── */
 
 /* Case studies have no site header. The sticky chrome row is the 40px
-   close control at --page-padding.
+   Back to portfolio / Close controls at --page-padding.
    Desktop/tablet: pill top 60px (20px padding + 40px control). Scroll
    clearance 120px = 60px + 40px pill + 20px so a heading never sits under
    the pill or its shadow.
@@ -3302,7 +3304,9 @@ html[data-device="mobile"]:has(.case-study-toggle) {
   top: var(--page-padding);
   z-index: 40;
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
   pointer-events: none;
 }
 
@@ -3325,6 +3329,35 @@ html[data-device="mobile"]:has(.case-study-toggle) {
 .case-study-collapse:focus-visible {
   outline: 2px solid var(--color-accent);
   outline-offset: 2px;
+}
+
+.nav-pill.case-study-back {
+  pointer-events: auto;
+  width: max-content;
+  max-width: calc(100% - 52px);
+  height: 40px;
+  flex: 0 0 auto;
+  gap: 0;
+  text-decoration: none;
+  color: inherit;
+}
+
+.nav-pill.case-study-back:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.nav-pill.case-study-back .nav-pill-button {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  height: 100%;
+  min-height: 0;
+  padding: 0 16px;
+  overflow: visible;
+  text-overflow: unset;
+  font-size: var(--text-body-sm-size);
+  cursor: pointer;
 }
 
 .nav-pill.case-study-toggle {
@@ -3357,11 +3390,13 @@ html[data-device="mobile"]:has(.case-study-toggle) {
   background: transparent;
 }
 
+html[data-device="mobile"] .nav-pill.case-study-back,
 html[data-device="mobile"] .nav-pill.case-study-toggle {
   width: max-content;
   gap: 8px;
 }
 
+html[data-device="mobile"] .nav-pill.case-study-back .nav-pill-button,
 html[data-device="mobile"] .nav-pill.case-study-toggle .nav-pill-button {
   flex: 0 0 auto;
   min-height: 0;
