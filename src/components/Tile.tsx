@@ -160,6 +160,7 @@ export function Tile({ tile, isActive, sortOrder, entranceState }: TileProps) {
     <div
       className={`tile-slot tile-size-${tile.size}`}
       data-grid-order={sortOrder}
+      data-categories={tile.categories.join(" ")}
       data-active={isActive}
       data-entrance={entranceState || undefined}
       inert={!isActive || undefined}

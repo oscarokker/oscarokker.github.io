@@ -27,6 +27,7 @@ export const CASE_STUDY_SNAPSHOT_KEY = "case-study-snapshot";
 export const CASE_STUDY_FROM_GRID_KEY = "case-study-from-grid";
 export const CASE_STUDY_PENDING_COLLAPSE_KEY = "case-study-pending-collapse";
 export const CASE_STUDY_PENDING_OPEN_KEY = "case-study-pending-open";
+export const CASE_STUDY_HOME_SCROLL_KEY = "case-study-home-scroll";
 
 /**
  * Blocking <head> script so the destination document's first paint is already

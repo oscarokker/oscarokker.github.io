@@ -873,6 +873,51 @@ html[data-device="mobile"] .tile-card[data-active="false"] {
   pointer-events: none;
 }
 
+/* First paint for /?filter=… before React hydrates. The boot script sets
+   html[data-portfolio-filter]; static HTML still renders every tile
+   data-active="true". No-JS never sets the attribute, so all tiles show.
+   Visuals match the post-hydration filter: greyed on desktop, removed on mobile. */
+html[data-portfolio-filter="work"] .tile-slot:not([data-categories~="work"]),
+html[data-portfolio-filter="about"] .tile-slot:not([data-categories~="about"]),
+html[data-portfolio-filter="side-quests"] .tile-slot:not([data-categories~="side-quests"]) {
+  pointer-events: none;
+}
+
+html[data-portfolio-filter="work"] .tile-slot:not([data-categories~="work"]) > .tile-card,
+html[data-portfolio-filter="about"] .tile-slot:not([data-categories~="about"]) > .tile-card,
+html[data-portfolio-filter="side-quests"] .tile-slot:not([data-categories~="side-quests"]) > .tile-card {
+  opacity: var(--color-tile-inactive-opacity);
+  filter: grayscale(var(--color-tile-inactive-grayscale));
+  pointer-events: none;
+}
+
+html[data-device="mobile"][data-portfolio-filter="work"] .tile-slot:not([data-categories~="work"]),
+html[data-device="mobile"][data-portfolio-filter="about"] .tile-slot:not([data-categories~="about"]),
+html[data-device="mobile"][data-portfolio-filter="side-quests"] .tile-slot:not([data-categories~="side-quests"]) {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  html[data-portfolio-filter="work"] .tile-slot:not([data-categories~="work"]),
+  html[data-portfolio-filter="about"] .tile-slot:not([data-categories~="about"]),
+  html[data-portfolio-filter="side-quests"] .tile-slot:not([data-categories~="side-quests"]) {
+    display: none;
+  }
+}
+
+html[data-portfolio-filter="work"] .site-nav-filters .nav-pill-button[data-active="true"],
+html[data-portfolio-filter="about"] .site-nav-filters .nav-pill-button[data-active="true"],
+html[data-portfolio-filter="side-quests"] .site-nav-filters .nav-pill-button[data-active="true"] {
+  color: var(--color-text-secondary);
+}
+
+html[data-portfolio-filter="work"] .site-nav-filters .nav-pill-button[data-filter="work"],
+html[data-portfolio-filter="about"] .site-nav-filters .nav-pill-button[data-filter="about"],
+html[data-portfolio-filter="side-quests"] .site-nav-filters .nav-pill-button[data-filter="side-quests"] {
+  color: var(--color-text-primary);
+  background: var(--color-bg-nav-active);
+}
+
 .tile-card[data-active="true"]:hover {
   transform: translateY(-4px);
   box-shadow: var(--shadow-tile-hover);
@@ -1828,11 +1873,17 @@ html[data-device="mobile"] .site-nav-filters {
     text-overflow: ellipsis;
   }
 
+  .nav-pill.case-study-back,
   .nav-pill.case-study-toggle {
     width: max-content;
     gap: 8px;
   }
 
+  .nav-pill.case-study-toggle {
+    top: var(--case-study-pill-top, calc(var(--page-padding) + 40px + 12px));
+  }
+
+  .nav-pill.case-study-back .nav-pill-button,
   .nav-pill.case-study-toggle .nav-pill-button {
     flex: 0 0 auto;
     min-height: 0;
@@ -1840,6 +1891,13 @@ html[data-device="mobile"] .site-nav-filters {
     overflow: visible;
     text-overflow: unset;
     font-size: var(--text-body-sm-size);
+  }
+
+  /* Same clearance as html[data-device="mobile"]:has(.case-study-toggle)
+     when the device attribute is missing on a narrow viewport. */
+  html:has(.case-study-toggle) {
+    --case-study-pill-top: calc(var(--page-padding) + 40px + 12px);
+    --case-study-scroll-clearance: calc(var(--case-study-pill-top) + 40px + 20px);
   }
 
   /* Entrance: no Y on bottom filters */
@@ -3128,6 +3186,8 @@ html[data-device="mobile"] .cv-tile-logo {
   z-index: 1250;
   overflow-y: auto;
   background: var(--color-bg);
+  /* This layer is the scrollport for in-document case studies. */
+  scroll-padding-top: var(--case-study-scroll-clearance, 120px);
 }
 
 /* First paint of a morph navigation: hide destination until React covering is up. */
@@ -3196,6 +3256,31 @@ html[data-theme="dark"][data-case-study-boot="cover"] body::before {
 
 /* ─── Case study page ────────────────────────────────────────────── */
 
+/* Case studies have no site header. The sticky chrome row is the 40px
+   Back to portfolio / Close controls at --page-padding.
+   Desktop/tablet: pill top 60px (20px padding + 40px control). Scroll
+   clearance 120px = 60px + 40px pill + 20px so a heading never sits under
+   the pill or its shadow.
+   Mobile (--page-padding 16px): pill top 68px = 16 + 40 + 12px gap.
+   Scroll clearance 128px = 68 + 40px pill + 20px air.
+   Keep these on <html> so both the document scroller and descendants see
+   the same tokens. scroll-padding on .case-study-page alone does not
+   affect either scrollport. */
+html:has(.case-study-toggle) {
+  --case-study-pill-top: 60px;
+  --case-study-scroll-clearance: 120px;
+  /* Solid through the bottom of the 40px reading pill, then a short fade.
+     Mobile overrides --case-study-pill-top, so the solid edge follows it. */
+  --case-study-scrim-solid: calc(var(--case-study-pill-top) + 40px);
+  --case-study-scrim-fade: 32px;
+  scroll-padding-top: var(--case-study-scroll-clearance);
+}
+
+html[data-device="mobile"]:has(.case-study-toggle) {
+  --case-study-pill-top: calc(var(--page-padding) + 40px + 12px);
+  --case-study-scroll-clearance: calc(var(--case-study-pill-top) + 40px + 20px);
+}
+
 .case-study-page {
   position: relative;
   isolation: isolate;
@@ -3204,7 +3289,7 @@ html[data-theme="dark"][data-case-study-boot="cover"] body::before {
   background-color: var(--color-bg);
   padding: var(--page-padding) var(--page-padding) 128px;
   font-family: var(--font-sans), system-ui, sans-serif;
-  scroll-padding-top: 120px;
+  scroll-padding-top: var(--case-study-scroll-clearance, 120px);
 }
 
 .case-study-ripple-host {
@@ -3225,6 +3310,25 @@ html[data-theme="dark"][data-case-study-boot="cover"] body::before {
   flex-direction: column;
   align-items: stretch;
   gap: var(--case-study-stack-gap);
+}
+
+/* Fixed canvas scrim behind the top-row controls and the reading pill.
+   The pill (z-index 40) and the Back / Close slot stay above it. No blur. */
+.case-study-page-inner::before {
+  content: "";
+  position: fixed;
+  z-index: 2;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: calc(var(--case-study-scrim-solid, 100px) + var(--case-study-scrim-fade, 32px));
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    var(--color-bg) 0,
+    var(--color-bg) var(--case-study-scrim-solid, 100px),
+    rgb(from var(--color-bg) r g b / 0) 100%
+  );
 }
 
 .case-study-page[data-from-morph="true"] .case-study-page-inner,
@@ -3268,7 +3372,9 @@ html[data-theme="dark"][data-case-study-boot="cover"] body::before {
   top: var(--page-padding);
   z-index: 40;
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
   pointer-events: none;
 }
 
@@ -3293,10 +3399,65 @@ html[data-theme="dark"][data-case-study-boot="cover"] body::before {
   outline-offset: 2px;
 }
 
+.nav-pill.case-study-back {
+  pointer-events: auto;
+  width: max-content;
+  max-width: calc(100% - 52px);
+  height: 40px;
+  flex: 0 0 auto;
+  gap: 0;
+  text-decoration: none;
+  color: inherit;
+}
+
+.nav-pill.case-study-back:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.nav-pill.case-study-back .nav-pill-button {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  height: 100%;
+  min-height: 0;
+  padding: 0 16px;
+  overflow: visible;
+  text-overflow: unset;
+  font-size: var(--text-body-sm-size);
+  cursor: pointer;
+}
+
+/* Once the article scrolls, these stick over body copy. Frost them like the
+   expand scrim: 20px blur (--expanded-backdrop-blur) on a theme-tinted
+   semi-opaque surface, plus the chrome shadow. A literal length — a var()
+   inside blur() is emitted as -webkit-backdrop-filter only, which does not
+   override the pill's unprefixed blur(16px). Solid fill where backdrop-filter
+   is unsupported so glyphs cannot stay sharp through the control. */
+.nav-pill.case-study-back,
+.intro-chrome-icon-btn.case-study-collapse {
+  background-color: color-mix(in srgb, var(--color-bg-elevated) 88%, transparent);
+  backdrop-filter: blur(20px);
+  box-shadow: var(--shadow-chrome);
+}
+
+/* Native button drawing drops backdrop-filter and paints a sharp control. */
+.intro-chrome-icon-btn.case-study-collapse {
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .nav-pill.case-study-back,
+  .intro-chrome-icon-btn.case-study-collapse {
+    background-color: var(--color-chrome-bg);
+  }
+}
+
 .nav-pill.case-study-toggle {
   align-self: center;
   position: sticky;
-  top: 60px;
+  top: var(--case-study-pill-top, 60px);
   z-index: 40;
   flex-shrink: 0;
   width: max-content;
@@ -3323,11 +3484,30 @@ html[data-theme="dark"][data-case-study-boot="cover"] body::before {
   background: transparent;
 }
 
+/* Summary chosen in the URL, before React hydrates and measures the thumb.
+   The static HTML always marks Detailed active; this restyles the chips
+   and hides detailed-only blocks so the first paint matches the param. */
+html[data-reading="summary"] .case-study-page:not([data-reading-ready="true"]) .nav-pill-button[data-reading="detailed"] {
+  color: var(--color-text-secondary);
+}
+
+html[data-reading="summary"] .case-study-page:not([data-reading-ready="true"]) .nav-pill-button[data-reading="summary"] {
+  color: var(--color-text-primary);
+  background: var(--color-bg-nav-active);
+}
+
+html[data-reading="summary"] .case-study-page:not([data-reading-ready="true"]) [data-detailed="true"],
+html[data-reading="summary"] .case-study-page:not([data-reading-ready="true"]) .reading-fold:has(> .reading-fold-clip > [data-detailed="true"]) {
+  display: none;
+}
+
+html[data-device="mobile"] .nav-pill.case-study-back,
 html[data-device="mobile"] .nav-pill.case-study-toggle {
   width: max-content;
   gap: 8px;
 }
 
+html[data-device="mobile"] .nav-pill.case-study-back .nav-pill-button,
 html[data-device="mobile"] .nav-pill.case-study-toggle .nav-pill-button {
   flex: 0 0 auto;
   min-height: 0;

@@ -7,6 +7,7 @@ import {
   useId,
   useLayoutEffect,
   useState,
+  type MouseEvent as ReactMouseEvent,
   type ReactElement,
   type ReactNode,
 } from "react";
@@ -19,18 +20,46 @@ import type { CaseStudy, CaseStudyBlockVariant } from "@/data/case-studies";
 import { useSlidingThumb } from "@/hooks/useSlidingThumb";
 import { accentClass } from "@/lib/accent";
 import { withBasePath } from "@/lib/base-path";
+import { CASE_STUDY_FROM_GRID_KEY } from "@/lib/case-study-href";
+import {
+  readReadingMode,
+  writeReadingMode,
+  type ReadingMode,
+} from "@/lib/reading-mode";
 
 interface CaseStudyArticleProps {
   study: CaseStudy;
 }
-
-type ReadingMode = "detailed" | "summary";
 
 /** Keep in sync with `--transition-reading` in globals.css */
 const READING_FOLD_MS = 420;
 
 function detailedAttr(variant?: CaseStudyBlockVariant) {
   return variant === "detailed" ? true : undefined;
+}
+
+function cameFromHomepage(slug: string): boolean {
+  try {
+    return sessionStorage.getItem(CASE_STUDY_FROM_GRID_KEY) === slug;
+  } catch {
+    return false;
+  }
+}
+
+function isPlainActivation(event: {
+  button: number;
+  metaKey: boolean;
+  ctrlKey: boolean;
+  shiftKey: boolean;
+  altKey: boolean;
+}) {
+  return (
+    event.button === 0 &&
+    !event.metaKey &&
+    !event.ctrlKey &&
+    !event.shiftKey &&
+    !event.altKey
+  );
 }
 
 function maybeReadingFold(
@@ -99,8 +128,20 @@ export function CaseStudyArticle({ study }: CaseStudyArticleProps) {
     () => phase === "idle" && snapshot?.slug !== study.slug,
   );
   const [mode, setMode] = useState<ReadingMode>("detailed");
+  const [readingReady, setReadingReady] = useState(false);
   const { containerRef: toggleRef, thumb, thumbReady } = useSlidingThumb(mode);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+
+  useLayoutEffect(() => {
+    const next = readReadingMode();
+    document.documentElement.setAttribute("data-reading", next);
+    if (mode !== next) {
+      setMode(next);
+      return;
+    }
+    writeReadingMode(next);
+    setReadingReady(true);
+  }, [mode]);
 
   useLayoutEffect(() => {
     const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -144,8 +185,20 @@ export function CaseStudyArticle({ study }: CaseStudyArticleProps) {
   }, [closeToGrid]);
 
   const handleMode = useCallback((next: ReadingMode) => {
+    document.documentElement.setAttribute("data-reading", next);
+    writeReadingMode(next);
     setMode(next);
   }, []);
+
+  const handleBackToPortfolio = useCallback(
+    (event: ReactMouseEvent<HTMLAnchorElement>) => {
+      if (!isPlainActivation(event)) return;
+      if (!cameFromHomepage(study.slug)) return;
+      event.preventDefault();
+      closeToGrid();
+    },
+    [closeToGrid, study.slug],
+  );
 
   return (
     <article
@@ -153,9 +206,19 @@ export function CaseStudyArticle({ study }: CaseStudyArticleProps) {
       data-from-morph={fromMorph ? "true" : "false"}
       data-revealed={revealed ? "true" : "false"}
       data-reading-mode={mode}
+      data-reading-ready={readingReady ? "true" : "false"}
       aria-labelledby={titleId}
     >
       <div className="case-study-collapse-slot">
+        <a
+          href={withBasePath("/")}
+          className="nav-pill case-study-back"
+          onClick={handleBackToPortfolio}
+        >
+          <span className="nav-pill-button" data-active="true">
+            Back to portfolio
+          </span>
+        </a>
         <button
           type="button"
           className="intro-chrome-icon-btn case-study-collapse"
@@ -194,6 +257,7 @@ export function CaseStudyArticle({ study }: CaseStudyArticleProps) {
             role="tab"
             aria-selected={mode === "detailed"}
             aria-controls={bodyId}
+            data-reading="detailed"
             data-active={mode === "detailed"}
             onPointerDown={(event) => {
               if (event.button !== 0 || mode === "detailed") return;
@@ -217,6 +281,7 @@ export function CaseStudyArticle({ study }: CaseStudyArticleProps) {
             role="tab"
             aria-selected={mode === "summary"}
             aria-controls={bodyId}
+            data-reading="summary"
             data-active={mode === "summary"}
             onPointerDown={(event) => {
               if (event.button !== 0 || mode === "summary") return;

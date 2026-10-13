@@ -60,6 +60,7 @@ function FilterButton({
     <button
       type="button"
       className="nav-pill-button"
+      data-filter={filterId}
       data-active={isActive}
       aria-pressed={isActive}
       {...pointerHandlers}

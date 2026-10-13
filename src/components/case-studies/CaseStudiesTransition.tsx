@@ -16,6 +16,7 @@ import { usePathname } from "next/navigation";
 import { useCursorLabelOptional } from "@/hooks/useCursorLabel";
 import {
   CASE_STUDY_FROM_GRID_KEY,
+  CASE_STUDY_HOME_SCROLL_KEY,
   CASE_STUDY_PENDING_COLLAPSE_KEY,
   CASE_STUDY_PENDING_OPEN_KEY,
   CASE_STUDY_SNAPSHOT_KEY,
@@ -188,6 +189,33 @@ function clearBootCover() {
   document.documentElement.removeAttribute("data-case-study-boot");
 }
 
+function rememberHomeScroll() {
+  try {
+    sessionStorage.setItem(CASE_STUDY_HOME_SCROLL_KEY, String(window.scrollY));
+  } catch {
+    // ignore quota / privacy mode
+  }
+}
+
+function restoreHomeScroll() {
+  let top: number | null = null;
+  try {
+    const raw = sessionStorage.getItem(CASE_STUDY_HOME_SCROLL_KEY);
+    sessionStorage.removeItem(CASE_STUDY_HOME_SCROLL_KEY);
+    if (raw != null) {
+      const parsed = Number(raw);
+      if (Number.isFinite(parsed)) top = parsed;
+    }
+  } catch {
+    top = null;
+  }
+  if (top == null) return;
+  const y = top;
+  const apply = () => window.scrollTo({ top: y, behavior: "instant" });
+  apply();
+  window.requestAnimationFrame(apply);
+}
+
 export function viewportRect(): MorphRect {
   return {
     top: 0,
@@ -316,6 +344,7 @@ export function CaseStudyTransitionProvider({
 
   const openFromTile = useCallback(
     (next: CaseStudySnapshot) => {
+      rememberHomeScroll();
       lastSnapshotRef.current = next;
       pendingCollapseRef.current = false;
       didAssignOpenRef.current = false;
@@ -442,6 +471,7 @@ export function CaseStudyTransitionProvider({
     setSnapshot(null);
     setLabelSuppressed?.(false);
     clearBootCover();
+    restoreHomeScroll();
   }, [hideTile, setLabelSuppressed]);
 
   const closeToGrid = useCallback(() => {
