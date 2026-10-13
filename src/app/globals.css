@@ -3269,6 +3269,10 @@ html[data-theme="dark"][data-case-study-boot="cover"] body::before {
 html:has(.case-study-toggle) {
   --case-study-pill-top: 60px;
   --case-study-scroll-clearance: 120px;
+  /* Solid through the bottom of the 40px reading pill, then a short fade.
+     Mobile overrides --case-study-pill-top, so the solid edge follows it. */
+  --case-study-scrim-solid: calc(var(--case-study-pill-top) + 40px);
+  --case-study-scrim-fade: 32px;
   scroll-padding-top: var(--case-study-scroll-clearance);
 }
 
@@ -3306,6 +3310,25 @@ html[data-device="mobile"]:has(.case-study-toggle) {
   flex-direction: column;
   align-items: stretch;
   gap: var(--case-study-stack-gap);
+}
+
+/* Fixed canvas scrim behind the top-row controls and the reading pill.
+   The pill (z-index 40) and the Back / Close slot stay above it. No blur. */
+.case-study-page-inner::before {
+  content: "";
+  position: fixed;
+  z-index: 2;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: calc(var(--case-study-scrim-solid, 100px) + var(--case-study-scrim-fade, 32px));
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    var(--color-bg) 0,
+    var(--color-bg) var(--case-study-scrim-solid, 100px),
+    rgb(from var(--color-bg) r g b / 0) 100%
+  );
 }
 
 .case-study-page[data-from-morph="true"] .case-study-page-inner,
