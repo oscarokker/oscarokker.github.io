@@ -3405,6 +3405,32 @@ html[data-device="mobile"]:has(.case-study-toggle) {
   cursor: pointer;
 }
 
+/* Once the article scrolls, these stick over body copy. Frost them like the
+   expand scrim: 20px blur (--expanded-backdrop-blur) on a theme-tinted
+   semi-opaque surface, plus the chrome shadow. A literal length — a var()
+   inside blur() is emitted as -webkit-backdrop-filter only, which does not
+   override the pill's unprefixed blur(16px). Solid fill where backdrop-filter
+   is unsupported so glyphs cannot stay sharp through the control. */
+.nav-pill.case-study-back,
+.intro-chrome-icon-btn.case-study-collapse {
+  background-color: color-mix(in srgb, var(--color-bg-elevated) 88%, transparent);
+  backdrop-filter: blur(20px);
+  box-shadow: var(--shadow-chrome);
+}
+
+/* Native button drawing drops backdrop-filter and paints a sharp control. */
+.intro-chrome-icon-btn.case-study-collapse {
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .nav-pill.case-study-back,
+  .intro-chrome-icon-btn.case-study-collapse {
+    background-color: var(--color-chrome-bg);
+  }
+}
+
 .nav-pill.case-study-toggle {
   align-self: center;
   position: sticky;
