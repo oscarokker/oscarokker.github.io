@@ -2046,6 +2046,11 @@ html[data-device="mobile"] .nav-pill-button {
   color: var(--color-text-primary);
 }
 
+.nav-pill-button:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .nav-pill[data-thumb-ready="true"] .nav-pill-thumb,
   .case-study-toggle[data-thumb-ready="true"] .case-study-toggle-thumb,
