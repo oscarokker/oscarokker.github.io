@@ -78,6 +78,7 @@ function ShellChrome({ children }: { children: React.ReactNode }) {
   );
 
   const onFilterChange = useCallback((filter: FilterCategory) => {
+    const previous = filterFromLocation();
     rememberPortfolioFilter(filter);
     window.history.replaceState(
       null,
@@ -85,6 +86,12 @@ function ShellChrome({ children }: { children: React.ReactNode }) {
       withBasePath(homeHrefForFilter(filter)),
     );
     window.dispatchEvent(new PopStateEvent("popstate"));
+    if (filter === previous) return;
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    window.scrollTo({
+      top: 0,
+      behavior: reduceMotion ? "instant" : "smooth",
+    });
   }, []);
 
   return (

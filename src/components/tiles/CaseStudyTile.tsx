@@ -25,6 +25,7 @@ interface CaseStudyTileProps {
   coverSrc?: string;
   coverVideoSrc?: string;
   coverPosterSrc?: string;
+  cursorLabel?: string;
 }
 
 function isModifiedClick(event: {
