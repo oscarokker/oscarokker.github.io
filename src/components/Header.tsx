@@ -191,6 +191,8 @@ export function Header({ visible = true, activeFilter, onFilterChange }: HeaderP
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
               className="header-logo block"
+              aria-hidden="true"
+              focusable="false"
               aria-label="Oscar Rode logo"
             >
               <path d="M3.5 32C9.5 30 29.3425 22.5 42.58 0L24.62 41.5C26.7325 32 25.2325 32.5 3.5 32Z" fill="currentColor"/>
