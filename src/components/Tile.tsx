@@ -52,7 +52,7 @@ function getCursorMeta(tile: TileData): CursorMeta | null {
       };
     case "case-study":
       return {
-        label: tile.props.title,
+        label: tile.props.cursorLabel ?? tile.props.title,
         accent: tile.props.accent,
       };
     case "music":

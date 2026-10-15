@@ -48,6 +48,7 @@ export const tiles: TileData[] = [
       coverSrc: "/case-studies/cheapvoyage/beat7-8-poster.jpg",
       coverVideoSrc: "/case-studies/cheapvoyage/beat7-8-demo.mp4",
       coverPosterSrc: "/case-studies/cheapvoyage/beat7-8-poster.jpg",
+      cursorLabel: "Open CheapVoyage",
     },
   },
   {
@@ -94,6 +95,7 @@ export const tiles: TileData[] = [
       slug: "spotify-podcasts",
       accent: "violet",
       coverSrc: "/case-studies/spotify-source-insights-cover.webp",
+      cursorLabel: "Open Spotify Podcasts",
     },
   },
   {
