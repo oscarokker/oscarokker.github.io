@@ -1674,8 +1674,12 @@ html[data-device="mobile"] .music-morph-card[data-mini="true"] {
   transition: translate var(--transition-fast);
 }
 
-/* Chrome entrance animation (first load only) — per-child tile-style */
-.site-nav-top:not([data-entrance="done"]),
+/* Chrome entrance animation (first load only) — per-child tile-style.
+   Motion is on the logo and theme slot, not .site-nav-top: filters sit
+   between them in the DOM, and a transform/filter on the parent would
+   trap their absolute (desktop/tablet) and fixed (mobile) positioning. */
+.site-nav-top:not([data-entrance="done"]) > .header-logo-link,
+.site-nav-top:not([data-entrance="done"]) > .site-nav-theme,
 .site-nav-filters:not([data-entrance="done"]) {
   opacity: 0;
   transform: translateY(-20px);
@@ -1687,8 +1691,10 @@ html[data-device="mobile"] .music-morph-card[data-mini="true"] {
     filter 550ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.site-nav-top[data-entrance="visible"],
-.site-nav-top[data-entrance="done"],
+.site-nav-top[data-entrance="visible"] > .header-logo-link,
+.site-nav-top[data-entrance="visible"] > .site-nav-theme,
+.site-nav-top[data-entrance="done"] > .header-logo-link,
+.site-nav-top[data-entrance="done"] > .site-nav-theme,
 .site-nav-filters[data-entrance="visible"],
 .site-nav-filters[data-entrance="done"] {
   opacity: 1;
@@ -1696,7 +1702,8 @@ html[data-device="mobile"] .music-morph-card[data-mini="true"] {
   filter: blur(0);
 }
 
-.site-nav-top[data-entrance="done"],
+.site-nav-top[data-entrance="done"] > .header-logo-link,
+.site-nav-top[data-entrance="done"] > .site-nav-theme,
 .site-nav-filters[data-entrance="done"] {
   filter: none;
   will-change: auto;
@@ -1711,9 +1718,12 @@ html[data-device="mobile"] .site-nav-filters[data-entrance="done"] {
 
 /* Skip animation for reduced motion - show immediately */
 @media (prefers-reduced-motion: reduce) {
-  .site-nav-top:not([data-entrance="done"]),
-  .site-nav-top[data-entrance="visible"],
-  .site-nav-top[data-entrance="done"],
+  .site-nav-top:not([data-entrance="done"]) > .header-logo-link,
+  .site-nav-top:not([data-entrance="done"]) > .site-nav-theme,
+  .site-nav-top[data-entrance="visible"] > .header-logo-link,
+  .site-nav-top[data-entrance="visible"] > .site-nav-theme,
+  .site-nav-top[data-entrance="done"] > .header-logo-link,
+  .site-nav-top[data-entrance="done"] > .site-nav-theme,
   .site-nav-filters:not([data-entrance="done"]),
   .site-nav-filters[data-entrance="visible"],
   .site-nav-filters[data-entrance="done"] {
@@ -1737,7 +1747,8 @@ html[data-device="mobile"] .site-nav-filters {
 }
 
 /* Mobile: hide top only; filters stay visible (persistent dock per Kern design lock) */
-html[data-device="mobile"] .site-nav[data-visible="false"] .site-nav-top {
+html[data-device="mobile"] .site-nav[data-visible="false"] .site-nav-top > .header-logo-link,
+html[data-device="mobile"] .site-nav[data-visible="false"] .site-nav-top > .site-nav-theme {
   translate: 0 calc(-100% - 24px);
   transition: translate var(--transition-base);
 }
@@ -1761,12 +1772,15 @@ html[data-device="mobile"] .site-nav[data-visible="false"] .site-nav-top {
   min-height: 40px;
 }
 
-/* Desktop/tablet: hide top bar and filters by sliding up */
-.site-nav[data-visible="true"] .site-nav-top {
+/* Desktop/tablet: hide logo and theme by sliding up. The theme slot, not the
+   button, takes the translate so the button can keep its own hover lift. */
+.site-nav[data-visible="true"] .site-nav-top > .header-logo-link,
+.site-nav[data-visible="true"] .site-nav-top > .site-nav-theme {
   translate: 0 0;
 }
 
-.site-nav[data-visible="false"] .site-nav-top {
+.site-nav[data-visible="false"] .site-nav-top > .header-logo-link,
+.site-nav[data-visible="false"] .site-nav-top > .site-nav-theme {
   translate: 0 calc(-100% - 24px);
   transition: translate var(--transition-base);
 }
@@ -1789,6 +1803,11 @@ html[data-device="tablet"] .site-nav[data-visible="false"] .site-nav-filters {
   justify-content: space-between;
   gap: 16px;
   margin: max(24px, env(safe-area-inset-top)) max(48px, env(safe-area-inset-right)) 24px max(48px, env(safe-area-inset-left));
+}
+
+.site-nav-theme {
+  display: inline-flex;
+  flex-shrink: 0;
 }
 
 .site-nav-filters {
