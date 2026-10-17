@@ -3,7 +3,7 @@
 import { useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore } from "react";
 import type { FilterCategory } from "@/lib/types";
 import { tiles } from "@/data/tiles";
-import { AuthorPanel, AuthorTile } from "@/components/AuthorTile";
+import { AuthorTile } from "@/components/AuthorTile";
 import { Tile, tileMatchesFilter } from "@/components/Tile";
 import { useDevice } from "@/hooks/useDevice";
 import { tileGridOrder, useTileGridFlip } from "@/hooks/useTileGridFlip";
@@ -133,7 +133,6 @@ export function Portfolio({
             entranceState={entranceStates.author ?? null}
           />
         </div>
-        <AuthorPanel />
       </main>
     </>
   );

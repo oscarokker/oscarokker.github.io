@@ -4171,7 +4171,6 @@ html[data-device="mobile"] .case-study-cover-stage {
   box-shadow: none;
 }
 
-.author-tile:focus-visible,
 .author-pause:focus-visible {
   outline: 2px solid var(--color-highlight);
   outline-offset: 3px;
@@ -4179,6 +4178,7 @@ html[data-device="mobile"] .case-study-cover-stage {
 
 .author-line {
   display: block;
+  margin: 0;
   padding-right: 34px;
   font-family: var(--font-satoshi), system-ui, sans-serif;
   font-weight: 700;

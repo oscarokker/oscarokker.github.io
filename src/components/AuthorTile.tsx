@@ -92,67 +92,57 @@ export function AuthorTile({
       data-entrance={entranceState || undefined}
       inert={!active || undefined}
     >
-      <button
-        type="button"
-        className="author-tile"
-        aria-expanded="false"
-        aria-controls="author-panel"
-        aria-label={AUTHOR_LABEL}
-      >
-        <span className="author-face" data-continuous-corners="">
-        <span className="author-line" aria-hidden="true">
-          {AUTHOR_LABEL.replace("Grok Bot", "Grok\u00A0Bot")}
-        </span>
-        <svg
-          className="author-ul"
-          viewBox="0 0 160 14"
-          preserveAspectRatio="none"
-          aria-hidden="true"
-          focusable="false"
-        >
-          <path d="M3 9 C 30 3, 60 12, 90 7 S 140 4, 157 8" />
-        </svg>
-        <div className="author-bots" aria-hidden="true">
-          {BOTS.map((bot) => (
-            <svg
-              key={bot.id}
-              className={`author-bot${bot.heightClass ? ` ${bot.heightClass}` : ""}`}
-              viewBox={bot.viewBox}
-              style={
-                {
-                  "--dur": bot.dur,
-                  "--blink": bot.blink,
-                } as CSSProperties
-              }
-              focusable="false"
-            >
-              <path
-                transform={bot.transform}
-                fill={bot.fill}
-                fillRule="evenodd"
-                d={bot.body}
-              />
-              <g transform={bot.transform}>
-                <path className="lid" fill={bot.fill} d={bot.lid} />
-              </g>
-            </svg>
-          ))}
+      <div className="author-tile">
+        <div className="author-face" data-continuous-corners="">
+          <p className="author-line">
+            {AUTHOR_LABEL.replace("Grok Bot", "Grok\u00A0Bot")}
+          </p>
+          <svg
+            className="author-ul"
+            viewBox="0 0 160 14"
+            preserveAspectRatio="none"
+            aria-hidden="true"
+            focusable="false"
+          >
+            <path d="M3 9 C 30 3, 60 12, 90 7 S 140 4, 157 8" />
+          </svg>
+          <div className="author-bots" aria-hidden="true">
+            {BOTS.map((bot) => (
+              <svg
+                key={bot.id}
+                className={`author-bot${bot.heightClass ? ` ${bot.heightClass}` : ""}`}
+                viewBox={bot.viewBox}
+                style={
+                  {
+                    "--dur": bot.dur,
+                    "--blink": bot.blink,
+                  } as CSSProperties
+                }
+                focusable="false"
+              >
+                <path
+                  transform={bot.transform}
+                  fill={bot.fill}
+                  fillRule="evenodd"
+                  d={bot.body}
+                />
+                <g transform={bot.transform}>
+                  <path className="lid" fill={bot.fill} d={bot.lid} />
+                </g>
+              </svg>
+            ))}
+          </div>
         </div>
-        </span>
-      </button>
+      </div>
       <button
         type="button"
         className="author-pause"
         aria-pressed={userPaused}
-        aria-label={userPaused ? "Play animation" : "Pause animation"}
+        aria-label="Pause animation"
         onClick={() => setUserPaused((paused) => !paused)}
       >
         {userPaused ? <PlayIcon /> : <PauseIcon />}
       </button>
     </div>
   );
-}
-
-export function AuthorPanel() {
-  return <div id="author-panel" hidden />;
 }
