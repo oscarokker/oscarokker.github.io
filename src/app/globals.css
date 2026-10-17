@@ -4190,7 +4190,7 @@ html[data-device="mobile"] .case-study-cover-stage {
 
 .author-ul {
   display: block;
-  width: 70%;
+  width: 85%;
   height: 10px;
   margin-top: 5px;
   overflow: visible;
@@ -4367,6 +4367,12 @@ html[data-device="mobile"] .author-line {
 
 html[data-device="mobile"] .author-ul {
   width: 52%;
+}
+
+@media (max-width: 364px) {
+  .author-ul {
+    min-width: 214px;
+  }
 }
 
 html[data-device="mobile"] .author-bots {
