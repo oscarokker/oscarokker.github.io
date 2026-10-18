@@ -13,23 +13,28 @@ export const tiles: TileData[] = [
     props: {
       name: "Oscar Rode",
       bio: "UI/UX designer, now a Test Consultant at\u00a0Netcompany.",
+      expandedBio:
+        "I'm a UI/UX designer who turns design theory into interfaces that ship. Right now I'm a Test Consultant at Netcompany.",
       paragraphs: [
-        "My name is Oscar Rode, a UI/UX designer based in Copenhagen. I build systems that translate research into design into something development can ship.",
-        "I hold a master’s and bachelor’s in Digital Design & Interactive Technologies from the IT University of Copenhagen, which trained me to tackle wicked problems through systems thinking. I've always been into technology, but only discovered UX in high school while studying the architecture and engineering of the Sydney Opera House.",
-        "I co-founded CheapVoyage, an AI-driven travel planner for digital nomads and backpackers, and turned complexity into clarity under early-stage startup pressure. What energizes me most is designing human-AI interfaces that genuinely improve the quality of people's work and everyday life.",
-        "I love working across disciplines and within constraints (limited resources, tight deadlines). Simplifying a complex problem to its core, and building a simple solution that holds.",
+        "I'm Oscar Rode, a UI/UX designer based in Copenhagen. Since October 2026 I've worked as a Test Consultant at Netcompany, checking quality on real systems that people rely on. It's teaching me where products break, and what it takes for them to hold up.",
+        "Long term, I want to lead design in early-stage product teams, setting a clear direction while the product is still finding its shape. I'm fascinated by AI and automation and bring both into my design work. I co-founded CheapVoyage and hold a cand.it in Digital Design and Interactive Technologies from the IT University of Copenhagen.",
       ],
       paragraphMarks: [
-        { phrase: "translate research into design into something development can ship" },
         {
-          phrase: "IT University of Copenhagen",
-          href: "https://en.itu.dk/",
-          cursorLabel: "Visit the IT University of Copenhagen",
+          phrase: "Netcompany",
+          href: "https://www.netcompany.com",
+          cursorLabel: "Visit Netcompany",
+          className: "netcompany-link",
         },
         {
           phrase: "CheapVoyage",
           href: "https://cheap.voyage/",
           cursorLabel: "Visit CheapVoyage",
+        },
+        {
+          phrase: "IT University of Copenhagen",
+          href: "https://en.itu.dk/",
+          cursorLabel: "Visit the IT University of Copenhagen",
         },
       ],
       imageSrc: "/oscar-rode-profile-picture.png",

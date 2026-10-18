@@ -26,6 +26,8 @@ export interface IntroParagraphMark {
   phrase: string;
   href?: string;
   cursorLabel?: string;
+  /** When set, this class replaces the default emphasis treatment. */
+  className?: string;
 }
 
 export interface IntroTileData extends BaseTileData {
@@ -33,6 +35,8 @@ export interface IntroTileData extends BaseTileData {
   props: {
     name: string;
     bio: string;
+    /** Line under the avatar in the expanded about panel. */
+    expandedBio?: string;
     paragraphs: string[];
     paragraphMarks?: IntroParagraphMark[];
     imageSrc?: string;
