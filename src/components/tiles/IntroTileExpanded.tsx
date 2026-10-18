@@ -34,7 +34,7 @@ export interface IntroSourceRect {
 }
 
 const NETCOMPANY_LABEL = "Netcompany";
-const NETCOMPANY_HREF = "https://www.netcompany.com";
+export const NETCOMPANY_HREF = "https://www.netcompany.com";
 
 export function IntroSupportLine({
   bio,

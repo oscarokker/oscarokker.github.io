@@ -1,3 +1,4 @@
+import { NETCOMPANY_HREF } from "@/components/tiles/IntroTileExpanded";
 import type { TileData } from "@/lib/types";
 
 /** One-liner on the Ghostlink tile face. The cursor label is separate. */
@@ -25,8 +26,7 @@ export const tiles: TileData[] = [
         { phrase: "translate research into design into something development can ship" },
         {
           phrase: "Netcompany",
-          href: "https://www.netcompany.com/",
-          cursorLabel: "Visit Netcompany",
+          href: NETCOMPANY_HREF,
           className: "netcompany-link",
         },
         {
