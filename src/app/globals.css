@@ -4193,6 +4193,7 @@ html[data-device="mobile"] .case-study-cover-stage {
   width: 85%;
   height: 10px;
   margin-top: 5px;
+  margin-bottom: 40px;
   overflow: visible;
 }
 
@@ -4221,7 +4222,8 @@ html[data-device="mobile"] .case-study-cover-stage {
   padding-left: 2px;
   height: calc(18% + 3.96px);
   gap: calc(8% + 4px);
-  flex-shrink: 0;
+  flex-shrink: 1;
+  min-height: 0;
 }
 
 .author-bot {
@@ -4322,6 +4324,13 @@ html[data-portfolio-filter="side-quests"] .author-cell > .author-pause {
   opacity: var(--color-tile-inactive-opacity);
   filter: grayscale(var(--color-tile-inactive-grayscale));
   pointer-events: none;
+}
+
+/* Five lines at 14px leave no room for the 40px gap in the narrowest tablet cell. */
+@media (min-width: 768px) and (max-width: 791px) {
+  .author-line {
+    font-size: 13px;
+  }
 }
 
 @media (max-width: 767px) {
