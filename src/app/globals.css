@@ -124,7 +124,7 @@
 @property --color-netcompany {
   syntax: "<color>";
   inherits: true;
-  initial-value: #cb302e;
+  initial-value: #41605e;
 }
 
 @property --color-tile-coral {
@@ -280,7 +280,7 @@
   --color-accent: #2d4a3e;
   --color-accent-soft: rgba(45, 74, 62, 0.12);
   --color-highlight: #2409D6;
-  --color-netcompany: #cb302e;
+  --color-netcompany: #41605e;
 
   /* Tile accent palette */
   --color-tile-coral: #e8734a;
@@ -443,7 +443,7 @@
   --color-accent: #6db89a;
   --color-accent-soft: rgba(109, 184, 154, 0.15);
   --color-highlight: #8573FF;
-  --color-netcompany: #ff6359;
+  --color-netcompany: #37aaa4;
 
   --color-tile-coral: #f09070;
   --color-tile-blue: #6a9ae8;
@@ -2404,22 +2404,37 @@ html[data-device="mobile"] .intro-tile-avatar {
 
 .netcompany-link {
   color: var(--color-netcompany);
-  text-decoration-line: underline;
-  text-decoration-thickness: 1px;
-  text-decoration-color: currentColor;
-  text-underline-offset: 0.2em;
+  font-weight: 600;
+  text-decoration: none;
+  background-image: linear-gradient(currentColor, currentColor);
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 0% 1.5px;
+  padding-bottom: 0.12em;
+  transition: background-size 180ms cubic-bezier(.2, 0, 0, 1);
   pointer-events: auto;
 }
 
-.netcompany-link:hover {
-  color: var(--color-netcompany);
-  text-decoration-thickness: 2px;
+@media (hover: hover) and (pointer: fine) {
+  .netcompany-link:hover {
+    background-size: 100% 1.5px;
+    transition-duration: 240ms;
+  }
 }
 
 .netcompany-link:focus-visible {
+  background-size: 100% 1.5px;
+  transition: none;
   outline: 2px solid var(--color-netcompany);
   outline-offset: 2px;
   border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .netcompany-link,
+  .netcompany-link:hover {
+    transition: none;
+  }
 }
 
 .intro-tile--expandable {
