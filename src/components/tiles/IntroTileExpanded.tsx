@@ -561,7 +561,7 @@ export function IntroTileExpanded({
           </div>
           <div className="intro-morph-expanded-copy">
             {expandedBio ? (
-              <p className="intro-expanded-bio text-body m-0">{expandedBio}</p>
+              <p className="intro-expanded-bio text-body m-0">{expandedBio.trim()}</p>
             ) : null}
             <div className="intro-morph-paragraphs intro-expanded-paragraphs">
               {paragraphs.map((paragraph) => (
