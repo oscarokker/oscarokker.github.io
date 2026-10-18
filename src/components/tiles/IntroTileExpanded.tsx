@@ -34,7 +34,7 @@ export interface IntroSourceRect {
 }
 
 const NETCOMPANY_LABEL = "Netcompany";
-const NETCOMPANY_HREF = "https://www.netcompany.com";
+export const NETCOMPANY_HREF = "https://www.netcompany.com";
 
 export function IntroSupportLine({
   bio,
@@ -74,6 +74,7 @@ export function IntroSupportLine({
 interface IntroTileExpandedProps {
   name: string;
   bio: string;
+  expandedBio?: string;
   paragraphs: string[];
   paragraphMarks?: IntroParagraphMark[];
   imageSrc?: string;
@@ -172,7 +173,7 @@ function renderMarkedParagraph(
       nodes.push(text.slice(cursor, hit.start));
     }
 
-    const className = "intro-expanded-emphasis";
+    const className = hit.mark.className ?? "intro-expanded-emphasis";
     if (hit.mark.href) {
       nodes.push(
         <a
@@ -243,6 +244,7 @@ function measureExpandedTarget(card: HTMLElement): MorphRect {
 export function IntroTileExpanded({
   name,
   bio,
+  expandedBio,
   paragraphs,
   paragraphMarks = [],
   imageSrc,
@@ -558,6 +560,9 @@ export function IntroTileExpanded({
             )}
           </div>
           <div className="intro-morph-expanded-copy">
+            {expandedBio ? (
+              <p className="intro-expanded-bio text-body m-0">{expandedBio.trim()}</p>
+            ) : null}
             <div className="intro-morph-paragraphs intro-expanded-paragraphs">
               {paragraphs.map((paragraph) => (
                 <p

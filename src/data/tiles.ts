@@ -1,3 +1,4 @@
+import { NETCOMPANY_HREF } from "@/components/tiles/IntroTileExpanded";
 import type { TileData } from "@/lib/types";
 
 /** One-liner on the Ghostlink tile face. The cursor label is separate. */
@@ -13,14 +14,21 @@ export const tiles: TileData[] = [
     props: {
       name: "Oscar Rode",
       bio: "UI/UX designer, now a Test Consultant at\u00a0Netcompany.",
+      expandedBio:
+        "I'm a UI/UX designer who turns design theory into interfaces that ship.",
       paragraphs: [
-        "My name is Oscar Rode, a UI/UX designer based in Copenhagen. I build systems that translate research into design into something development can ship.",
+        "My name is Oscar Rode, a UI/UX designer based in Copenhagen. I build systems that translate research into design into something development can ship. Right now I'm a Test Consultant at Netcompany, learning where products break and what makes them hold up.",
         "I hold a master’s and bachelor’s in Digital Design & Interactive Technologies from the IT University of Copenhagen, which trained me to tackle wicked problems through systems thinking. I've always been into technology, but only discovered UX in high school while studying the architecture and engineering of the Sydney Opera House.",
         "I co-founded CheapVoyage, an AI-driven travel planner for digital nomads and backpackers, and turned complexity into clarity under early-stage startup pressure. What energizes me most is designing human-AI interfaces that genuinely improve the quality of people's work and everyday life.",
         "I love working across disciplines and within constraints (limited resources, tight deadlines). Simplifying a complex problem to its core, and building a simple solution that holds.",
       ],
       paragraphMarks: [
         { phrase: "translate research into design into something development can ship" },
+        {
+          phrase: "Netcompany",
+          href: NETCOMPANY_HREF,
+          className: "netcompany-link",
+        },
         {
           phrase: "IT University of Copenhagen",
           href: "https://en.itu.dk/",

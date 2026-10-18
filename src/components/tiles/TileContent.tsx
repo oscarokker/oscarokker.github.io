@@ -37,6 +37,7 @@ import {
 interface IntroTileProps {
   name: string;
   bio: string;
+  expandedBio?: string;
   paragraphs: string[];
   paragraphMarks?: IntroParagraphMark[];
   imageSrc?: string;
@@ -56,6 +57,7 @@ function TileChromeHint({ children }: { children: ReactNode }) {
 export function IntroTile({
   name,
   bio,
+  expandedBio,
   paragraphs,
   paragraphMarks,
   imageSrc,
@@ -130,6 +132,7 @@ export function IntroTile({
         <IntroTileExpanded
           name={name}
           bio={bio}
+          expandedBio={expandedBio}
           paragraphs={paragraphs}
           paragraphMarks={paragraphMarks}
           imageSrc={imageSrc}

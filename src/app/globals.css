@@ -2715,6 +2715,14 @@ html[data-device="mobile"] .music-player-mini-mode .music-morph-player iframe {
   color: var(--color-text-primary);
 }
 
+.intro-expanded-bio {
+  width: 100%;
+  font-size: 18px;
+  line-height: 1.6;
+  text-align: center;
+  color: var(--color-text-primary);
+}
+
 .intro-expanded-emphasis {
   font-weight: 600;
   color: var(--color-highlight);
