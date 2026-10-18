@@ -2723,31 +2723,6 @@ html[data-device="mobile"] .music-player-mini-mode .music-morph-player iframe {
   color: var(--color-text-primary);
 }
 
-a.netcompany-link,
-a.netcompany-link:visited {
-  color: var(--color-netcompany);
-  text-decoration-line: underline;
-  text-decoration-thickness: 1px;
-  text-decoration-color: var(--color-netcompany);
-  text-underline-offset: 0.2em;
-}
-
-.intro-about-expanded-root a.netcompany-link {
-  font-weight: 600;
-}
-
-a.netcompany-link:hover {
-  color: var(--color-netcompany);
-  text-decoration-thickness: 2px;
-}
-
-a.netcompany-link:focus-visible {
-  color: var(--color-netcompany);
-  outline: 2px solid var(--color-netcompany);
-  outline-offset: 2px;
-  border-radius: 4px;
-}
-
 .intro-expanded-emphasis {
   font-weight: 600;
   color: var(--color-highlight);

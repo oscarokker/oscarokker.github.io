@@ -48,15 +48,12 @@ This file is the contract for future design and implementation. Prefer these tok
 |------|-------|------|-------|------|
 | Forest Accent | `#2d4a3e` | `#6db89a` | `--color-accent` | Soft brand accent / soft fills (`--color-accent-soft`) |
 | Highlight | `#2409d6` | `#8573ff` | `--color-highlight` | Rare emphasis (not a second brand color flood) |
-| Netcompany | `#cb302e` | `#ff6359` | `--color-netcompany` | Link colour for Netcompany in the expanded about text |
 | Tile Teal | `#2a9d8f` / `#4bb8a8` | `--color-tile-teal` | Default work/case accents |
 | Tile Violet | `#7c5cbf` / `#9b7fd4` | `--color-tile-violet` | Spotify / secondary work |
 | Tile Indigo | `#4f5bd5` / `#7278e0` | `--color-tile-indigo` | Thesis / research |
 | Tile Amber / Coral / Rose / … | see CSS | `--color-tile-*` | Personality tiles — use sparingly; grid should not become a rainbow |
 
 **Border / overlay:** `--color-border`, `--color-border-strong`, `--color-overlay-dim`, `--color-overlay-scrim`, `--color-shadow` — hairline, not heavy chrome.
-
-**Netcompany link** (`.netcompany-link`): colour is `--color-netcompany` (`#cb302e` light, `#ff6359` dark). Underline at rest is 1px with `text-underline-offset: 0.2em`. Hover thickens the underline to 2px and does not change the colour. `:focus-visible` draws a 2px outline in the link colour, with `outline-offset: 2px` and `border-radius: 4px`. The punctuation after the word stays outside the link, in the body text colour.
 
 ---
 
