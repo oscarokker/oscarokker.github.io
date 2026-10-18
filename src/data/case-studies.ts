@@ -46,6 +46,8 @@ export interface CaseStudyResult {
 
 export interface CaseStudy {
   slug: string;
+  datePublished: string;
+  dateModified: string;
   tileId: string;
   title: string;
   headline: string;
@@ -62,6 +64,8 @@ export interface CaseStudy {
 export const caseStudies: CaseStudy[] = [
   {
     slug: "cheap-voyage",
+    datePublished: "2026-08-28",
+    dateModified: "2026-09-16",
     tileId: "case-study-1",
     title: "CheapVoyage",
     accent: "teal",
@@ -238,6 +242,8 @@ export const caseStudies: CaseStudy[] = [
   },
   {
     slug: "spotify-podcasts",
+    datePublished: "2026-08-28",
+    dateModified: "2026-09-09",
     tileId: "case-study-2",
     title: "AI Sources for Spotify Podcasts",
     accent: "violet",

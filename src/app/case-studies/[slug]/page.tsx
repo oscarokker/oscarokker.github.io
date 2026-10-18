@@ -95,6 +95,8 @@ export default async function CaseStudyPage({
       url: "https://oscarrode.com/",
     },
     image: `https://oscarrode.com${coverImage}`,
+    datePublished: study.datePublished,
+    dateModified: study.dateModified,
     publisher: {
       "@type": "Person",
       name: "Oscar Rode",
