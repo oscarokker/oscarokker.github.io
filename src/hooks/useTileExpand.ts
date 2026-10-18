@@ -66,7 +66,7 @@ export function useTileExpand({
   );
 
   const open = useCallback(
-    (event?: ReactMouseEvent<HTMLDivElement>) => {
+    (event?: ReactMouseEvent<HTMLElement>) => {
       if (!enabled) return;
       const rect = measureSourceRect();
       if (!rect) return;

@@ -33,6 +33,44 @@ export interface IntroSourceRect {
   height: number;
 }
 
+const NETCOMPANY_LABEL = "Netcompany";
+const NETCOMPANY_HREF = "https://www.netcompany.com";
+
+export function IntroSupportLine({
+  bio,
+  interactive = false,
+}: {
+  bio: string;
+  interactive?: boolean;
+}) {
+  const labelAt = bio.indexOf(NETCOMPANY_LABEL);
+  if (labelAt === -1) return bio;
+
+  const before = bio.slice(0, labelAt);
+  const after = bio.slice(labelAt + NETCOMPANY_LABEL.length);
+
+  return (
+    <>
+      {before}
+      {interactive ? (
+        <a
+          className="netcompany-link"
+          href={NETCOMPANY_HREF}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={(event) => event.stopPropagation()}
+          onPointerDown={(event) => event.stopPropagation()}
+        >
+          {NETCOMPANY_LABEL}
+        </a>
+      ) : (
+        <span className="netcompany-link">{NETCOMPANY_LABEL}</span>
+      )}
+      {after}
+    </>
+  );
+}
+
 interface IntroTileExpandedProps {
   name: string;
   bio: string;
@@ -498,7 +536,7 @@ export function IntroTileExpanded({
                 {name}
               </p>
               <p className="text-body m-0">
-                {bio}
+                <IntroSupportLine bio={bio} />
               </p>
             </div>
           </div>

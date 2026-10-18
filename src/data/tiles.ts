@@ -12,7 +12,7 @@ export const tiles: TileData[] = [
     variant: "intro",
     props: {
       name: "Oscar Rode",
-      bio: "I am a UI/UX designer who translates from design theory to the interface that actually goes into production.",
+      bio: "UI/UX designer, now a Test Consultant at\u00a0Netcompany.",
       paragraphs: [
         "My name is Oscar Rode, a UI/UX designer based in Copenhagen. I build systems that translate research into design into something development can ship.",
         "I hold a master’s and bachelor’s in Digital Design & Interactive Technologies from the IT University of Copenhagen, which trained me to tackle wicked problems through systems thinking. I've always been into technology, but only discovered UX in high school while studying the architecture and engineering of the Sydney Opera House.",
