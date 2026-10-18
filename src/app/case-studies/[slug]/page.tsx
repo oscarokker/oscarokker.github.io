@@ -40,16 +40,22 @@ export async function generateMetadata({
   const canonicalUrl = `https://oscarrode.com/case-studies/${slug}/`;
   const coverPhoto = COVER_PHOTOS[study.cover];
   const coverImage = coverPhoto?.src || `/case-studies/${study.cover}-cover.png`;
+  const shareTitle =
+    slug === "cheap-voyage"
+      ? "CheapVoyage · Oscar Rode"
+      : slug === "spotify-podcasts"
+        ? "AI Sources for Spotify Podcasts · Oscar Rode"
+        : study.title;
 
   return {
     title: study.title,
-    description: study.intro,
+    description: study.seoDescription,
     alternates: {
       canonical: canonicalUrl,
     },
     openGraph: {
-      title: study.title,
-      description: study.intro,
+      title: shareTitle,
+      description: study.seoDescription,
       type: "article",
       url: canonicalUrl,
       siteName: "Oscar Rode · Design Portfolio",
@@ -64,8 +70,8 @@ export async function generateMetadata({
     },
     twitter: {
       card: "summary_large_image",
-      title: study.title,
-      description: study.intro,
+      title: shareTitle,
+      description: study.seoDescription,
       images: [coverImage],
     },
   };
