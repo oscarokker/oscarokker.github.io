@@ -121,6 +121,12 @@
   initial-value: #2409d6;
 }
 
+@property --color-netcompany {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #cb302e;
+}
+
 @property --color-tile-coral {
   syntax: "<color>";
   inherits: true;
@@ -274,6 +280,7 @@
   --color-accent: #2d4a3e;
   --color-accent-soft: rgba(45, 74, 62, 0.12);
   --color-highlight: #2409D6;
+  --color-netcompany: #cb302e;
 
   /* Tile accent palette */
   --color-tile-coral: #e8734a;
@@ -436,6 +443,7 @@
   --color-accent: #6db89a;
   --color-accent-soft: rgba(109, 184, 154, 0.15);
   --color-highlight: #8573FF;
+  --color-netcompany: #ff6359;
 
   --color-tile-coral: #f09070;
   --color-tile-blue: #6a9ae8;
@@ -464,6 +472,7 @@
   --color-text-tertiary: var(--color-text-tertiary);
   --color-accent: var(--color-accent);
   --color-highlight: var(--color-highlight);
+  --color-netcompany: var(--color-netcompany);
   --color-border: var(--color-border);
 
   --font-sans: var(--font-satoshi);
@@ -573,6 +582,7 @@ html {
     --color-accent var(--transition-theme),
     --color-accent-soft var(--transition-theme),
     --color-highlight var(--transition-theme),
+    --color-netcompany var(--transition-theme),
     --color-tile-coral var(--transition-theme),
     --color-tile-blue var(--transition-theme),
     --color-tile-violet var(--transition-theme),
@@ -2272,7 +2282,7 @@ html[data-device="mobile"] .social-tile-copied-toast {
   position: absolute;
   top: 14px;
   right: 14px;
-  z-index: 1;
+  z-index: 2;
   opacity: 0;
   pointer-events: none;
   transform: scale(0.92);
@@ -2286,7 +2296,7 @@ html[data-device="mobile"] .social-tile-copied-toast {
   transform: scale(1);
 }
 
-.intro-tile--expandable[aria-expanded="true"] .intro-tile-expand {
+.intro-tile--expandable:has([aria-expanded="true"]) .intro-tile-expand {
   opacity: 0;
   transform: scale(0.92);
 }
@@ -2361,14 +2371,61 @@ html[data-device="mobile"] .intro-tile-avatar {
   color: var(--color-text-primary);
 }
 
+/* Hit target for the expand control. The Netcompany link is a sibling, not a child. */
+.intro-tile-open {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: inherit;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  appearance: none;
+}
+
+.intro-tile-open:focus {
+  outline: none;
+}
+
+.intro-tile-open:focus-visible {
+  box-shadow: inset 0 0 0 2px var(--color-accent);
+}
+
+.intro-tile-avatar,
+.intro-tile-content {
+  position: relative;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.netcompany-link {
+  color: var(--color-netcompany);
+  text-decoration-line: underline;
+  text-decoration-thickness: 1px;
+  text-decoration-color: currentColor;
+  text-underline-offset: 0.2em;
+  pointer-events: auto;
+}
+
+.netcompany-link:hover {
+  color: var(--color-netcompany);
+  text-decoration-thickness: 2px;
+}
+
+.netcompany-link:focus-visible {
+  outline: 2px solid var(--color-netcompany);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
 .intro-tile--expandable {
   width: 100%;
   cursor: pointer;
   outline: none;
-}
-
-.intro-tile--expandable:focus-visible {
-  box-shadow: inset 0 0 0 2px var(--color-accent);
 }
 
 /* ─── Intro expanded overlay (FLIP morph) ─────────────────────────── */

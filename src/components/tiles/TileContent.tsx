@@ -12,7 +12,10 @@ import {
   type MouseEvent,
   type ReactNode,
 } from "react";
-import { IntroTileExpanded } from "@/components/tiles/IntroTileExpanded";
+import {
+  IntroSupportLine,
+  IntroTileExpanded,
+} from "@/components/tiles/IntroTileExpanded";
 import type { IntroParagraphMark } from "@/lib/types";
 import { PhotoStackPreview } from "@/components/tiles/PhotoMedia";
 import { PhotoStackTileExpanded } from "@/components/tiles/PhotoStackTileExpanded";
@@ -68,7 +71,6 @@ export function IntroTile({
     close,
     handleMorphReady,
     handleExitComplete,
-    handleKeyDown,
   } = useTileExpand({ capturePointer: true });
 
   const initials = name
@@ -83,14 +85,16 @@ export function IntroTile({
       <div
         ref={tileRef}
         className={`tile-card-inner intro-tile intro-tile--expandable ${accentClass()}`}
-        role="button"
-        tabIndex={mounted ? -1 : 0}
-        aria-expanded={mounted}
-        aria-haspopup="dialog"
-        aria-label={`About ${name}. Activate to read more.`}
-        onClick={mounted ? undefined : open}
-        onKeyDown={mounted ? undefined : handleKeyDown}
       >
+        <button
+          type="button"
+          className="intro-tile-open"
+          tabIndex={mounted ? -1 : 0}
+          aria-expanded={mounted}
+          aria-haspopup="dialog"
+          aria-label={`About ${name}. Activate to read more.`}
+          onClick={mounted ? undefined : open}
+        />
         <TileChromeHint>
           <ExpandIcon />
         </TileChromeHint>
@@ -116,7 +120,7 @@ export function IntroTile({
               {name}
             </h1>
             <p className="text-body m-0">
-              {bio}
+              <IntroSupportLine bio={bio} interactive />
             </p>
           </div>
         </div>
