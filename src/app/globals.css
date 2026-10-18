@@ -2726,11 +2726,14 @@ html[data-device="mobile"] .music-player-mini-mode .music-morph-player iframe {
 a.netcompany-link,
 a.netcompany-link:visited {
   color: var(--color-netcompany);
-  font-weight: 600;
   text-decoration-line: underline;
   text-decoration-thickness: 1px;
   text-decoration-color: var(--color-netcompany);
   text-underline-offset: 0.2em;
+}
+
+.intro-about-expanded-root a.netcompany-link {
+  font-weight: 600;
 }
 
 a.netcompany-link:hover {
