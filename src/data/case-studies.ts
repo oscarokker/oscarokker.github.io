@@ -50,6 +50,7 @@ export interface CaseStudy {
   title: string;
   headline: string;
   intro: string;
+  seoDescription: string;
   role: string;
   accent?: string;
   cover: CaseStudyCoverId;
@@ -68,6 +69,8 @@ export const caseStudies: CaseStudy[] = [
     headline: "Designing a Conversational Interface to Make Travel Planning Easy",
     intro:
       "Budget Europe travel is a maze of tabs and forms. We built CheapVoyage 1.0 as a warmer way to find affordable routes — then Google landed on a similar surface, and we pivoted to CheapVoyage 2.0: a conversational planner so finding a cheaper route feels like asking a friend, not filling out a form.",
+    seoDescription:
+      "Budget travel across Europe is a maze of tabs. CheapVoyage started as a search engine for affordable routes, then became a planner you simply talk to.",
     role: "Co-Founder and UX Designer. I owned research, brand, the design system, and the React/Vite frontend. My two co-founders — deep in data science and software — owned backend, databases, scraping, and the search engine. My job was to translate what was technically possible into something travellers would actually use — including saying no when a technical option would make the product harder to trust.",
     cover: "voyage",
     coverLabel: "CheapVoyage chat planner",
@@ -244,6 +247,8 @@ export const caseStudies: CaseStudy[] = [
     headline: "Designing Source Insights to Add Nuance After a Health Podcast",
     intro:
       "Health-curious listeners often finish a longevity episode with a claim still ringing in their ear and no way to sit with it. Source Insights is a post-podcast layer inside Spotify: each claim from the episode can be opened, then read against the host's own sources and against supporting and opposing sources the model found. The AI does not score the claim. It makes the disagreement visible.",
+    seoDescription:
+      "Source Insights lets Spotify listeners check any claim from a health podcast against the host's sources and opposing ones. The AI shows the disagreement.",
     role: "UX Designer — group project at ITU Copenhagen",
     cover: "podcasts",
     coverLabel: "Source Insights on a Spotify episode page",

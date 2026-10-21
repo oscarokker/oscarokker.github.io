@@ -13,8 +13,8 @@ import { DEVICE_INIT_SCRIPT } from "@/lib/device";
 import "./globals.css";
 
 const SITE_TITLE = "Oscar Rode · Design Portfolio";
-const SITE_DESCRIPTION =
-  "Portfolio of Oscar Rode, UX/UI Designer specializing in Human-AI interaction and product design. Based in Copenhagen, Denmark. Co-founder and UX designer of CheapVoyage, an AI-driven conversational travel planner.";
+const seoDescription =
+  "UI/UX designer in Copenhagen who turns complexity into clarity. Case studies in human-AI interaction, including CheapVoyage, a conversational travel planner.";
 
 const satoshi = localFont({
   src: "../fonts/Satoshi-Variable.woff2",
@@ -36,13 +36,13 @@ export const metadata: Metadata = {
     default: SITE_TITLE,
     template: "%s · Oscar Rode",
   },
-  description: SITE_DESCRIPTION,
+  description: seoDescription,
   alternates: {
     canonical: "/",
   },
   openGraph: {
     title: SITE_TITLE,
-    description: SITE_DESCRIPTION,
+    description: seoDescription,
     type: "website",
     locale: "en_GB",
     url: "https://oscarrode.com/",
@@ -59,7 +59,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: SITE_TITLE,
-    description: SITE_DESCRIPTION,
+    description: seoDescription,
     images: ["/oscar-rode-profile-picture.png"],
   },
   icons: {
