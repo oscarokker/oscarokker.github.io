@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, ResolvingMetadata } from "next";
 import { notFound } from "next/navigation";
 import { CaseStudyArticle } from "@/components/case-studies/CaseStudiesArticle";
 import {
@@ -6,6 +6,11 @@ import {
   getCaseStudySlugs,
   type CaseStudyCoverId,
 } from "@/data/case-studies";
+
+const SHARE_CARDS: Record<string, string> = {
+  "cheap-voyage": "https://oscarrode.com/og/cheapvoyage-og.jpg",
+  "spotify-podcasts": "https://oscarrode.com/og/spotify-podcasts-og.jpg",
+};
 
 const COVER_PHOTOS: Partial<
   Record<CaseStudyCoverId, { src: string; width: number; height: number }>
@@ -28,15 +33,23 @@ export function generateStaticParams() {
   return getCaseStudySlugs().map((slug) => ({ slug }));
 }
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}): Promise<Metadata> {
+export async function generateMetadata(
+  {
+    params,
+  }: {
+    params: Promise<{ slug: string }>;
+  },
+  parent: ResolvingMetadata,
+): Promise<Metadata> {
   const { slug } = await params;
   const study = getCaseStudy(slug);
   if (!study) return { title: "Case study" };
 
+  const { title } = await parent;
+  const pageTitle = title?.template
+    ? title.template.replace(/%s/g, study.title)
+    : study.title;
+  const shareCard = SHARE_CARDS[slug];
   const canonicalUrl = `https://oscarrode.com/case-studies/${slug}/`;
   const coverPhoto = COVER_PHOTOS[study.cover];
   const coverImage = coverPhoto?.src || `/case-studies/${study.cover}-cover.png`;
@@ -60,19 +73,26 @@ export async function generateMetadata({
       url: canonicalUrl,
       siteName: "Oscar Rode · Design Portfolio",
       images: [
-        {
-          url: coverImage,
-          width: coverPhoto?.width,
-          height: coverPhoto?.height,
-          alt: study.coverLabel,
-        },
+        shareCard
+          ? {
+              url: shareCard,
+              width: 1200,
+              height: 630,
+              alt: pageTitle,
+            }
+          : {
+              url: coverImage,
+              width: coverPhoto?.width,
+              height: coverPhoto?.height,
+              alt: study.coverLabel,
+            },
       ],
     },
     twitter: {
       card: "summary_large_image",
       title: shareTitle,
       description: study.seoDescription,
-      images: [coverImage],
+      images: [shareCard ?? coverImage],
     },
   };
 }
