@@ -62,9 +62,6 @@ export const metadata: Metadata = {
     description: seoDescription,
     images: ["/oscar-rode-profile-picture.png"],
   },
-  icons: {
-    icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
-  },
 };
 
 export const viewport: Viewport = {
