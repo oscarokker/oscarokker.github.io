@@ -3,6 +3,7 @@
 import { useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore } from "react";
 import type { FilterCategory } from "@/lib/types";
 import { tiles } from "@/data/tiles";
+import { AuthorTile } from "@/components/AuthorTile";
 import { Tile, tileMatchesFilter } from "@/components/Tile";
 import { useDevice } from "@/hooks/useDevice";
 import { tileGridOrder, useTileGridFlip } from "@/hooks/useTileGridFlip";
@@ -86,6 +87,13 @@ export function Portfolio({
       }, TILE_START_OFFSET + index * actualStagger);
     });
 
+    setTimeout(() => {
+      setEntranceStates((prev) => ({
+        ...prev,
+        author: "visible",
+      }));
+    }, TILE_START_OFFSET + (tiles.length - 1) * actualStagger);
+
     // Mark entrance as done after all animations complete
     const totalDuration = TILE_START_OFFSET + tiles.length * actualStagger + ANIMATION_DURATION;
     setTimeout(() => {
@@ -115,6 +123,15 @@ export function Portfolio({
               />
             );
           })}
+          <AuthorTile
+            active={activeFilter === "all" || activeFilter === "about"}
+            sortOrder={tileGridOrder(
+              tiles.length,
+              activeFilter === "all" || activeFilter === "about",
+              activeFilter,
+            )}
+            entranceState={entranceStates.author ?? null}
+          />
         </div>
       </main>
     </>
