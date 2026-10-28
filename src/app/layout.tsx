@@ -50,8 +50,8 @@ export const metadata: Metadata = {
     images: [
       {
         url: "/oscar-rode-profile-picture.png",
-        width: 800,
-        height: 800,
+        width: 320,
+        height: 320,
         alt: "Oscar Rode",
       },
     ],
