@@ -19,7 +19,11 @@ export interface CaseStudyImpact {
 export interface CaseStudyFigure {
   cover?: CaseStudyCoverId;
   src?: string;
-  images?: { src: string; alt: string }[];
+  images?: {
+    src: string;
+    alt: string;
+    srcSet?: { src: string; width: number }[];
+  }[];
   layout?: "phones" | "gallery";
   videoSrc?: string;
   poster?: string;
@@ -294,15 +298,27 @@ export const caseStudies: CaseStudy[] = [
         figure: {
           images: [
             {
-              src: "/case-studies/spotify-phone-1-claims.png",
+              src: "/case-studies/spotify-phone-1-claims-600.webp",
+              srcSet: [
+                { src: "/case-studies/spotify-phone-1-claims-600.webp", width: 600 },
+                { src: "/case-studies/spotify-phone-1-claims-1200.webp", width: 1200 },
+              ],
               alt: "Source Insights with the first claim expanded.",
             },
             {
-              src: "/case-studies/spotify-phone-2-sources.png",
+              src: "/case-studies/spotify-phone-2-sources-600.webp",
+              srcSet: [
+                { src: "/case-studies/spotify-phone-2-sources-600.webp", width: 600 },
+                { src: "/case-studies/spotify-phone-2-sources-1200.webp", width: 1200 },
+              ],
               alt: "A claim opened into creator, supporting, and opposing sources.",
             },
             {
-              src: "/case-studies/spotify-phone-3-summary.png",
+              src: "/case-studies/spotify-phone-3-summary-600.webp",
+              srcSet: [
+                { src: "/case-studies/spotify-phone-3-summary-600.webp", width: 600 },
+                { src: "/case-studies/spotify-phone-3-summary-1200.webp", width: 1200 },
+              ],
               alt: "An AI summary of a source under a claim.",
             },
           ],

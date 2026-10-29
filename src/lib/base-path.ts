@@ -9,6 +9,15 @@ export function getBasePath(): string {
   return raw.endsWith("/") ? raw.slice(0, -1) : raw;
 }
 
+/** Width-descriptor srcset, each URL passed through `withBasePath`. */
+export function withSrcSet(
+  entries: readonly { src: string; width: number }[],
+): string {
+  return entries
+    .map((entry) => `${withBasePath(entry.src)} ${entry.width}w`)
+    .join(", ");
+}
+
 /** Prefix a root-relative URL. Leave absolute and already-prefixed paths alone. */
 export function withBasePath(href: string): string {
   const base = getBasePath();
