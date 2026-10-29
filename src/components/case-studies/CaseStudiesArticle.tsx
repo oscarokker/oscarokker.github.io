@@ -19,7 +19,7 @@ import { CaseStudyImpactIcon } from "@/components/case-studies/CaseStudiesImpact
 import type { CaseStudy, CaseStudyBlockVariant } from "@/data/case-studies";
 import { useSlidingThumb } from "@/hooks/useSlidingThumb";
 import { accentClass } from "@/lib/accent";
-import { withBasePath } from "@/lib/base-path";
+import { withBasePath, withSrcSet } from "@/lib/base-path";
 import { CASE_STUDY_FROM_GRID_KEY } from "@/lib/case-study-href";
 import {
   readReadingMode,
@@ -372,18 +372,41 @@ export function CaseStudyArticle({ study }: CaseStudyArticleProps) {
                         ) : section.figure.images ? (
                           section.figure.layout === "phones" ? (
                             <div className="case-study-phone-row">
-                              {section.figure.images.map((img) => (
-                                <Image
-                                  key={img.src}
-                                  src={withBasePath(img.src)}
-                                  alt={img.alt}
-                                  width={1206}
-                                  height={2622}
-                                  sizes="(max-width: 680px) 30vw, 200px"
-                                  className="case-study-phone-img"
-                                  style={{ width: "100%", height: "auto" }}
-                                />
-                              ))}
+                              {section.figure.images.map((img) =>
+                                img.srcSet ? (
+                                  // Native img: static export serves public files as-is, so next/image
+                                  // cannot emit this width pair. Width and height stay the source pixels.
+                                  // eslint-disable-next-line @next/next/no-img-element
+                                  <img
+                                    key={img.src}
+                                    src={withBasePath(img.src)}
+                                    srcSet={withSrcSet(img.srcSet)}
+                                    sizes="(max-width: 680px) 30vw, 200px"
+                                    alt={img.alt}
+                                    width={1206}
+                                    height={2622}
+                                    loading="lazy"
+                                    decoding="async"
+                                    className="case-study-phone-img"
+                                    style={{
+                                      width: "100%",
+                                      height: "auto",
+                                      aspectRatio: "1206 / 2622",
+                                    }}
+                                  />
+                                ) : (
+                                  <Image
+                                    key={img.src}
+                                    src={withBasePath(img.src)}
+                                    alt={img.alt}
+                                    width={1206}
+                                    height={2622}
+                                    sizes="(max-width: 680px) 30vw, 200px"
+                                    className="case-study-phone-img"
+                                    style={{ width: "100%", height: "auto" }}
+                                  />
+                                ),
+                              )}
                             </div>
                           ) : (
                             <div className="case-study-figure-gallery">

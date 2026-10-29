@@ -51,7 +51,7 @@ export function CaseStudyFace({
               autoPlay
               loop
               playsInline
-              preload="auto"
+              preload="metadata"
               className="case-study-face-cover"
             />
           ) : imageSrc ? (

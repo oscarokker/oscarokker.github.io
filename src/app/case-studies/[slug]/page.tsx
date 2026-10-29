@@ -16,7 +16,7 @@ const COVER_PHOTOS: Partial<
   Record<CaseStudyCoverId, { src: string; width: number; height: number }>
 > = {
   voyage: {
-    src: "/case-studies/cheapvoyage-picture-1.png",
+    src: "/case-studies/cheapvoyage-picture-1-1440.webp",
     width: 1440,
     height: 1024,
   },

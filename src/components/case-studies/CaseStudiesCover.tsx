@@ -1,6 +1,6 @@
 import Image from "next/image";
 import type { CaseStudyCoverId } from "@/data/case-studies";
-import { withBasePath } from "@/lib/base-path";
+import { withBasePath, withSrcSet } from "@/lib/base-path";
 
 interface CaseStudyCoverProps {
   id: CaseStudyCoverId;
@@ -8,10 +8,23 @@ interface CaseStudyCoverProps {
 }
 
 const COVER_PHOTOS: Partial<
-  Record<CaseStudyCoverId, { src: string; width: number; height: number }>
+  Record<
+    CaseStudyCoverId,
+    {
+      src: string;
+      width: number;
+      height: number;
+      srcSet?: { src: string; width: number }[];
+    }
+  >
 > = {
   voyage: {
-    src: "/case-studies/cheapvoyage-picture-1.png",
+    // Source is 1440px wide, so the 2x file stops there (no upscale).
+    src: "/case-studies/cheapvoyage-picture-1-900.webp",
+    srcSet: [
+      { src: "/case-studies/cheapvoyage-picture-1-900.webp", width: 900 },
+      { src: "/case-studies/cheapvoyage-picture-1-1440.webp", width: 1440 },
+    ],
     width: 1440,
     height: 1024,
   },
@@ -33,15 +46,37 @@ export function CaseStudyCover({ id, label }: CaseStudyCoverProps) {
         }`}
       >
         {photo ? (
-          <Image
-            src={withBasePath(photo.src)}
-            alt={label}
-            width={photo.width}
-            height={photo.height}
-            sizes="(max-width: 680px) 100vw, 680px"
-            className="case-study-cover-photo"
-            style={{ width: "100%", height: "auto" }}
-          />
+          photo.srcSet ? (
+            // Native img: static export serves public files as-is, so next/image
+            // cannot emit this width pair.
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={withBasePath(photo.src)}
+              srcSet={withSrcSet(photo.srcSet)}
+              sizes="(max-width: 680px) 100vw, 680px"
+              alt={label}
+              width={photo.width}
+              height={photo.height}
+              loading="lazy"
+              decoding="async"
+              className="case-study-cover-photo"
+              style={{
+                width: "100%",
+                height: "auto",
+                aspectRatio: `${photo.width} / ${photo.height}`,
+              }}
+            />
+          ) : (
+            <Image
+              src={withBasePath(photo.src)}
+              alt={label}
+              width={photo.width}
+              height={photo.height}
+              sizes="(max-width: 680px) 100vw, 680px"
+              className="case-study-cover-photo"
+              style={{ width: "100%", height: "auto" }}
+            />
+          )
         ) : (
           <>
             {id === "podcasts" ? <PodcastArt /> : null}
