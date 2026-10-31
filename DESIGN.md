@@ -53,6 +53,24 @@ This file is the contract for future design and implementation. Prefer these tok
 | Tile Indigo | `#4f5bd5` / `#7278e0` | `--color-tile-indigo` | Thesis / research |
 | Tile Amber / Coral / Rose / … | see CSS | `--color-tile-*` | Personality tiles — use sparingly; grid should not become a rainbow |
 
+### Cursor label pill
+
+White `#ffffff` at 14px / 500 on `.custom-cursor-label`. Fill is `color-mix(in srgb, <token> 90%, transparent)` with `backdrop-filter: blur(10px)`. These tokens are pill-only and **identical in light and dark** — do not point the pill at `--color-tile-*` or `--color-accent`. White on the 90% mix must stay **≥ 4.5:1** over pure white, parchment, the tile, and the dark page/tile. Dark mode only: `box-shadow: inset 0 0 0 1px rgba(255,255,255,.14)`.
+
+| Accent | Token | Fill |
+|--------|-------|------|
+| default | `--cursor-label-default` | `#2d4a3e` |
+| coral | `--cursor-label-coral` | `#b6461a` |
+| blue | `--cursor-label-blue` | `#3366b9` |
+| violet | `--cursor-label-violet` | `#7555b7` |
+| indigo | `--cursor-label-indigo` | `#4f5bd5` |
+| teal | `--cursor-label-teal` | `#007669` |
+| amber | `--cursor-label-amber` | `#8f5d00` |
+| rose | `--cursor-label-rose` | `#ac4665` |
+| green | `--cursor-label-green` | `#1f7738` |
+| orange | `--cursor-label-orange` | `#a45300` |
+| sky | `--cursor-label-sky` | `#226f92` |
+
 **Border / overlay:** `--color-border`, `--color-border-strong`, `--color-overlay-dim`, `--color-overlay-scrim`, `--color-shadow` — hairline, not heavy chrome.
 
 ---
