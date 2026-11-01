@@ -83,10 +83,11 @@ const NAMED_ACCENTS = new Set([
   "sky",
 ]);
 
+/** Pill fill. Named accents use mode-invariant `--cursor-label-*`, not `--color-tile-*`. */
 export function resolveCursorAccent(accent?: string): string {
-  if (!accent) return "var(--color-accent)";
+  if (!accent) return "var(--cursor-label-default)";
   if (NAMED_ACCENTS.has(accent)) {
-    return `var(--color-tile-${accent})`;
+    return `var(--cursor-label-${accent})`;
   }
   return accent;
 }

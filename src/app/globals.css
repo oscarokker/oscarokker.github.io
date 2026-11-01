@@ -294,6 +294,19 @@
   --color-tile-orange: #e08a3a;
   --color-tile-sky: #5ba4c9;
 
+  /* Cursor-label pills. Same hex in light and dark — not tile fills. */
+  --cursor-label-default: #2d4a3e;
+  --cursor-label-coral: #b6461a;
+  --cursor-label-blue: #3366b9;
+  --cursor-label-violet: #7555b7;
+  --cursor-label-indigo: #4f5bd5;
+  --cursor-label-teal: #007669;
+  --cursor-label-amber: #8f5d00;
+  --cursor-label-rose: #ac4665;
+  --cursor-label-green: #1f7738;
+  --cursor-label-orange: #a45300;
+  --cursor-label-sky: #226f92;
+
   /* Filter states — unmatched tiles: monochrome + 40% opacity */
   --color-tile-active-opacity: 1;
   --color-tile-inactive-opacity: 0.4;
@@ -455,6 +468,19 @@
   --color-tile-green: #6ab87a;
   --color-tile-orange: #eca060;
   --color-tile-sky: #78b8d8;
+
+  /* Same pill fills as light. Do not follow the lighter tile accents. */
+  --cursor-label-default: #2d4a3e;
+  --cursor-label-coral: #b6461a;
+  --cursor-label-blue: #3366b9;
+  --cursor-label-violet: #7555b7;
+  --cursor-label-indigo: #4f5bd5;
+  --cursor-label-teal: #007669;
+  --cursor-label-amber: #8f5d00;
+  --cursor-label-rose: #ac4665;
+  --cursor-label-green: #1f7738;
+  --cursor-label-orange: #a45300;
+  --cursor-label-sky: #226f92;
 
   --color-tile-inactive-opacity: 0.4;
   --color-tile-inactive-grayscale: 1;
@@ -3113,7 +3139,7 @@ html[data-device="mobile"] .cv-tile-logo {
   border-radius: var(--radius-full);
   background: color-mix(
     in srgb,
-    var(--cursor-label-bg, var(--color-accent)) 80%,
+    var(--cursor-label-bg, var(--cursor-label-default)) 90%,
     transparent
   );
   color: #ffffff;
@@ -3130,6 +3156,10 @@ html[data-device="mobile"] .cv-tile-logo {
     opacity var(--transition-base),
     transform var(--transition-base),
     background-color var(--transition-base);
+}
+
+[data-theme="dark"] .custom-cursor-label {
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14);
 }
 
 .custom-cursor-label[data-multiline="true"] {
