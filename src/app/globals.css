@@ -1994,8 +1994,8 @@ html[data-device="mobile"] .nav-pill-button {
   text-overflow: ellipsis;
 }
 
-/* Narrow screens (below 390px): content-based button sizing to fit "Side Quests" */
-@media (max-width: 389px) {
+/* Narrow screens (≤412px): content-based button sizing to fit "Side Quests" */
+@media (max-width: 412px) {
   html[data-device="mobile"] .site-nav-filters {
     padding-left: max(env(safe-area-inset-left), 8px);
     padding-right: max(env(safe-area-inset-right), 8px);
