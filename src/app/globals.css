@@ -1994,6 +1994,64 @@ html[data-device="mobile"] .nav-pill-button {
   text-overflow: ellipsis;
 }
 
+/* Narrow screens (≤412px): content-based button sizing to fit "Side Quests" */
+@media (max-width: 412px) {
+  html[data-device="mobile"] .site-nav-filters {
+    padding-left: max(env(safe-area-inset-left), 8px);
+    padding-right: max(env(safe-area-inset-right), 8px);
+  }
+
+  .site-nav-filters {
+    padding-left: max(env(safe-area-inset-left), 8px);
+    padding-right: max(env(safe-area-inset-right), 8px);
+  }
+
+  html[data-device="mobile"] .nav-pill {
+    padding: 2px;
+    gap: 2px;
+  }
+
+  .nav-pill {
+    padding: 2px;
+    gap: 2px;
+  }
+
+  html[data-device="mobile"] .nav-pill-button {
+    flex: 1 1 auto;
+    min-width: 0;
+    min-height: 44px;
+    padding: 10px 8px;
+  }
+
+  .nav-pill-button {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+}
+
+/* Extra-narrow screens (320px): further reduce side padding */
+@media (max-width: 340px) {
+  html[data-device="mobile"] .site-nav-filters {
+    padding-left: max(env(safe-area-inset-left), 6px);
+    padding-right: max(env(safe-area-inset-right), 6px);
+  }
+
+  .site-nav-filters {
+    padding-left: max(env(safe-area-inset-left), 6px);
+    padding-right: max(env(safe-area-inset-right), 6px);
+  }
+
+  html[data-device="mobile"] .nav-pill {
+    padding: 2px;
+  }
+
+  .nav-pill {
+    padding: 2px;
+  }
+}
+
 .nav-pill {
   position: relative;
   display: flex;
