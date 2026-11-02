@@ -1963,38 +1963,6 @@ html[data-device="mobile"] .site-nav-filters {
   }
 }
 
-/* Narrow screens (below 390px): content-based button sizing to fit "Side Quests" */
-@media (max-width: 389px) {
-  .site-nav-filters {
-    padding-left: max(env(safe-area-inset-left), 8px);
-    padding-right: max(env(safe-area-inset-right), 8px);
-  }
-
-  .nav-pill {
-    padding: 2px;
-    gap: 2px;
-  }
-
-  .nav-pill-button {
-    flex: 1 1 auto;
-    min-width: 0;
-    padding-left: 8px;
-    padding-right: 8px;
-  }
-}
-
-/* Extra-narrow screens (320px): further reduce side padding */
-@media (max-width: 340px) {
-  .site-nav-filters {
-    padding-left: max(env(safe-area-inset-left), 6px);
-    padding-right: max(env(safe-area-inset-right), 6px);
-  }
-
-  .nav-pill {
-    padding: 2px;
-  }
-}
-
 [data-theme="dark"] .header-logo {
   color: white;
 }
