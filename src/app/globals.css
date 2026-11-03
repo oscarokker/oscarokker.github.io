@@ -2242,7 +2242,13 @@ html[data-device="mobile"] .social-tile-icon {
   transform: scale(0.92);
 }
 
-.social-tile-button:focus-visible {
+.tile-card:has(.social-tile-button:focus-visible)::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 10;
   box-shadow: inset 0 0 0 2px var(--color-accent);
 }
 
