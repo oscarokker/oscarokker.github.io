@@ -2350,8 +2350,8 @@ html[data-device="mobile"] .social-tile-copied-toast {
   position: relative;
 }
 
-.theme-toggle-btn:focus-visible {
-  box-shadow: inset 0 0 0 2px var(--color-accent);
+.intro-chrome-icon-btn.theme-toggle-btn:focus-visible {
+  box-shadow: var(--shadow-chrome-hover), inset 0 0 0 2px var(--color-accent);
 }
 
 .theme-toggle-icon {

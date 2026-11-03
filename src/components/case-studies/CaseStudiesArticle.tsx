@@ -94,7 +94,9 @@ function ReadingFold({
       return;
     }
 
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reduced = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
     if (reduced) {
       setConcealed(true);
       return;
@@ -146,11 +148,11 @@ export function CaseStudyArticle({ study }: CaseStudyArticleProps) {
   useLayoutEffect(() => {
     const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
     setPrefersReducedMotion(mediaQuery.matches);
-    
+
     const handleChange = (e: MediaQueryListEvent) => {
       setPrefersReducedMotion(e.matches);
     };
-    
+
     mediaQuery.addEventListener("change", handleChange);
     return () => mediaQuery.removeEventListener("change", handleChange);
   }, []);
@@ -211,271 +213,280 @@ export function CaseStudyArticle({ study }: CaseStudyArticleProps) {
         aria-labelledby={titleId}
       >
         <div className="case-study-collapse-slot">
-        <a
-          href={withBasePath("/")}
-          className="nav-pill case-study-back"
-          onClick={handleBackToPortfolio}
-        >
-          <span className="nav-pill-button" data-active="true">
-            Back to portfolio
-          </span>
-        </a>
-        <button
-          type="button"
-          className="intro-chrome-icon-btn case-study-collapse"
-          aria-label="Close case study"
-          onClick={closeToGrid}
-        >
-          <MinimizeIcon />
-        </button>
-      </div>
-      <div className="case-study-page-inner">
-        <div className="case-study-hero">
-          <CaseStudyCover id={study.cover} label={study.coverLabel} />
-        </div>
-
-        <div
-          ref={toggleRef}
-          className="nav-pill case-study-toggle"
-          role="tablist"
-          aria-label="Reading length"
-          data-thumb-ready={thumbReady ? "true" : "false"}
-        >
-          <span
-            className="case-study-toggle-thumb"
-            aria-hidden
-            style={{
-              transform: `translateX(${thumb.x}px)`,
-              width: thumb.width,
-            }}
+          <a
+            href={withBasePath("/")}
+            className="nav-pill case-study-back"
+            onClick={handleBackToPortfolio}
           >
-            <span className="nav-pill-thumb-surface" />
-          </span>
+            <span className="nav-pill-button" data-active="true">
+              Back to portfolio
+            </span>
+          </a>
           <button
             type="button"
-            id={detailedTabId}
-            className="nav-pill-button"
-            role="tab"
-            aria-selected={mode === "detailed"}
-            aria-controls={bodyId}
-            data-reading="detailed"
-            data-active={mode === "detailed"}
-            onPointerDown={(event) => {
-              if (event.button !== 0 || mode === "detailed") return;
-              event.preventDefault();
-              handleMode("detailed");
-            }}
-            onClick={(event) => {
-              if (event.detail !== 0) {
-                event.preventDefault();
-                return;
-              }
-              handleMode("detailed");
-            }}
+            className="intro-chrome-icon-btn case-study-collapse"
+            aria-label="Close case study"
+            onClick={closeToGrid}
           >
-            Detailed
-          </button>
-          <button
-            type="button"
-            id={summaryTabId}
-            className="nav-pill-button"
-            role="tab"
-            aria-selected={mode === "summary"}
-            aria-controls={bodyId}
-            data-reading="summary"
-            data-active={mode === "summary"}
-            onPointerDown={(event) => {
-              if (event.button !== 0 || mode === "summary") return;
-              event.preventDefault();
-              handleMode("summary");
-            }}
-            onClick={(event) => {
-              if (event.detail !== 0) {
-                event.preventDefault();
-                return;
-              }
-              handleMode("summary");
-            }}
-          >
-            Summary
+            <MinimizeIcon />
           </button>
         </div>
-
-        <div className="case-study-reading">
-          <header className="case-study-header">
-            <h1 id={titleId} className="case-study-headline">
-              {study.headline}
-            </h1>
-          </header>
+        <div className="case-study-page-inner">
+          <div className="case-study-hero">
+            <CaseStudyCover id={study.cover} label={study.coverLabel} />
+          </div>
 
           <div
-            id={bodyId}
-            className="case-study-body"
-            role="tabpanel"
-            aria-labelledby={
-              mode === "detailed" ? detailedTabId : summaryTabId
-            }
+            ref={toggleRef}
+            className="nav-pill case-study-toggle"
+            role="tablist"
+            aria-label="Reading length"
+            data-thumb-ready={thumbReady ? "true" : "false"}
           >
-            <p className="case-study-intro">{study.intro}</p>
+            <span
+              className="case-study-toggle-thumb"
+              aria-hidden
+              style={{
+                transform: `translateX(${thumb.x}px)`,
+                width: thumb.width,
+              }}
+            >
+              <span className="nav-pill-thumb-surface" />
+            </span>
+            <button
+              type="button"
+              id={detailedTabId}
+              className="nav-pill-button"
+              role="tab"
+              aria-selected={mode === "detailed"}
+              aria-controls={bodyId}
+              data-reading="detailed"
+              data-active={mode === "detailed"}
+              onPointerDown={(event) => {
+                if (event.button !== 0 || mode === "detailed") return;
+                event.preventDefault();
+                handleMode("detailed");
+              }}
+              onClick={(event) => {
+                if (event.detail !== 0) {
+                  event.preventDefault();
+                  return;
+                }
+                handleMode("detailed");
+              }}
+            >
+              Detailed
+            </button>
+            <button
+              type="button"
+              id={summaryTabId}
+              className="nav-pill-button"
+              role="tab"
+              aria-selected={mode === "summary"}
+              aria-controls={bodyId}
+              data-reading="summary"
+              data-active={mode === "summary"}
+              onPointerDown={(event) => {
+                if (event.button !== 0 || mode === "summary") return;
+                event.preventDefault();
+                handleMode("summary");
+              }}
+              onClick={(event) => {
+                if (event.detail !== 0) {
+                  event.preventDefault();
+                  return;
+                }
+                handleMode("summary");
+              }}
+            >
+              Summary
+            </button>
+          </div>
 
-            <section className="case-study-section">
-              <h2>My role</h2>
-              <p>{study.role}</p>
-            </section>
+          <div className="case-study-reading">
+            <header className="case-study-header">
+              <h1 id={titleId} className="case-study-headline">
+                {study.headline}
+              </h1>
+            </header>
 
-            <section className="case-study-section">
-              <h2>Impact</h2>
-              <ul className="case-study-impact">
-                {study.impact.map((item) => (
-                  <li key={item.title}>
-                    <span className="case-study-impact-icon" aria-hidden>
-                      <CaseStudyImpactIcon id={item.icon} />
-                    </span>
-                    <div>
-                      <h3>{item.title}</h3>
-                      <p>{item.body}</p>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </section>
+            <div
+              id={bodyId}
+              className="case-study-body"
+              role="tabpanel"
+              aria-labelledby={
+                mode === "detailed" ? detailedTabId : summaryTabId
+              }
+            >
+              <p className="case-study-intro">{study.intro}</p>
 
-            {study.sections.map((section) => {
-              const inner = (
-                <>
-                  <h2>{section.heading}</h2>
-                  {section.paragraphs.map((paragraph, index) =>
-                    maybeReadingFold(
-                      paragraph.variant === "detailed" &&
-                        section.variant !== "detailed",
-                      mode === "detailed",
-                      `${section.heading}-${index}`,
-                      <p data-detailed={detailedAttr(paragraph.variant)}>
-                        {paragraph.text}
-                      </p>,
-                    ),
-                  )}
-                  {section.figure ? (
-                    <div className="case-study-inline-figure">
-                      <div className="case-study-figure-wrapper">
-                        {section.figure.videoSrc ? (
-                          <video
-                            src={withBasePath(section.figure.videoSrc)}
-                            poster={section.figure.poster ? withBasePath(section.figure.poster) : undefined}
-                            muted
-                            playsInline
-                            loop
-                            autoPlay={!prefersReducedMotion}
-                            preload="metadata"
-                            className="case-study-cover-photo"
-                            style={{ width: "100%", height: "auto" }}
-                          />
-                        ) : section.figure.images ? (
-                          section.figure.layout === "phones" ? (
-                            <div className="case-study-phone-row">
-                              {section.figure.images.map((img) =>
-                                img.srcSet ? (
-                                  // Native img: static export serves public files as-is, so next/image
-                                  // cannot emit this width pair. Width and height stay the source pixels.
-                                  // eslint-disable-next-line @next/next/no-img-element
-                                  <img
-                                    key={img.src}
-                                    src={withBasePath(img.src)}
-                                    srcSet={withSrcSet(img.srcSet)}
-                                    sizes="(max-width: 680px) 30vw, 200px"
-                                    alt={img.alt}
-                                    width={1206}
-                                    height={2622}
-                                    loading="lazy"
-                                    decoding="async"
-                                    className="case-study-phone-img"
-                                    style={{
-                                      width: "100%",
-                                      height: "auto",
-                                      aspectRatio: "1206 / 2622",
-                                    }}
-                                  />
-                                ) : (
+              <section className="case-study-section">
+                <h2>My role</h2>
+                <p>{study.role}</p>
+              </section>
+
+              <section className="case-study-section">
+                <h2>Impact</h2>
+                <ul className="case-study-impact">
+                  {study.impact.map((item) => (
+                    <li key={item.title}>
+                      <span className="case-study-impact-icon" aria-hidden>
+                        <CaseStudyImpactIcon id={item.icon} />
+                      </span>
+                      <div>
+                        <h3>{item.title}</h3>
+                        <p>{item.body}</p>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+
+              {study.sections.map((section) => {
+                const inner = (
+                  <>
+                    <h2>{section.heading}</h2>
+                    {section.paragraphs.map((paragraph, index) =>
+                      maybeReadingFold(
+                        paragraph.variant === "detailed" &&
+                          section.variant !== "detailed",
+                        mode === "detailed",
+                        `${section.heading}-${index}`,
+                        <p data-detailed={detailedAttr(paragraph.variant)}>
+                          {paragraph.text}
+                        </p>,
+                      ),
+                    )}
+                    {section.figure ? (
+                      <div className="case-study-inline-figure">
+                        <div className="case-study-figure-wrapper">
+                          {section.figure.videoSrc ? (
+                            <video
+                              src={withBasePath(section.figure.videoSrc)}
+                              poster={
+                                section.figure.poster
+                                  ? withBasePath(section.figure.poster)
+                                  : undefined
+                              }
+                              muted
+                              playsInline
+                              loop
+                              autoPlay={!prefersReducedMotion}
+                              preload="metadata"
+                              className="case-study-cover-photo"
+                              style={{ width: "100%", height: "auto" }}
+                            />
+                          ) : section.figure.images ? (
+                            section.figure.layout === "phones" ? (
+                              <div className="case-study-phone-row">
+                                {section.figure.images.map((img) =>
+                                  img.srcSet ? (
+                                    // Native img: static export serves public files as-is, so next/image
+                                    // cannot emit this width pair. Width and height stay the source pixels.
+                                    // eslint-disable-next-line @next/next/no-img-element
+                                    <img
+                                      key={img.src}
+                                      src={withBasePath(img.src)}
+                                      srcSet={withSrcSet(img.srcSet)}
+                                      sizes="(max-width: 680px) 30vw, 200px"
+                                      alt={img.alt}
+                                      width={1206}
+                                      height={2622}
+                                      loading="lazy"
+                                      decoding="async"
+                                      className="case-study-phone-img"
+                                      style={{
+                                        width: "100%",
+                                        height: "auto",
+                                        aspectRatio: "1206 / 2622",
+                                      }}
+                                    />
+                                  ) : (
+                                    <Image
+                                      key={img.src}
+                                      src={withBasePath(img.src)}
+                                      alt={img.alt}
+                                      width={1206}
+                                      height={2622}
+                                      sizes="(max-width: 680px) 30vw, 200px"
+                                      className="case-study-phone-img"
+                                      style={{ width: "100%", height: "auto" }}
+                                    />
+                                  ),
+                                )}
+                              </div>
+                            ) : (
+                              <div className="case-study-figure-gallery">
+                                {section.figure.images.map((img) => (
                                   <Image
                                     key={img.src}
                                     src={withBasePath(img.src)}
                                     alt={img.alt}
-                                    width={1206}
-                                    height={2622}
-                                    sizes="(max-width: 680px) 30vw, 200px"
-                                    className="case-study-phone-img"
+                                    width={1600}
+                                    height={900}
+                                    sizes="(max-width: 680px) 100vw, 680px"
+                                    className="case-study-gallery-img"
                                     style={{ width: "100%", height: "auto" }}
                                   />
-                                ),
-                              )}
-                            </div>
-                          ) : (
-                            <div className="case-study-figure-gallery">
-                              {section.figure.images.map((img) => (
-                                <Image
-                                  key={img.src}
-                                  src={withBasePath(img.src)}
-                                  alt={img.alt}
-                                  width={1600}
-                                  height={900}
-                                  sizes="(max-width: 680px) 100vw, 680px"
-                                  className="case-study-gallery-img"
-                                  style={{ width: "100%", height: "auto" }}
-                                />
-                              ))}
-                            </div>
-                          )
-                        ) : section.figure.src ? (
-                          <Image
-                            src={withBasePath(section.figure.src)}
-                            alt={section.figure.caption}
-                            width={1204}
-                            height={928}
-                            sizes="(max-width: 680px) 100vw, 680px"
-                            className="case-study-cover-photo"
-                            style={{ width: "100%", height: "auto" }}
-                          />
-                        ) : section.figure.cover ? (
-                          <CaseStudyCover
-                            id={section.figure.cover}
-                            label={section.figure.caption}
-                          />
-                        ) : null}
-                        {section.figure.label && (
-                          <span className="case-study-figure-label" aria-label={`Version ${section.figure.label}`}>
-                            {section.figure.label}
-                          </span>
-                        )}
+                                ))}
+                              </div>
+                            )
+                          ) : section.figure.src ? (
+                            <Image
+                              src={withBasePath(section.figure.src)}
+                              alt={section.figure.caption}
+                              width={1204}
+                              height={928}
+                              sizes="(max-width: 680px) 100vw, 680px"
+                              className="case-study-cover-photo"
+                              style={{ width: "100%", height: "auto" }}
+                            />
+                          ) : section.figure.cover ? (
+                            <CaseStudyCover
+                              id={section.figure.cover}
+                              label={section.figure.caption}
+                            />
+                          ) : null}
+                          {section.figure.label && (
+                            <span
+                              className="case-study-figure-label"
+                              aria-label={`Version ${section.figure.label}`}
+                            >
+                              {section.figure.label}
+                            </span>
+                          )}
+                        </div>
+                        <p className="case-study-caption">
+                          {section.figure.caption}
+                        </p>
                       </div>
-                      <p className="case-study-caption">{section.figure.caption}</p>
-                    </div>
-                  ) : null}
-                </>
-              );
+                    ) : null}
+                  </>
+                );
 
-              return maybeReadingFold(
-                section.variant === "detailed",
-                mode === "detailed",
-                section.heading,
-                <section
-                  className="case-study-section"
-                  data-detailed={detailedAttr(section.variant)}
-                >
-                  {inner}
-                </section>,
-              );
-            })}
+                return maybeReadingFold(
+                  section.variant === "detailed",
+                  mode === "detailed",
+                  section.heading,
+                  <section
+                    className="case-study-section"
+                    data-detailed={detailedAttr(section.variant)}
+                  >
+                    {inner}
+                  </section>,
+                );
+              })}
+            </div>
           </div>
-        </div>
 
-        <section className="case-study-section">
-          <h2>{study.result.heading ?? "Result"}</h2>
-          {study.result.paragraphs.map((paragraph) => (
-            <p key={paragraph.slice(0, 48)}>{paragraph}</p>
-          ))}
-        </section>
-      </div>
-    </article>
+          <section className="case-study-section">
+            <h2>{study.result.heading ?? "Result"}</h2>
+            {study.result.paragraphs.map((paragraph) => (
+              <p key={paragraph.slice(0, 48)}>{paragraph}</p>
+            ))}
+          </section>
+        </div>
+      </article>
     </main>
   );
 }
