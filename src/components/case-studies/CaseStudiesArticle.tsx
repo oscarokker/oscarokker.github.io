@@ -201,15 +201,16 @@ export function CaseStudyArticle({ study }: CaseStudyArticleProps) {
   );
 
   return (
-    <article
-      className={`case-study-page ${accentClass(study.accent)}`}
-      data-from-morph={fromMorph ? "true" : "false"}
-      data-revealed={revealed ? "true" : "false"}
-      data-reading-mode={mode}
-      data-reading-ready={readingReady ? "true" : "false"}
-      aria-labelledby={titleId}
-    >
-      <div className="case-study-collapse-slot">
+    <main>
+      <article
+        className={`case-study-page ${accentClass(study.accent)}`}
+        data-from-morph={fromMorph ? "true" : "false"}
+        data-revealed={revealed ? "true" : "false"}
+        data-reading-mode={mode}
+        data-reading-ready={readingReady ? "true" : "false"}
+        aria-labelledby={titleId}
+      >
+        <div className="case-study-collapse-slot">
         <a
           href={withBasePath("/")}
           className="nav-pill case-study-back"
@@ -475,5 +476,6 @@ export function CaseStudyArticle({ study }: CaseStudyArticleProps) {
         </section>
       </div>
     </article>
+    </main>
   );
 }

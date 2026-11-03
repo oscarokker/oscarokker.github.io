@@ -107,7 +107,6 @@ export function Portfolio({
         <div
           ref={gridRef}
           className="tile-grid"
-          role="list"
           data-entrance-done={entranceDone || undefined}
         >
           {tiles.map((tile, index) => {
