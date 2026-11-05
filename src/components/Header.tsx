@@ -82,8 +82,10 @@ export function Header({ visible = true, activeFilter, onFilterChange }: HeaderP
   const pathname = usePathname();
   const caseStudyTransition = useCaseStudyTransitionOptional();
   const phase = caseStudyTransition?.phase ?? "idle";
+  const overlayOpen = Boolean(caseStudyTransition?.inDocumentSlug);
   const insideCaseStudy =
     isCaseStudyPath(pathname) ||
+    overlayOpen ||
     phase === "expanding" ||
     phase === "covering" ||
     phase === "revealing";

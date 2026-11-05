@@ -10,9 +10,9 @@ import { CASE_STUDY_BOOT_SCRIPT } from "@/lib/case-study-href";
 import { READING_BOOT_SCRIPT } from "@/lib/reading-mode";
 import { PORTFOLIO_FILTER_BOOT_SCRIPT } from "@/lib/portfolio-filter";
 import { DEVICE_INIT_SCRIPT } from "@/lib/device";
+import { SITE_TITLE, TITLE_TEMPLATE } from "@/lib/site-title";
 import "./globals.css";
 
-const SITE_TITLE = "Oscar Rode · Design Portfolio";
 const seoDescription =
   "UI/UX designer in Copenhagen who turns complexity into clarity. Case studies in human-AI interaction, including CheapVoyage, a conversational travel planner.";
 
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://oscarrode.com"),
   title: {
     default: SITE_TITLE,
-    template: "%s · Oscar Rode",
+    template: TITLE_TEMPLATE,
   },
   description: seoDescription,
   alternates: {

@@ -3,6 +3,7 @@
 import { useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore } from "react";
 import type { FilterCategory } from "@/lib/types";
 import { tiles } from "@/data/tiles";
+import { useCaseStudyTransitionOptional } from "@/components/case-studies/CaseStudiesTransition";
 import { AuthorTile } from "@/components/AuthorTile";
 import { Tile, tileMatchesFilter } from "@/components/Tile";
 import { useDevice } from "@/hooks/useDevice";
@@ -36,6 +37,10 @@ export function Portfolio({
   );
   const device = useDevice();
   const gridRef = useRef<HTMLDivElement>(null);
+  const caseStudy = useCaseStudyTransitionOptional();
+  const homeInert =
+    Boolean(caseStudy?.inDocumentSlug) ||
+    (caseStudy != null && caseStudy.phase !== "idle");
   
   // Track entrance animation completion
   const [entranceDone, setEntranceDone] = useState(false);
@@ -103,7 +108,11 @@ export function Portfolio({
 
   return (
     <>
-      <main className="portfolio-main" data-device={device}>
+      <main
+        className="portfolio-main"
+        data-device={device}
+        inert={homeInert || undefined}
+      >
         <div
           ref={gridRef}
           className="tile-grid"
