@@ -6,6 +6,7 @@ import {
   getCaseStudySlugs,
   type CaseStudyCoverId,
 } from "@/data/case-studies";
+import { documentTitleForStudy } from "@/lib/site-title";
 
 const SHARE_CARDS: Record<string, string> = {
   "cheap-voyage": "https://oscarrode.com/og/cheapvoyage-og.jpg",
@@ -47,7 +48,7 @@ export async function generateMetadata(
 
   const { title } = await parent;
   const pageTitle = title?.template
-    ? title.template.replace(/%s/g, study.title)
+    ? documentTitleForStudy(study.title)
     : study.title;
   const shareCard = SHARE_CARDS[slug];
   const canonicalUrl = `https://oscarrode.com/case-studies/${slug}/`;

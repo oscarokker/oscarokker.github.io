@@ -6,6 +6,7 @@ import {
   useEffect,
   useId,
   useLayoutEffect,
+  useRef,
   useState,
   type MouseEvent as ReactMouseEvent,
   type ReactElement,
@@ -123,8 +124,10 @@ export function CaseStudyArticle({ study }: CaseStudyArticleProps) {
   const detailedTabId = `${titleId}-tab-detailed`;
   const summaryTabId = `${titleId}-tab-summary`;
   const bodyId = `${titleId}-body`;
-  const { phase, snapshot, notifyPageReady, closeToGrid } =
+  const { phase, snapshot, inDocumentSlug, notifyPageReady, closeToGrid } =
     useCaseStudyTransition();
+  const backLinkRef = useRef<HTMLAnchorElement>(null);
+  const didFocusStudyRef = useRef(false);
   const fromMorph = snapshot?.slug === study.slug && phase !== "idle";
   const [revealed, setRevealed] = useState(
     () => phase === "idle" && snapshot?.slug !== study.slug,
@@ -186,6 +189,15 @@ export function CaseStudyArticle({ study }: CaseStudyArticleProps) {
     return () => document.removeEventListener("keydown", onKeyDown);
   }, [closeToGrid]);
 
+  useLayoutEffect(() => {
+    if (inDocumentSlug !== study.slug) return;
+    if (didFocusStudyRef.current) return;
+    const back = backLinkRef.current;
+    if (!back) return;
+    didFocusStudyRef.current = true;
+    back.focus({ preventScroll: true });
+  }, [inDocumentSlug, study.slug]);
+
   const handleMode = useCallback((next: ReadingMode) => {
     document.documentElement.setAttribute("data-reading", next);
     writeReadingMode(next);
@@ -214,6 +226,7 @@ export function CaseStudyArticle({ study }: CaseStudyArticleProps) {
       >
         <div className="case-study-collapse-slot">
           <a
+            ref={backLinkRef}
             href={withBasePath("/")}
             className="nav-pill case-study-back"
             onClick={handleBackToPortfolio}

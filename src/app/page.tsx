@@ -1,5 +1,6 @@
 import type { Metadata, ResolvingMetadata } from "next";
 import { Portfolio } from "@/components/Portfolio";
+import { SITE_TITLE } from "@/lib/site-title";
 import "./ghostlink.css";
 
 const HOME_SHARE_IMAGE = "https://oscarrode.com/og/home-og.png";
@@ -9,7 +10,7 @@ export async function generateMetadata(
   parent: ResolvingMetadata,
 ): Promise<Metadata> {
   const previous = await parent;
-  const title = previous.title?.absolute || "Oscar Rode · Design Portfolio";
+  const title = previous.title?.absolute || SITE_TITLE;
 
   return {
     openGraph: {

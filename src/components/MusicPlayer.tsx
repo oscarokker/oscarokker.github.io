@@ -13,6 +13,7 @@ import {
   type TransitionEvent as ReactTransitionEvent,
 } from "react";
 import { createPortal } from "react-dom";
+import { useCaseStudyTransitionOptional } from "@/components/case-studies/CaseStudiesTransition";
 import { accentClass } from "@/lib/accent";
 import { withBasePath } from "@/lib/base-path";
 import { lockBodyScroll } from "@/lib/lockBodyScroll";
@@ -148,6 +149,10 @@ export function MusicPlayer() {
     stopPlayer,
     expandPlayer,
   } = useMusicPlayer();
+  const caseStudy = useCaseStudyTransitionOptional();
+  const behindStudy =
+    Boolean(caseStudy?.inDocumentSlug) ||
+    (caseStudy != null && caseStudy.phase !== "idle");
 
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
@@ -584,6 +589,7 @@ export function MusicPlayer() {
       <div
         className={`intro-expanded-root music-expanded-root ${isMini ? "music-player-mini-mode" : ""}`}
         data-visible={(isExpanded || isMini) ? "true" : "false"}
+        inert={behindStudy || undefined}
       >
         {isExpanded && (
           <button

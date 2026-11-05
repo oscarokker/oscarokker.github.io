@@ -32,6 +32,7 @@ import {
 } from "@/lib/portfolio-filter";
 import { lockBodyScroll } from "@/lib/lockBodyScroll";
 import { loadCaseStudyContent } from "@/data/load-case-study";
+import { documentTitleForStudy, SITE_TITLE } from "@/lib/site-title";
 
 export interface MorphRect {
   top: number;
@@ -274,6 +275,8 @@ export function CaseStudyTransitionProvider({
   const [snapshot, setSnapshot] = useState<CaseStudySnapshot | null>(null);
   const [inDocumentSlug, setInDocumentSlug] = useState<string | null>(null);
   const tilesRef = useRef(new Map<string, HTMLElement>());
+  const openerRef = useRef<HTMLElement | null>(null);
+  const restoreFocusOnIdleRef = useRef(false);
   const lastSnapshotRef = useRef<CaseStudySnapshot | null>(null);
   const pendingCollapseRef = useRef(false);
   const didBootRef = useRef(false);
@@ -294,6 +297,36 @@ export function CaseStudyTransitionProvider({
     const tile = tilesRef.current.get(slug);
     if (!tile) return;
     tile.style.visibility = hidden ? "hidden" : "";
+  }, []);
+
+  const rememberOpener = useCallback((slug: string) => {
+    const tile = tilesRef.current.get(slug);
+    const active = document.activeElement;
+    if (active instanceof HTMLElement && tile?.contains(active)) {
+      openerRef.current = active;
+      return;
+    }
+    openerRef.current =
+      tile?.querySelector<HTMLElement>("a.case-study-tile") ?? tile ?? null;
+  }, []);
+
+  const markRestoreFocus = useCallback(() => {
+    if (openerRef.current) restoreFocusOnIdleRef.current = true;
+  }, []);
+
+  const applyDocumentTitle = useCallback((studyTitle?: string | null) => {
+    const path = locationPath();
+    if (isCaseStudyPath(path)) {
+      const title =
+        studyTitle ??
+        lastSnapshotRef.current?.title ??
+        readSnapshot()?.title;
+      if (title) document.title = documentTitleForStudy(title);
+      return;
+    }
+    if (isHomePath(path)) {
+      document.title = SITE_TITLE;
+    }
   }, []);
 
   const measureOrigin = useCallback(
@@ -348,6 +381,7 @@ export function CaseStudyTransitionProvider({
       lastSnapshotRef.current = next;
       pendingCollapseRef.current = false;
       didAssignOpenRef.current = false;
+      rememberOpener(next.slug);
       persistSnapshot(next);
       markPendingOpen(next.slug);
       setSnapshot(next);
@@ -372,6 +406,7 @@ export function CaseStudyTransitionProvider({
             href
           );
           setInDocumentSlug(next.slug);
+          applyDocumentTitle(next.title);
           clearPendingOpen();
           setPhase("idle");
           setSnapshot(null);
@@ -383,7 +418,7 @@ export function CaseStudyTransitionProvider({
 
       setPhase("expanding");
     },
-    [clearCursorLabel, hideTile, setLabelSuppressed],
+    [applyDocumentTitle, clearCursorLabel, hideTile, rememberOpener, setLabelSuppressed],
   );
 
   const completeExpand = useCallback(() => {
@@ -416,6 +451,7 @@ export function CaseStudyTransitionProvider({
             href
           );
           setInDocumentSlug(current.slug);
+          applyDocumentTitle(current.title);
 
           // Manually trigger the ready → revealing → idle sequence
           // since usePathname() doesn't change on pushState
@@ -434,7 +470,7 @@ export function CaseStudyTransitionProvider({
         });
       });
     });
-  }, [setLabelSuppressed]);
+  }, [applyDocumentTitle, setLabelSuppressed]);
 
   const notifyPageReady = useCallback(
     (slug: string) => {
@@ -481,6 +517,7 @@ export function CaseStudyTransitionProvider({
     const current = snapshot ?? lastSnapshotRef.current ?? readSnapshot();
     const slug =
       current?.slug ?? caseStudySlugFromPath(locationPath()) ?? undefined;
+    markRestoreFocus();
 
     const goHome = () => {
       markPendingCollapse();
@@ -490,6 +527,7 @@ export function CaseStudyTransitionProvider({
       if (inDocumentSlugRef.current && window.history.length > 1) {
         setInDocumentSlug(null);
         window.history.back();
+        applyDocumentTitle(null);
         return;
       }
       
@@ -513,6 +551,7 @@ export function CaseStudyTransitionProvider({
     };
 
     if (!current) {
+      applyDocumentTitle(null);
       goHome();
       return;
     }
@@ -544,23 +583,41 @@ export function CaseStudyTransitionProvider({
         goHome();
       });
     });
-  }, [clearCursorLabel, hideTile, setLabelSuppressed, snapshot]);
+  }, [applyDocumentTitle, clearCursorLabel, hideTile, markRestoreFocus, setLabelSuppressed, snapshot]);
 
   useEffect(() => {
-    const onPopState = (event: PopStateEvent) => {
+    const onPopState = () => {
       // Handle back navigation from in-document case study
       if (inDocumentSlugRef.current) {
         const current = lastSnapshotRef.current ?? readSnapshot();
         if (current) {
+          markRestoreFocus();
           setInDocumentSlug(null);
+          applyDocumentTitle(null);
           beginCollapse(current);
+          return;
         }
       }
+      applyDocumentTitle(lastSnapshotRef.current?.title ?? readSnapshot()?.title);
     };
 
     window.addEventListener("popstate", onPopState);
     return () => window.removeEventListener("popstate", onPopState);
-  }, [beginCollapse]);
+  }, [applyDocumentTitle, beginCollapse, markRestoreFocus]);
+
+  useEffect(() => {
+    applyDocumentTitle(lastSnapshotRef.current?.title);
+  }, [applyDocumentTitle, inDocumentSlug, pathname]);
+
+  useEffect(() => {
+    if (phase !== "idle" || inDocumentSlug) return;
+    if (!restoreFocusOnIdleRef.current) return;
+    const opener = openerRef.current;
+    restoreFocusOnIdleRef.current = false;
+    openerRef.current = null;
+    if (!opener || !document.contains(opener)) return;
+    opener.focus({ preventScroll: true });
+  }, [inDocumentSlug, phase]);
 
   useEffect(() => {
     return () => {
