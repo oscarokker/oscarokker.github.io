@@ -239,7 +239,9 @@ Close control ≥44×44, above content, not under images/text.
 - Don't let the music iframe intercept taps
 - Don't add SaaS marketing chrome (pricing tables, multi CTA pill pairs) that fights the personal bento
 - Don't introduce a second typeface on the main site or load from Google Fonts — Satoshi is self-hosted and covers all roles (**exceptions:** Nunito Sans is self-hosted and applied only to the Duolingo streak number; JetBrains Mono is lazy-loaded **only** inside expanded Ghostlink for the code editor)
-- Don't put `@strudel/web` on the homepage critical path or leave patterns running after Ghostlink closes
+- Don't put `@strudel/web` or the expanded Ghostlink shell on the homepage critical path, and don't idle-timer preload them while visitors browse; intent-prefetch the shell on hover/focus/pointerdown of the Ghostlink tile only
+- Don't load the YouTube IFrame API (or `www-widgetapi.js`) until a YouTube track is actually opened — never on MusicPlayer mount / idle home
+- Don't leave patterns running after Ghostlink closes
 - Don't wire Ghostlink into the YouTube MusicPlayer mini-dock
 
 ---
@@ -288,7 +290,7 @@ Replaces `.aurora-bg` on the **dark homepage only**. Light parchment + paper gra
 - **Home:** photography and product UI live *inside* tiles (music covers, trek photos, case covers) — the grid is the composition.
 - **Case studies:** product shots, research artifacts, short looping demos. No stock lifestyle filler.
 - **Personality:** side quests (Himalaya, Duolingo, music, Ghostlink) are allowed — Ghostlink is playful + nerdy (creative + technical in one surface); Work filter must still surface real case studies first.
-- **Ghostlink expandable:** `@strudel/web` island (dynamic-import on first expand only); **four worlds** (`neo.trance`, `botanica`, `utopiaOS`, `break(core)`) with per-world **skins** (CSS tokens + animated BG canvas). Shared expanded shell: world tabs top-left; **Mute + Minimize** top-right (icon buttons); Strudel IDE across the shell (**JetBrains Mono**, lazy-loaded on expand, line numbers, **no editor scrim** — code sits on the world). Code: neo.trance `#E4F1FF`, break(core) `#FFE6F2`, line numbers at ~48% of that hue; botanica / utopiaOS stay charcoal ink. read-only **section timeline** bottom (playhead + fill, loops forever — not a scrubber). Each world is a living song you plug into and co-write with the ghost — it **auto-starts on expand** (default **muted**), auto-advances via ghost (no click-to-jump). **Ghost writer** + per `(worldId, sectionId)` edit memory; **Ghost waiting** when dirty on auto-advance until blur or Ctrl/⌘+Enter. Controls: **Mute/Unmute** (playback + timeline continue while muted). Apply edits with **Ctrl/⌘+Enter** only — no visible shortcut hint. Expanded chrome is world tabs, Mute, Minimize, the editor, and the section timeline: no world/section label, ghost-memory cue, or Strudel credit line (AGPL credit stays in ATTRIBUTION.md). Close and reopen restarts the song from the intro — no Update, Reset section, or Reset track. No Play/Pause/Stop/Restart. `hush` + teardown Strudel/BG RAF on close / tab hidden — separate from YouTube MusicPlayer. `prefers-reduced-motion`: static BG plates.
+- **Ghostlink expandable:** expanded shell demand-loaded on first open (same-origin intent-prefetch on hover/focus/pointerdown of the tile — not an idle timer); `@strudel/web` island (dynamic-import on first expand only, not on tile hover); **four worlds** (`neo.trance`, `botanica`, `utopiaOS`, `break(core)`) with per-world **skins** (CSS tokens + animated BG canvas). Shared expanded shell: world tabs top-left; **Mute + Minimize** top-right (icon buttons); Strudel IDE across the shell (**JetBrains Mono**, lazy-loaded on expand, line numbers, **no editor scrim** — code sits on the world). Code: neo.trance `#E4F1FF`, break(core) `#FFE6F2`, line numbers at ~48% of that hue; botanica / utopiaOS stay charcoal ink. read-only **section timeline** bottom (playhead + fill, loops forever — not a scrubber). Each world is a living song you plug into and co-write with the ghost — it **auto-starts on expand** (default **muted**), auto-advances via ghost (no click-to-jump). **Ghost writer** + per `(worldId, sectionId)` edit memory; **Ghost waiting** when dirty on auto-advance until blur or Ctrl/⌘+Enter. Controls: **Mute/Unmute** (playback + timeline continue while muted). Apply edits with **Ctrl/⌘+Enter** only — no visible shortcut hint. Expanded chrome is world tabs, Mute, Minimize, the editor, and the section timeline: no world/section label, ghost-memory cue, or Strudel credit line (AGPL credit stays in ATTRIBUTION.md). Close and reopen restarts the song from the intro — no Update, Reset section, or Reset track. No Play/Pause/Stop/Restart. `hush` + teardown Strudel/BG RAF on close / tab hidden — separate from YouTube MusicPlayer. `prefers-reduced-motion`: static BG plates.
 - **Dark mode:** distinctive — indigo field + ASCII wave texture. Preserve it; don't flatten to generic gray dark mode.
 
 ---
@@ -365,3 +367,8 @@ When this file and the CSS disagree, update both in the same change.
 
 - Case-study figure CSS already matches this contract (`24px` radius; caption centered, `--color-text-secondary`, `margin-top: 12px`) via PR #34.
 - Verified tokens against live `src/app/globals.css` on main; filter labels and mobile breakpoint corrected above to match code.
+
+## Living sync (Mosaic, 2026-11-08)
+
+- YouTube IFrame API injects only when a `youtubeId` track is opened (not on idle MusicPlayer mount).
+- Expanded Ghostlink shell is demand-loaded from the collapsed tile; collapsed teaser notation lives in `src/lib/beat-lab/teaser.ts` so composition/section sources stay out of the home page chunk. Intent-prefetch is hover/focus/pointerdown only.

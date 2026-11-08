@@ -27,6 +27,11 @@ import {
   isMorphGeometryTransition,
   resumeCornerMorph,
 } from "@/lib/morph-motion";
+import {
+  ensureYoutubeIframeApi,
+  type YoutubeIframeApi,
+  type YoutubePlayer,
+} from "@/lib/youtube-iframe-api";
 
 function prefersReducedMotion(): boolean {
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -165,7 +170,7 @@ export function MusicPlayer() {
   const hasStartedRef = useRef(false);
   const iframeReadyRef = useRef(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
-  const ytPlayerRef = useRef<any>(null);
+  const ytPlayerRef = useRef<YoutubePlayer | null>(null);
   // Start as true - assume autoplay works. API will update if paused/ended.
   const [isYouTubePlaying, setIsYouTubePlaying] = useState(true);
   const isMiniRef = useRef(false);
@@ -224,73 +229,65 @@ export function MusicPlayer() {
     );
   }, [track?.youtubeId, track?.startSeconds]);
 
-  // Load YouTube IFrame API
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    
-    // Check if API is already loaded
-    if ((window as any).YT && (window as any).YT.Player) {
-      return;
-    }
-
-    // Load the API if not already present
-    if (!document.querySelector('script[src*="youtube.com/iframe_api"]')) {
-      const tag = document.createElement("script");
-      tag.src = "https://www.youtube.com/iframe_api";
-      const firstScriptTag = document.getElementsByTagName("script")[0];
-      firstScriptTag.parentNode?.insertBefore(tag, firstScriptTag);
-    }
-  }, []);
-
-  // Initialize YouTube Player once per track
+  // YouTube IFrame API + player: only when a youtubeId track is open, not on idle mount.
   useEffect(() => {
     if (!track?.youtubeId) return;
-    if (ytPlayerRef.current) return; // Already initialized for this track
+    if (ytPlayerRef.current) return;
 
-    const initPlayer = () => {
-      if (!(window as any).YT?.Player || !iframeRef.current) {
-        setTimeout(initPlayer, 100);
-        return;
-      }
+    let cancelled = false;
 
+    const initPlayer = async () => {
       try {
-        ytPlayerRef.current = new (window as any).YT.Player(iframeRef.current, {
-          events: {
-            onStateChange: (event: any) => {
-              const YT = (window as any).YT;
-              const state = event.data;
-              
-              // YT.PlayerState: UNSTARTED (-1), ENDED (0), PLAYING (1), PAUSED (2), BUFFERING (3), CUED (5)
-              const playing = state === YT.PlayerState.PLAYING || state === YT.PlayerState.BUFFERING;
-              setIsYouTubePlaying(playing);
-              
-              // Mobile: keep button visible when paused, only unmount on ENDED
-              // Desktop mini-player: hide on pause (previous approved behavior)
-              const isMobile = window.matchMedia("(pointer: coarse), (max-width: 680px)").matches;
-              
-              if (isMiniRef.current && state === YT.PlayerState.ENDED) {
-                stopPlayer();
-              } else if (isMiniRef.current && state === YT.PlayerState.PAUSED && !isMobile) {
-                // Desktop mini-player: hide on pause
-                stopPlayer();
-              }
+        const YT = await ensureYoutubeIframeApi();
+        if (cancelled || ytPlayerRef.current || !iframeRef.current) return;
+
+        try {
+          ytPlayerRef.current = new YT.Player(iframeRef.current, {
+            events: {
+              onStateChange: (event: { data: number }) => {
+                if (cancelled) return;
+                const state = event.data;
+                const playing =
+                  state === YT.PlayerState.PLAYING ||
+                  state === YT.PlayerState.BUFFERING;
+                setIsYouTubePlaying(playing);
+
+                const isMobile = window.matchMedia(
+                  "(pointer: coarse), (max-width: 680px)",
+                ).matches;
+
+                if (isMiniRef.current && state === YT.PlayerState.ENDED) {
+                  stopPlayer();
+                } else if (
+                  isMiniRef.current &&
+                  state === YT.PlayerState.PAUSED &&
+                  !isMobile
+                ) {
+                  stopPlayer();
+                }
+              },
             },
-          },
-        });
+          });
+        } catch (error) {
+          if (!cancelled) {
+            console.error("Failed to initialize YouTube player:", error);
+          }
+        }
       } catch (error) {
-        console.error("Failed to initialize YouTube player:", error);
+        if (!cancelled) {
+          console.error("Failed to load YouTube IFrame API:", error);
+        }
       }
     };
 
-    // Give iframe time to be ready
-    setTimeout(initPlayer, 500);
+    void initPlayer();
 
     return () => {
-      // Only destroy when track changes or component unmounts (not on expanded↔mini)
+      cancelled = true;
       if (ytPlayerRef.current?.destroy) {
         try {
           ytPlayerRef.current.destroy();
-        } catch (e) {
+        } catch {
           // Ignore errors during cleanup
         }
         ytPlayerRef.current = null;
@@ -536,11 +533,11 @@ export function MusicPlayer() {
     if (!ytPlayerRef.current) return;
     try {
       const playerState = ytPlayerRef.current.getPlayerState?.();
-      const YT = (window as any).YT;
+      const YT = (window as Window & { YT?: YoutubeIframeApi }).YT;
       if (playerState === YT?.PlayerState?.PLAYING) {
-        ytPlayerRef.current.pauseVideo();
+        ytPlayerRef.current.pauseVideo?.();
       } else {
-        ytPlayerRef.current.playVideo();
+        ytPlayerRef.current.playVideo?.();
       }
     } catch (error) {
       console.error("Failed to toggle play/pause:", error);
