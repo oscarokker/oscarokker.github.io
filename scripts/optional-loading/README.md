@@ -9,6 +9,7 @@ node scripts/optional-loading/analyze-bundles.mjs out changed
 npm install --no-save playwright
 npx playwright install chromium
 node scripts/optional-loading/playwright-network.mjs
+node scripts/optional-loading/playwright-youtube-player.mjs
 npm run test:optional-loading
 ```
 

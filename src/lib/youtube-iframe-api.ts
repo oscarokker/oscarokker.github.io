@@ -5,6 +5,16 @@
 
 export const YOUTUBE_IFRAME_API_SRC = "https://www.youtube.com/iframe_api";
 
+/** Public IFrame API PlayerState numbers — used so bind/state tracking does not need `window.YT`. */
+export const YOUTUBE_PLAYER_STATE = {
+  UNSTARTED: -1,
+  ENDED: 0,
+  PLAYING: 1,
+  PAUSED: 2,
+  BUFFERING: 3,
+  CUED: 5,
+} as const;
+
 export type YoutubePlayer = {
   destroy?: () => void;
   getPlayerState?: () => number;

@@ -1,0 +1,53 @@
+{
+  "origin": "http://127.0.0.1:35599",
+  "scenarios": {
+    "coldIdle": {
+      "iframeApi": 0,
+      "widgetapi": 0,
+      "expanded": 0,
+      "strudel": 0
+    },
+    "firstTrackOpen": {
+      "constructs": 1,
+      "srcHasFeelAlive": true,
+      "iframe": 1,
+      "stateEvents": [
+        1
+      ]
+    },
+    "closeAndReopenSameTrack": {
+      "constructs": 2,
+      "lastSrcHasFeelAlive": true,
+      "destroys": 1
+    },
+    "secondTrackAfterCachedApi": {
+      "constructs": 3,
+      "lastSrcHasMoonlit": true,
+      "distinctIds": [
+        "SLBmsHOsuLU",
+        "H-DNcJ-KnTE"
+      ]
+    },
+    "fastSwitch": {
+      "constructs": 2,
+      "destroys": 1,
+      "lastSrcHasMoonlit": true,
+      "anyMoonlit": true
+    },
+    "closeDuringApiLoad": {
+      "playerConstructsAfterClose": 0,
+      "musicRoot": 0
+    },
+    "playPauseStateTracking": {
+      "constructs": 1,
+      "stateEvents": [
+        1,
+        2,
+        1
+      ],
+      "afterPlay": "Pause music",
+      "afterPause": "Play music",
+      "afterResume": "Pause music"
+    }
+  }
+}

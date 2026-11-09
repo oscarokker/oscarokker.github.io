@@ -370,5 +370,5 @@ When this file and the CSS disagree, update both in the same change.
 
 ## Living sync (Mosaic, 2026-11-08)
 
-- YouTube IFrame API injects only when a `youtubeId` track is opened (not on idle MusicPlayer mount).
+- YouTube IFrame API injects only when a `youtubeId` track is opened (not on idle MusicPlayer mount). `YT.Player` waits for the youtube-nocookie iframe to mount (a cached API can resolve first) and is aborted/destroyed on close.
 - Expanded Ghostlink shell is demand-loaded from the collapsed tile; collapsed teaser notation lives in `src/lib/beat-lab/teaser.ts` so composition/section sources stay out of the home page chunk. Intent-prefetch is hover/focus/pointerdown only.

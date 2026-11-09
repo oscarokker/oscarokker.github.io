@@ -1,7 +1,7 @@
 {
   "label": "changed",
   "outDir": "/agent/repos/oscarokker.github.io/out",
-  "generatedAt": "2026-11-08T14:45:57.567Z",
+  "generatedAt": "2026-11-09T06:13:05.942Z",
   "indexScripts": [
     "/_next/static/chunks/4bd1b696-92152b0f5947070d.js",
     "/_next/static/chunks/794-bd75e607e02db8a4.js",
@@ -9,16 +9,16 @@
     "/_next/static/chunks/600-5fa4a54d9a1a1f35.js",
     "/_next/static/chunks/500-721f8650806d0f40.js",
     "/_next/static/chunks/366-4278b73d54afe041.js",
-    "/_next/static/chunks/145-de74c712e4655971.js",
-    "/_next/static/chunks/app/layout-7b3f7cf6ad02e03b.js",
+    "/_next/static/chunks/145-8f62ffb4bba3e5e0.js",
+    "/_next/static/chunks/app/layout-09bf1af69e3cfc21.js",
     "/_next/static/chunks/app/not-found-923827e7cdaa4127.js",
     "/_next/static/chunks/app/page-fcc7148336e64c92.js",
     "/_next/static/chunks/polyfills-42372ed130431b0a.js",
     "/_next/static/chunks/webpack-42827a9ab82cd704.js"
   ],
   "htmlReferencedJs": {
-    "raw": 709510,
-    "gzip": 221783,
+    "raw": 710343,
+    "gzip": 222075,
     "files": [
       {
         "src": "/_next/static/chunks/4bd1b696-92152b0f5947070d.js",
@@ -57,18 +57,18 @@
         "hits": {}
       },
       {
-        "src": "/_next/static/chunks/145-de74c712e4655971.js",
-        "raw": 19773,
-        "gzip": 7002,
+        "src": "/_next/static/chunks/145-8f62ffb4bba3e5e0.js",
+        "raw": 19845,
+        "gzip": 7066,
         "hits": {
           "iframe_api": 1,
           "youtube.com/iframe_api": 1
         }
       },
       {
-        "src": "/_next/static/chunks/app/layout-7b3f7cf6ad02e03b.js",
-        "raw": 44686,
-        "gzip": 13877,
+        "src": "/_next/static/chunks/app/layout-09bf1af69e3cfc21.js",
+        "raw": 45447,
+        "gzip": 14105,
         "hits": {}
       },
       {
@@ -134,9 +134,9 @@
       }
     },
     {
-      "file": "_next/static/chunks/145-de74c712e4655971.js",
-      "raw": 19773,
-      "gzip": 7002,
+      "file": "_next/static/chunks/145-8f62ffb4bba3e5e0.js",
+      "raw": 19845,
+      "gzip": 7066,
       "hits": {
         "iframe_api": 1,
         "youtube.com/iframe_api": 1
@@ -200,9 +200,9 @@
       }
     },
     {
-      "file": "_next/static/chunks/app/layout-7b3f7cf6ad02e03b.js",
-      "raw": 44686,
-      "gzip": 13877,
+      "file": "_next/static/chunks/app/layout-09bf1af69e3cfc21.js",
+      "raw": 45447,
+      "gzip": 14105,
       "hits": {}
     },
     {
@@ -219,9 +219,9 @@
       }
     },
     {
-      "file": "_next/static/chunks/145-de74c712e4655971.js",
-      "raw": 19773,
-      "gzip": 7002,
+      "file": "_next/static/chunks/145-8f62ffb4bba3e5e0.js",
+      "raw": 19845,
+      "gzip": 7066,
       "hits": {
         "iframe_api": 1,
         "youtube.com/iframe_api": 1
