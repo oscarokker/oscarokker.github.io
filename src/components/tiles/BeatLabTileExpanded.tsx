@@ -29,6 +29,7 @@ import {
 import { ensureJetBrainsMono } from "@/lib/beat-lab/load-jetbrains-mono";
 import { WORLDS } from "@/lib/beat-lab/worlds";
 import {
+  beginSession,
   ensureStrudel,
   evaluateCode,
   getTransportCycle,
@@ -67,7 +68,7 @@ export interface BeatLabSourceRect {
   height: number;
 }
 
-interface BeatLabTileExpandedProps {
+export interface BeatLabTileExpandedProps {
   title: string;
   description: string;
   accent?: string;
@@ -238,9 +239,10 @@ export function BeatLabTileExpanded({
     await teardown();
   }, []);
 
-  // Preload Strudel + JetBrains Mono on first expand (not homepage critical path).
+  // Strudel + JetBrains Mono on expand only (not homepage critical path).
   useEffect(() => {
     let cancelled = false;
+    beginSession();
     void ensureJetBrainsMono();
     ensureStrudel()
       .then(() => {
@@ -633,7 +635,9 @@ export function BeatLabTileExpanded({
     const section = sectionsFor(compositionId)[0];
     const code = resolveSectionSource(compositionId, section.id);
     await runEvaluate(code, { hushBeforeEval: true });
+    if (!livingSessionRef.current) return;
     sectionStartCycleRef.current = await getTransportCycle();
+    if (!livingSessionRef.current) return;
     setLoopInSection({ current: 0, total: section.loops });
     await writeEditorFromGhost(code);
   }, [
@@ -667,11 +671,16 @@ export function BeatLabTileExpanded({
 
     if (!ready || livingSessionRef.current) return;
     livingSessionRef.current = true;
+    let cancelled = false;
     void (async () => {
       await setMuted(true);
+      if (cancelled || !livingSessionRef.current) return;
       setMutedState(true);
       await startLivingChannel();
     })();
+    return () => {
+      cancelled = true;
+    };
   }, [visible, ready, teardownAudio, startLivingChannel]);
 
   const handleUpdate = useCallback(async () => {
