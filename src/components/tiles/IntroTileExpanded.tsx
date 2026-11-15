@@ -41,7 +41,7 @@ export interface IntroSourceRect {
 const NETCOMPANY_LABEL = "Netcompany";
 export const NETCOMPANY_HREF = "https://www.netcompany.com";
 
-/** Squircle-masked headshot: 320/480 AVIF+WebP srcset, PNG fallback. */
+/** Squircle-masked headshot: 320 AVIF/WebP, PNG fallback. */
 export function IntroAvatarImage({
   src,
   alt,
