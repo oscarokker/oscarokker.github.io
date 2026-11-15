@@ -65,15 +65,11 @@ function useAnimatedCounter(
 
     if (prefersReducedMotion) {
       // Skip animation, jump to target immediately
-      // Intentionally synchronous for instant UI update
-      // eslint-disable-next-line
       setDisplayValue(target);
       return;
     }
 
     // Show 0 immediately, then animate to target
-    // Intentionally synchronous for instant UI update
-    // eslint-disable-next-line
     setDisplayValue(0);
 
     // Animate from 0 to target

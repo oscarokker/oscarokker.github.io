@@ -301,6 +301,12 @@ Replaces `.aurora-bg` on the **dark homepage only**. Light parchment + paper gra
 
 ---
 
+## CSS files
+
+Do not grow `globals.css` with Ghostlink-only or case-study-only rules. Those belong in their own CSS files (`src/app/ghostlink.css` already holds Ghostlink). Leave `globals.css` unsplit otherwise.
+
+---
+
 ## Inconsistencies to watch (living audit)
 
 Call these out when found; fix in CSS + this file together:

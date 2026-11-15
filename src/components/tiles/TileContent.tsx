@@ -13,6 +13,7 @@ import {
   type ReactNode,
 } from "react";
 import {
+  IntroAvatarImage,
   IntroSupportLine,
   IntroTileExpanded,
 } from "@/components/tiles/IntroTileExpanded";
@@ -103,14 +104,7 @@ export function IntroTile({
 
         <div className="intro-tile-avatar" aria-hidden={!imageSrc}>
           {imageSrc ? (
-            <Image
-              src={withBasePath(imageSrc)}
-              alt=""
-              fill
-              sizes="192px"
-              className="intro-tile-avatar-image"
-              priority
-            />
+            <IntroAvatarImage src={imageSrc} alt="" />
           ) : (
             <span className="intro-tile-avatar-placeholder">{initials}</span>
           )}
@@ -500,8 +494,8 @@ export function LogoTile({
     <Image
       src={withBasePath(imageSrc)}
       alt={alt}
-      width={512}
-      height={128}
+      width={460}
+      height={100}
       className="logo-tile-image"
       sizes="(max-width: 768px) 100vw, 420px"
       priority={false}

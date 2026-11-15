@@ -74,7 +74,7 @@ export function usePointerGesture<T extends Element = Element>({
             stopPropagation: () => e.stopPropagation(),
             isPropagationStopped: () => false,
             isDefaultPrevented: () => e.defaultPrevented,
-          } as any;
+          } as unknown as ReactPointerEvent<T>;
           onDragStart?.(syntheticEvent);
         }
       };
@@ -109,7 +109,7 @@ export function usePointerGesture<T extends Element = Element>({
             stopPropagation: () => e.stopPropagation(),
             isPropagationStopped: () => false,
             isDefaultPrevented: () => e.defaultPrevented,
-          } as any;
+          } as unknown as ReactPointerEvent<T>;
           onTap?.(syntheticEvent);
         }
       };

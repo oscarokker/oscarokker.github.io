@@ -1,6 +1,6 @@
 "use client";
 
-import { useLayoutEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { accentClass } from "@/lib/accent";
 import { withBasePath } from "@/lib/base-path";
@@ -10,6 +10,66 @@ interface CaseStudyFaceProps {
   coverSrc?: string;
   coverVideoSrc?: string;
   coverPosterSrc?: string;
+}
+
+function CoverVideo({
+  src,
+  poster,
+}: {
+  src: string;
+  poster?: string;
+}) {
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [activeSrc, setActiveSrc] = useState<string | undefined>(undefined);
+  const [inView, setInView] = useState(false);
+
+  useEffect(() => {
+    const node = wrapRef.current;
+    if (!node) return;
+    const videoSrc = withBasePath(src);
+    const observer = new IntersectionObserver(([entry]) => {
+      setInView(entry.isIntersecting);
+      if (entry.isIntersecting) {
+        setActiveSrc((current) => current ?? videoSrc);
+      }
+    });
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [src]);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video || !activeSrc) return;
+    if (!inView) {
+      video.pause();
+      return;
+    }
+    const play = () => {
+      void video.play().catch(() => {});
+    };
+    if (video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
+      play();
+      return;
+    }
+    video.addEventListener("canplay", play);
+    return () => video.removeEventListener("canplay", play);
+  }, [activeSrc, inView]);
+
+  return (
+    <div ref={wrapRef} className="case-study-face-cover-wrap" aria-hidden>
+      <video
+        ref={videoRef}
+        src={activeSrc}
+        poster={poster ? withBasePath(poster) : undefined}
+        muted
+        loop
+        playsInline
+        preload={activeSrc ? "auto" : "none"}
+        className="case-study-face-cover"
+      />
+    </div>
+  );
 }
 
 export function CaseStudyFace({
@@ -24,16 +84,15 @@ export function CaseStudyFace({
   useLayoutEffect(() => {
     const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
     setPrefersReducedMotion(mediaQuery.matches);
-    
+
     const handleChange = (e: MediaQueryListEvent) => {
       setPrefersReducedMotion(e.matches);
     };
-    
+
     mediaQuery.addEventListener("change", handleChange);
     return () => mediaQuery.removeEventListener("change", handleChange);
   }, []);
 
-  // Use video if available and motion is not reduced
   const shouldShowVideo = coverVideoSrc && !prefersReducedMotion;
   const imageSrc = coverPosterSrc || coverSrc;
 
@@ -42,19 +101,10 @@ export function CaseStudyFace({
       className={`tile-card-inner case-study-face relative ${accentClass(accent)} h-full ${hasCover ? "case-study-face--cover" : ""}`}
     >
       {hasCover ? (
-        <div className="case-study-face-cover-wrap" aria-hidden>
-          {shouldShowVideo ? (
-            <video
-              src={withBasePath(coverVideoSrc)}
-              poster={coverPosterSrc ? withBasePath(coverPosterSrc) : undefined}
-              muted
-              autoPlay
-              loop
-              playsInline
-              preload="metadata"
-              className="case-study-face-cover"
-            />
-          ) : imageSrc ? (
+        shouldShowVideo ? (
+          <CoverVideo src={coverVideoSrc} poster={coverPosterSrc || coverSrc} />
+        ) : imageSrc ? (
+          <div className="case-study-face-cover-wrap" aria-hidden>
             <Image
               src={withBasePath(imageSrc)}
               alt=""
@@ -62,8 +112,8 @@ export function CaseStudyFace({
               sizes="(max-width: 680px) 50vw, 280px"
               className="case-study-face-cover"
             />
-          ) : null}
-        </div>
+          </div>
+        ) : null
       ) : (
         <div
           className="absolute inset-0 opacity-[0.08]"

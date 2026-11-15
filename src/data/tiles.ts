@@ -147,7 +147,7 @@ export const tiles: TileData[] = [
     size: "1x1",
     variant: "logo",
     props: {
-      imageSrc: "/itu-nextgen-logo.png",
+      imageSrc: "/itu-nextgen-logo.webp",
       alt: "ITU NextGen Innovation & startup hub",
       label: "Check out ITU NextGen where I got support to run CheapVoyage 🚀",
       href: "https://www.itunextgen.dk/",
@@ -163,7 +163,7 @@ export const tiles: TileData[] = [
       title: "Botanica",
       subtitle: "Music & Visuals",
       description: "Produce, mix, and craft audiovisual experiences.",
-      coverSrc: "/feel-alive-background.png",
+      coverSrc: "/feel-alive-background.webp",
       youtubeId: "SLBmsHOsuLU",
       videoTitle: "Feel Alive",
       videoArtist: "Oscar Rode",
