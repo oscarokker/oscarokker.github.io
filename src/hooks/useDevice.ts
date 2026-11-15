@@ -19,7 +19,7 @@ function getCurrentDevice(): DeviceMode {
   return getDeviceModeFromWidth(window.innerWidth);
 }
 
-let deviceListeners: Set<() => void> = new Set();
+const deviceListeners: Set<() => void> = new Set();
 let currentDevice: DeviceMode = "desktop";
 
 // Use matchMedia for efficient viewport tracking

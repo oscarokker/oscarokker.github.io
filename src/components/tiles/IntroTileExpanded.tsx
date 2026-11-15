@@ -50,8 +50,6 @@ export function IntroAvatarImage({
     <picture>
       <source srcSet={withBasePath(HEADSHOT_TILE_AVIF)} type="image/avif" />
       <source srcSet={withBasePath(HEADSHOT_TILE_WEBP)} type="image/webp" />
-      {/* Static export has no optimizer; picture serves the 240px tile files. */}
-      {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={withBasePath(src)}
         alt={alt}
