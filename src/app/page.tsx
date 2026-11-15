@@ -1,7 +1,10 @@
 import type { Metadata, ResolvingMetadata } from "next";
 import { Portfolio } from "@/components/Portfolio";
-import { withBasePath } from "@/lib/base-path";
-import { HEADSHOT_TILE_AVIF } from "@/lib/headshot";
+import { withSrcSet } from "@/lib/base-path";
+import {
+  HEADSHOT_AVIF_SRCSET,
+  HEADSHOT_TILE_SIZES,
+} from "@/lib/headshot";
 import { SITE_TITLE } from "@/lib/site-title";
 import "./ghostlink.css";
 
@@ -79,8 +82,9 @@ export default function Home() {
       <link
         rel="preload"
         as="image"
-        href={withBasePath(HEADSHOT_TILE_AVIF)}
         type="image/avif"
+        imageSrcSet={withSrcSet(HEADSHOT_AVIF_SRCSET)}
+        imageSizes={HEADSHOT_TILE_SIZES}
       />
       <script
         type="application/ld+json"

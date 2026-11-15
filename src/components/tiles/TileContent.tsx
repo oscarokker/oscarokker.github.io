@@ -104,7 +104,7 @@ export function IntroTile({
 
         <div className="intro-tile-avatar" aria-hidden={!imageSrc}>
           {imageSrc ? (
-            <IntroAvatarImage src={imageSrc} alt="" fetchPriority="high" />
+            <IntroAvatarImage src={imageSrc} alt="" />
           ) : (
             <span className="intro-tile-avatar-placeholder">{initials}</span>
           )}

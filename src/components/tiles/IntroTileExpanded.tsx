@@ -13,8 +13,13 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import { accentClass } from "@/lib/accent";
-import { withBasePath } from "@/lib/base-path";
-import { HEADSHOT_TILE_AVIF, HEADSHOT_TILE_WEBP } from "@/lib/headshot";
+import { withBasePath, withSrcSet } from "@/lib/base-path";
+import {
+  HEADSHOT_AVIF_SRCSET,
+  HEADSHOT_EXPANDED_SIZES,
+  HEADSHOT_TILE_SIZES,
+  HEADSHOT_WEBP_SRCSET,
+} from "@/lib/headshot";
 import { spawnClickRipple } from "@/lib/clickRipple";
 import { lockBodyScroll } from "@/lib/lockBodyScroll";
 import type { IntroParagraphMark } from "@/lib/types";
@@ -36,28 +41,36 @@ export interface IntroSourceRect {
 const NETCOMPANY_LABEL = "Netcompany";
 export const NETCOMPANY_HREF = "https://www.netcompany.com";
 
-/** Squircle-masked headshot: 240px AVIF/WebP for the tile, PNG fallback. */
+/** Squircle-masked headshot: 320/480 AVIF+WebP srcset, PNG fallback. */
 export function IntroAvatarImage({
   src,
   alt,
-  fetchPriority,
+  sizes = HEADSHOT_TILE_SIZES,
 }: {
   src: string;
   alt: string;
-  fetchPriority?: "high" | "low" | "auto";
+  sizes?: string;
 }) {
   return (
     <picture>
-      <source srcSet={withBasePath(HEADSHOT_TILE_AVIF)} type="image/avif" />
-      <source srcSet={withBasePath(HEADSHOT_TILE_WEBP)} type="image/webp" />
+      <source
+        type="image/avif"
+        srcSet={withSrcSet(HEADSHOT_AVIF_SRCSET)}
+        sizes={sizes}
+      />
+      <source
+        type="image/webp"
+        srcSet={withSrcSet(HEADSHOT_WEBP_SRCSET)}
+        sizes={sizes}
+      />
       <img
         src={withBasePath(src)}
         alt={alt}
-        width={240}
-        height={240}
+        width={320}
+        height={320}
+        sizes={sizes}
         className="intro-tile-avatar-image"
         decoding="async"
-        fetchPriority={fetchPriority}
       />
     </picture>
   );
@@ -567,7 +580,11 @@ export function IntroTileExpanded({
         <div className="intro-morph-expanded">
           <div className="intro-morph-expanded-avatar" aria-hidden={!imageSrc}>
             {imageSrc ? (
-              <IntroAvatarImage src={imageSrc} alt={name} />
+              <IntroAvatarImage
+                src={imageSrc}
+                alt={name}
+                sizes={HEADSHOT_EXPANDED_SIZES}
+              />
             ) : (
               <span className="intro-tile-avatar-placeholder">{initials}</span>
             )}
