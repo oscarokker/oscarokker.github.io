@@ -1,5 +1,7 @@
 import type { Metadata, ResolvingMetadata } from "next";
 import { Portfolio } from "@/components/Portfolio";
+import { withBasePath } from "@/lib/base-path";
+import { HEADSHOT_TILE_AVIF } from "@/lib/headshot";
 import { SITE_TITLE } from "@/lib/site-title";
 import "./ghostlink.css";
 
@@ -74,6 +76,12 @@ export default function Home() {
 
   return (
     <>
+      <link
+        rel="preload"
+        as="image"
+        href={withBasePath(HEADSHOT_TILE_AVIF)}
+        type="image/avif"
+      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

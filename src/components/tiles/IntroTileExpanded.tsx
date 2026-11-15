@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import {
   useCallback,
   useEffect,
@@ -15,6 +14,7 @@ import {
 import { createPortal } from "react-dom";
 import { accentClass } from "@/lib/accent";
 import { withBasePath } from "@/lib/base-path";
+import { HEADSHOT_TILE_AVIF, HEADSHOT_TILE_WEBP } from "@/lib/headshot";
 import { spawnClickRipple } from "@/lib/clickRipple";
 import { lockBodyScroll } from "@/lib/lockBodyScroll";
 import type { IntroParagraphMark } from "@/lib/types";
@@ -35,6 +35,35 @@ export interface IntroSourceRect {
 
 const NETCOMPANY_LABEL = "Netcompany";
 export const NETCOMPANY_HREF = "https://www.netcompany.com";
+
+/** Squircle-masked headshot: 240px AVIF/WebP for the tile, PNG fallback. */
+export function IntroAvatarImage({
+  src,
+  alt,
+  fetchPriority,
+}: {
+  src: string;
+  alt: string;
+  fetchPriority?: "high" | "low" | "auto";
+}) {
+  return (
+    <picture>
+      <source srcSet={withBasePath(HEADSHOT_TILE_AVIF)} type="image/avif" />
+      <source srcSet={withBasePath(HEADSHOT_TILE_WEBP)} type="image/webp" />
+      {/* Static export has no optimizer; picture serves the 240px tile files. */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={withBasePath(src)}
+        alt={alt}
+        width={240}
+        height={240}
+        className="intro-tile-avatar-image"
+        decoding="async"
+        fetchPriority={fetchPriority}
+      />
+    </picture>
+  );
+}
 
 export function IntroSupportLine({
   bio,
@@ -520,14 +549,7 @@ export function IntroTileExpanded({
         <div className="intro-morph-collapsed" aria-hidden>
           <div className="intro-tile-avatar" aria-hidden={!imageSrc}>
             {imageSrc ? (
-              <Image
-                src={withBasePath(imageSrc)}
-                alt=""
-                fill
-                sizes="160px"
-                className="intro-tile-avatar-image"
-                priority
-              />
+              <IntroAvatarImage src={imageSrc} alt="" />
             ) : (
               <span className="intro-tile-avatar-placeholder">{initials}</span>
             )}
@@ -547,14 +569,7 @@ export function IntroTileExpanded({
         <div className="intro-morph-expanded">
           <div className="intro-morph-expanded-avatar" aria-hidden={!imageSrc}>
             {imageSrc ? (
-              <Image
-                src={withBasePath(imageSrc)}
-                alt={name}
-                fill
-                sizes="(max-width: 560px) 140px, 128px"
-                className="intro-tile-avatar-image"
-                priority
-              />
+              <IntroAvatarImage src={imageSrc} alt={name} />
             ) : (
               <span className="intro-tile-avatar-placeholder">{initials}</span>
             )}
