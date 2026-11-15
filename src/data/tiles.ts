@@ -163,7 +163,7 @@ export const tiles: TileData[] = [
       title: "Botanica",
       subtitle: "Music & Visuals",
       description: "Produce, mix, and craft audiovisual experiences.",
-      coverSrc: "/feel-alive-background.png",
+      coverSrc: "/feel-alive-background.webp",
       youtubeId: "SLBmsHOsuLU",
       videoTitle: "Feel Alive",
       videoArtist: "Oscar Rode",
