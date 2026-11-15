@@ -494,8 +494,8 @@ export function LogoTile({
     <Image
       src={withBasePath(imageSrc)}
       alt={alt}
-      width={512}
-      height={128}
+      width={460}
+      height={100}
       className="logo-tile-image"
       sizes="(max-width: 768px) 100vw, 420px"
       priority={false}
