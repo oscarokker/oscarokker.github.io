@@ -8,6 +8,7 @@ import {
   useCallback,
   type ReactNode,
 } from "react";
+import { ensureYoutubeIframeApi } from "@/lib/youtube-iframe-api";
 
 export interface MusicTrack {
   youtubeId: string;
@@ -70,6 +71,11 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
   const [sourceRect, setSourceRect] = useState<MusicSourceRect | null>(null);
 
   const playTrack = useCallback((track: MusicTrack, rect: MusicSourceRect) => {
+    if (track.youtubeId) {
+      void ensureYoutubeIframeApi().catch(() => {
+        /* MusicPlayer retries when the iframe is ready */
+      });
+    }
     setCurrentTrack(track);
     setSourceRect(rect);
     setPlayerState("expanded");

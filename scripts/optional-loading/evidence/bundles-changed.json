@@ -1,0 +1,267 @@
+{
+  "label": "changed",
+  "outDir": "/agent/repos/oscarokker.github.io/out",
+  "generatedAt": "2026-11-09T06:13:05.942Z",
+  "indexScripts": [
+    "/_next/static/chunks/4bd1b696-92152b0f5947070d.js",
+    "/_next/static/chunks/794-bd75e607e02db8a4.js",
+    "/_next/static/chunks/main-app-f72298bfc652cd78.js",
+    "/_next/static/chunks/600-5fa4a54d9a1a1f35.js",
+    "/_next/static/chunks/500-721f8650806d0f40.js",
+    "/_next/static/chunks/366-4278b73d54afe041.js",
+    "/_next/static/chunks/145-8f62ffb4bba3e5e0.js",
+    "/_next/static/chunks/app/layout-09bf1af69e3cfc21.js",
+    "/_next/static/chunks/app/not-found-923827e7cdaa4127.js",
+    "/_next/static/chunks/app/page-fcc7148336e64c92.js",
+    "/_next/static/chunks/polyfills-42372ed130431b0a.js",
+    "/_next/static/chunks/webpack-42827a9ab82cd704.js"
+  ],
+  "htmlReferencedJs": {
+    "raw": 710343,
+    "gzip": 222075,
+    "files": [
+      {
+        "src": "/_next/static/chunks/4bd1b696-92152b0f5947070d.js",
+        "raw": 201054,
+        "gzip": 63156,
+        "hits": {}
+      },
+      {
+        "src": "/_next/static/chunks/794-bd75e607e02db8a4.js",
+        "raw": 241299,
+        "gzip": 65617,
+        "hits": {}
+      },
+      {
+        "src": "/_next/static/chunks/main-app-f72298bfc652cd78.js",
+        "raw": 513,
+        "gzip": 222,
+        "hits": {}
+      },
+      {
+        "src": "/_next/static/chunks/600-5fa4a54d9a1a1f35.js",
+        "raw": 15845,
+        "gzip": 5818,
+        "hits": {}
+      },
+      {
+        "src": "/_next/static/chunks/500-721f8650806d0f40.js",
+        "raw": 7882,
+        "gzip": 3406,
+        "hits": {}
+      },
+      {
+        "src": "/_next/static/chunks/366-4278b73d54afe041.js",
+        "raw": 17555,
+        "gzip": 5556,
+        "hits": {}
+      },
+      {
+        "src": "/_next/static/chunks/145-8f62ffb4bba3e5e0.js",
+        "raw": 19845,
+        "gzip": 7066,
+        "hits": {
+          "iframe_api": 1,
+          "youtube.com/iframe_api": 1
+        }
+      },
+      {
+        "src": "/_next/static/chunks/app/layout-09bf1af69e3cfc21.js",
+        "raw": 45447,
+        "gzip": 14105,
+        "hits": {}
+      },
+      {
+        "src": "/_next/static/chunks/app/not-found-923827e7cdaa4127.js",
+        "raw": 945,
+        "gzip": 485,
+        "hits": {}
+      },
+      {
+        "src": "/_next/static/chunks/app/page-fcc7148336e64c92.js",
+        "raw": 42181,
+        "gzip": 14627,
+        "hits": {
+          "Enter Ghostlink": 1,
+          "s(\"bd sd hh\")": 1
+        }
+      },
+      {
+        "src": "/_next/static/chunks/polyfills-42372ed130431b0a.js",
+        "raw": 112594,
+        "gzip": 39520,
+        "hits": {}
+      },
+      {
+        "src": "/_next/static/chunks/webpack-42827a9ab82cd704.js",
+        "raw": 5183,
+        "gzip": 2497,
+        "hits": {
+          "beat-lab-expanded": 1
+        }
+      }
+    ]
+  },
+  "filesWithNeedles": [
+    {
+      "file": "_next/static/chunks/cee746ab.a67410308798efbb.js",
+      "raw": 642327,
+      "gzip": 210767,
+      "hits": {
+        "@strudel/web": 1
+      }
+    },
+    {
+      "file": "_next/static/chunks/app/page-fcc7148336e64c92.js",
+      "raw": 42181,
+      "gzip": 14627,
+      "hits": {
+        "Enter Ghostlink": 1,
+        "s(\"bd sd hh\")": 1
+      }
+    },
+    {
+      "file": "_next/static/chunks/beat-lab-expanded.91e56d1138d4530d.js",
+      "raw": 36204,
+      "gzip": 10506,
+      "hits": {
+        "Loading Strudel": 1,
+        "Couldn't run this pattern": 1,
+        "Unmute — hear the world": 1,
+        "neo.trance": 2,
+        "break(core)": 8,
+        "beat-lab-expanded": 1
+      }
+    },
+    {
+      "file": "_next/static/chunks/145-8f62ffb4bba3e5e0.js",
+      "raw": 19845,
+      "gzip": 7066,
+      "hits": {
+        "iframe_api": 1,
+        "youtube.com/iframe_api": 1
+      }
+    },
+    {
+      "file": "_next/static/chunks/webpack-42827a9ab82cd704.js",
+      "raw": 5183,
+      "gzip": 2497,
+      "hits": {
+        "beat-lab-expanded": 1
+      }
+    }
+  ],
+  "largest": [
+    {
+      "file": "_next/static/chunks/cee746ab.a67410308798efbb.js",
+      "raw": 642327,
+      "gzip": 210767,
+      "hits": {
+        "@strudel/web": 1
+      }
+    },
+    {
+      "file": "_next/static/chunks/794-bd75e607e02db8a4.js",
+      "raw": 241299,
+      "gzip": 65617,
+      "hits": {}
+    },
+    {
+      "file": "_next/static/chunks/4bd1b696-92152b0f5947070d.js",
+      "raw": 201054,
+      "gzip": 63156,
+      "hits": {}
+    },
+    {
+      "file": "_next/static/chunks/framework-6860ebc283a60d07.js",
+      "raw": 189664,
+      "gzip": 59686,
+      "hits": {}
+    },
+    {
+      "file": "_next/static/chunks/main-7ee824d810c8f382.js",
+      "raw": 139050,
+      "gzip": 39926,
+      "hits": {}
+    },
+    {
+      "file": "_next/static/chunks/polyfills-42372ed130431b0a.js",
+      "raw": 112594,
+      "gzip": 39520,
+      "hits": {}
+    },
+    {
+      "file": "_next/static/chunks/app/page-fcc7148336e64c92.js",
+      "raw": 42181,
+      "gzip": 14627,
+      "hits": {
+        "Enter Ghostlink": 1,
+        "s(\"bd sd hh\")": 1
+      }
+    },
+    {
+      "file": "_next/static/chunks/app/layout-09bf1af69e3cfc21.js",
+      "raw": 45447,
+      "gzip": 14105,
+      "hits": {}
+    },
+    {
+      "file": "_next/static/chunks/beat-lab-expanded.91e56d1138d4530d.js",
+      "raw": 36204,
+      "gzip": 10506,
+      "hits": {
+        "Loading Strudel": 1,
+        "Couldn't run this pattern": 1,
+        "Unmute — hear the world": 1,
+        "neo.trance": 2,
+        "break(core)": 8,
+        "beat-lab-expanded": 1
+      }
+    },
+    {
+      "file": "_next/static/chunks/145-8f62ffb4bba3e5e0.js",
+      "raw": 19845,
+      "gzip": 7066,
+      "hits": {
+        "iframe_api": 1,
+        "youtube.com/iframe_api": 1
+      }
+    },
+    {
+      "file": "_next/static/chunks/496.c980b2de5dd32a32.js",
+      "raw": 15761,
+      "gzip": 6051,
+      "hits": {}
+    },
+    {
+      "file": "_next/static/chunks/600-5fa4a54d9a1a1f35.js",
+      "raw": 15845,
+      "gzip": 5818,
+      "hits": {}
+    },
+    {
+      "file": "_next/static/chunks/366-4278b73d54afe041.js",
+      "raw": 17555,
+      "gzip": 5556,
+      "hits": {}
+    },
+    {
+      "file": "_next/static/chunks/127-dd378f9a5465b005.js",
+      "raw": 20047,
+      "gzip": 5429,
+      "hits": {}
+    },
+    {
+      "file": "_next/static/chunks/app/case-studies/[slug]/page-56c9a29113379e70.js",
+      "raw": 11529,
+      "gzip": 3791,
+      "hits": {}
+    },
+    {
+      "file": "_next/static/chunks/913.7919dc158c4c71dc.js",
+      "raw": 11392,
+      "gzip": 3708,
+      "hits": {}
+    }
+  ]
+}

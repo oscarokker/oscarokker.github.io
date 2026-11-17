@@ -2,6 +2,7 @@
  * Ghostlink Strudel island.
  *
  * Dynamic-imported only from the expanded tile (never homepage critical path).
+ * The expanded shell itself is also demand-loaded from the collapsed tile.
  * Samples are the packs the worlds actually trigger, self-hosted under
  * /ghostlink/samples so playback does not fetch GitHub or strudel.cc.
  */
@@ -115,16 +116,37 @@ async function loadAndInit(): Promise<StrudelModule> {
   return mod;
 }
 
+function hushAndSuspend(mod: StrudelModule | null | undefined): void {
+  if (!mod) return;
+  try {
+    mod.hush();
+  } catch {
+    /* repl may not be ready */
+  }
+  try {
+    const ctx = mod.getAudioContext?.();
+    if (ctx && ctx.state === "running") {
+      void ctx.suspend();
+    }
+  } catch {
+    /* ignore */
+  }
+}
+
+/** Call on Ghostlink expand so a prior teardown cannot block the new session. */
+export function beginSession(): void {
+  disposed = false;
+}
+
 /** Load @strudel/web + samples once. Safe to call from expand (no sound). */
 export async function ensureStrudel(): Promise<StrudelModule> {
-  if (disposed) {
-    disposed = false;
-  }
   if (strudelMod) return strudelMod;
   if (!initPromise) {
     initPromise = loadAndInit()
       .then((mod) => {
         strudelMod = mod;
+        // Close during init: keep the module cached, do not leave audio running.
+        if (disposed) hushAndSuspend(mod);
         return mod;
       })
       .catch((err) => {
@@ -151,6 +173,7 @@ let pendingEval: EvalRequest | null = null;
 let evalPump: Promise<void> = Promise.resolve();
 
 async function runEval(request: EvalRequest): Promise<void> {
+  if (disposed) return;
   await ensureStrudel();
   if (disposed) return;
   if (strudelRepl) {
@@ -176,6 +199,7 @@ export async function evaluateCode(
   code: string,
   options?: { hushBeforeEval?: boolean },
 ): Promise<void> {
+  if (disposed) return;
   pendingEval = {
     code,
     hushFirst: options?.hushBeforeEval ?? true,
@@ -191,7 +215,15 @@ export async function evaluateCode(
 
 /** Current Strudel cycle (transport). Returns 0 when scheduler is idle. */
 export async function getTransportCycle(): Promise<number> {
+  if (disposed) {
+    try {
+      return strudelRepl?.scheduler.now() ?? 0;
+    } catch {
+      return 0;
+    }
+  }
   await ensureStrudel();
+  if (disposed) return 0;
   try {
     return strudelRepl?.scheduler.now() ?? 0;
   } catch {
@@ -223,8 +255,10 @@ function applyMasterGain(mod: StrudelModule): void {
  */
 export async function setMuted(muted: boolean): Promise<void> {
   audioMuted = muted;
+  if (disposed) return;
   try {
     const mod = strudelMod ?? (await ensureStrudel());
+    if (disposed) return;
     const ctx = mod.getAudioContext();
     if (ctx.state === "suspended") {
       await ctx.resume();
@@ -238,11 +272,7 @@ export async function setMuted(muted: boolean): Promise<void> {
 /** Hard teardown — hush + suspend context. No ghost audio. */
 export async function teardown(): Promise<void> {
   disposed = true;
-  try {
-    strudelMod?.hush();
-  } catch {
-    /* ignore */
-  }
+  hushAndSuspend(strudelMod);
   try {
     const ctx = strudelMod?.getAudioContext?.();
     if (ctx && ctx.state === "running") {

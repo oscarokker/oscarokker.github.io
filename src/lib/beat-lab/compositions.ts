@@ -12,8 +12,7 @@ export interface Composition {
   source: string;
 }
 
-/** Static mini-notation teaser for the collapsed face — not live audio. */
-export const TEASER_NOTATION = 's("bd sd hh")';
+export { TEASER_NOTATION } from "@/lib/beat-lab/teaser";
 
 export const COMPOSITIONS: Composition[] = [
   {
