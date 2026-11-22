@@ -1,6 +1,3 @@
-/** Full PNG for JSON-LD, Open Graph, and the picture fallback. */
-export const HEADSHOT_PNG = "/oscar-rode-profile-picture.png";
-
 /** 320w only — the master PNG is 320px; a 480w upsample reads softer. */
 export const HEADSHOT_AVIF_SRCSET = [
   { src: "/oscar-rode-profile-picture-320.avif", width: 320 },

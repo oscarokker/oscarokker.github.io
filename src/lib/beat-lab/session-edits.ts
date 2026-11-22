@@ -104,31 +104,3 @@ export function commitSectionEdit(
   if (persist) persistSectionEdits(next);
   return next;
 }
-
-export function clearSectionEdit(
-  edits: SectionEditMap,
-  compositionId: CompositionId,
-  sectionId: SectionId,
-  persist = true,
-): SectionEditMap {
-  const key = sectionEditKey(compositionId, sectionId);
-  if (!(key in edits)) return edits;
-  const next = { ...edits };
-  delete next[key];
-  if (persist) persistSectionEdits(next);
-  return next;
-}
-
-export function clearTrackEdits(
-  edits: SectionEditMap,
-  compositionId: CompositionId,
-  persist = true,
-): SectionEditMap {
-  const prefix = `${compositionId}:`;
-  const next: SectionEditMap = {};
-  for (const [k, v] of Object.entries(edits)) {
-    if (!k.startsWith(prefix)) next[k] = v;
-  }
-  if (persist) persistSectionEdits(next);
-  return next;
-}

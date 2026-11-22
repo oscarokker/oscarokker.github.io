@@ -252,7 +252,3 @@ export async function teardown(): Promise<void> {
     /* ignore */
   }
 }
-
-export function markDisposed(): void {
-  disposed = true;
-}

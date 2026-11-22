@@ -155,15 +155,3 @@ $: s("white*8")
   .crush(8)`,
   },
 ];
-
-export function compositionById(id: CompositionId): Composition {
-  return COMPOSITIONS.find((c) => c.id === id) ?? COMPOSITIONS[0];
-}
-
-export function initialSourceMap(): Record<CompositionId, string> {
-  const map = {} as Record<CompositionId, string>;
-  for (const c of COMPOSITIONS) {
-    map[c.id] = c.source;
-  }
-  return map;
-}

@@ -84,19 +84,3 @@ export function useDevice(): DeviceMode {
     getServerSnapshot,
   );
 }
-
-/**
- * Hook for components that need to know if they're on a specific device mode.
- */
-export function useIsDevice(mode: DeviceMode): boolean {
-  const device = useDevice();
-  return device === mode;
-}
-
-/**
- * Hook for components that need to know if device is mobile or tablet (not desktop).
- */
-export function useIsMobileOrTablet(): boolean {
-  const device = useDevice();
-  return device === "mobile" || device === "tablet";
-}
