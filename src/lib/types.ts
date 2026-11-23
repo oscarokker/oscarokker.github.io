@@ -4,18 +4,6 @@ export type FilterCategory = "all" | TileCategory;
 
 export type TileSize = "1x1" | "2x1" | "1x2" | "2x2";
 
-export type TileVariant =
-  | "intro"
-  | "case-study"
-  | "quote"
-  | "social"
-  | "music"
-  | "cv"
-  | "duolingo"
-  | "logo"
-  | "photo-stack"
-  | "beat-lab";
-
 interface BaseTileData {
   id: string;
   categories: TileCategory[];

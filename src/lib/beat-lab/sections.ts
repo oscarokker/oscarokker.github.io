@@ -699,15 +699,3 @@ export function defaultSectionSource(
   const section = sectionsFor(compositionId).find((s) => s.id === sectionId);
   return section?.source ?? sectionsFor(compositionId)[0].source;
 }
-
-export function authoredGrooveSource(compositionId: CompositionId): string {
-  const sections = sectionsFor(compositionId);
-  const chorus = sections.find((s) => s.id.startsWith("chorus"));
-  if (chorus) return chorus.source;
-  const groove = sections.find((s) => s.id === "groove" || s.id === "build-up");
-  return groove?.source ?? sections[0].source;
-}
-
-export function totalSectionLoops(compositionId: CompositionId): number {
-  return sectionsFor(compositionId).reduce((sum, s) => sum + s.loops, 0);
-}
